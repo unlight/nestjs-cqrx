@@ -1,6 +1,7 @@
 import { Inject, Type } from '@nestjs/common';
 
 import { AggregateRoot } from './aggregate-root';
+import { StreamNotFound } from './drivers/errors';
 import { EventStoreService } from './eventstore.service';
 
 export function aggregateRepositoryToken(value: { readonly name: string }) {
@@ -11,6 +12,8 @@ export const InjectAggregateRepository = (
     aggregate: Type<unknown>,
 ): ParameterDecorator => Inject(aggregateRepositoryToken(aggregate));
 
+export type FindOneOptions = { rejectOnNotFound: boolean };
+
 export class AggregateRepository<T extends AggregateRoot> {
     constructor(
         private readonly eventStore: EventStoreService,
@@ -18,19 +21,25 @@ export class AggregateRepository<T extends AggregateRoot> {
         private readonly category: string,
     ) {}
 
-    async findOne(id: string): Promise<T> {
+    async findOne(id: string, options?: FindOneOptions): Promise<T> {
         const aggregate = new this.Aggregate(this.category, id);
         const { streamId } = aggregate;
-
-        for await (const event of this.eventStore.readFromStart(streamId)) {
-            await aggregate.apply(event, true);
+        try {
+            const streamEvents = this.eventStore.readFromStart(streamId);
+            for await (const event of streamEvents) {
+                await aggregate.apply(event, true);
+            }
+        } catch (error: unknown) {
+            if (error instanceof StreamNotFound && options?.rejectOnNotFound) {
+                throw error;
+            }
         }
 
         return aggregate;
     }
 
     async save(aggregate: T): Promise<void> {
-        await this.eventStore.save({
+        await this.eventStore.appendToStream({
             streamId: aggregate.streamId,
             events: aggregate.getUncommittedEvents(),
         });

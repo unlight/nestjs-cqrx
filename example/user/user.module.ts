@@ -11,8 +11,8 @@ import { UserController } from './user.controller';
 @Module({
     imports: [
         CqrxModule.forFeature([User], {
-            UserRegistered: (event: Event<UserRegisteredDto>) =>
-                new UserRegistered(event.data),
+            // UserRegistered: (event: Event<UserRegisteredDto>) =>
+            //     new UserRegistered(event.data),
         }),
     ],
     providers: [...QUERY_HANDLERS, ...COMMAND_HANDLERS],

@@ -1,10 +1,12 @@
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import request from 'supertest';
 import { inspect } from 'util';
 
+import { AllExceptionsFilter } from './app.exception-filter';
 import { AppModule } from './app.module';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const d = (o: any) =>
     console.log(inspect(o, { colors: true, depth: null, compact: true }));
 
@@ -12,6 +14,9 @@ let app: INestApplication;
 let server: any;
 beforeAll(async () => {
     app = await NestFactory.create(AppModule, { logger: false });
+    app.enableCors();
+    app.useGlobalPipes(new ValidationPipe({}));
+    app.useGlobalFilters(new AllExceptionsFilter(app.getHttpAdapter()));
     server = app.getHttpServer();
     await app.init();
 });
@@ -21,36 +26,31 @@ afterAll(async () => {
 });
 
 it('smoke', async () => {
-    // const result = await request(server)
-    //     .get('/')
-    //     .expect(200)
-    //     .then(response => response.body);
-    // expect(result).toBeTruthy();
+    const result = await request(server)
+        .get('/user/index')
+        .expect(200)
+        .then(response => response.body);
+    expect(result).toBeTruthy();
 });
 
-// describe('app', () => {
+it('register failure with empty', async () => {
+    const result = await request(server)
+        .post('/user/register')
+        .set('Content-Type', 'application/json')
+        .send({ email: '', password: '' })
+        .then(response => response.body);
+    expect(result).toEqual(expect.objectContaining({ statusCode: 400 }));
+});
 
-//     it('login', async () => {
-//         const query = /* GraphQL */ `
-//             mutation {
-//                 loginUser(data: { email: "alice@conduit.com", password: "123" }) {
-//                     token
-//                 }
-//             }
-//         `;
-//         const result = await request(server)
-//             .post('/graphql')
-//             .send({ query })
-//             .expect(200)
-//             .then(response => response.body.data);
-//         expect(result).toEqual(
-//             expect.objectContaining({
-//                 loginUser: {
-//                     token: expect.any(String),
-//                 },
-//             }),
-//         );
-//     });
+it('register success', async () => {
+    const { body, statusCode } = await request(server)
+        .post('/user/register')
+        .set('Content-Type', 'application/json')
+        .send({ email: 'separation@wordable.edu', password: '0a704641e6b5' })
+        .then(response => response);
+    expect(body).toBeTruthy();
+    expect(statusCode).toEqual(201);
+});
 
 //     describe('user', () => {
 //         it('is following', async () => {
@@ -131,4 +131,3 @@ it('smoke', async () => {
 //             });
 //         });
 //     });
-// });

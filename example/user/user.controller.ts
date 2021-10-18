@@ -7,7 +7,7 @@ import { RegisterUserDto, UserDataDto, UserRegisteredDto } from './dto';
 // import { UserRegistered } from './events';
 // import { GetUser } from './query';
 
-@Controller()
+@Controller('user')
 export class UserController {
     constructor(
         private readonly queryBus$: QueryBus,
@@ -15,9 +15,9 @@ export class UserController {
         private readonly eventBus$: EventBus,
     ) {}
 
-    @Get()
+    @Get('index')
     index() {
-        return 'index';
+        return { index: 'yes' };
     }
 
     // @Get(':email')
@@ -26,8 +26,7 @@ export class UserController {
     // }
 
     @Post('register')
-    public async register(@Body() data: RegisterUserDto): Promise<UserRegisteredDto> {
-        console.log('data!!!', data);
+    async register(@Body() data: RegisterUserDto): Promise<UserRegisteredDto> {
         return this.commandBus$.execute(new RegisterUser(data));
     }
 

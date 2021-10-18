@@ -1,6 +1,11 @@
 # nestjs-cqrx
 
-WIP
+WIP. CQRS for NestJS.
+
+## Features
+
+-   Asynchronous commit/publish
+-   Event handler fires after saving event to store
 
 ## Issues
 

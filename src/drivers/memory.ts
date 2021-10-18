@@ -1,9 +1,9 @@
 import { ok } from 'assert';
-import erroz from 'erroz';
 import { EventEmitter } from 'events';
 import { last } from 'lodash';
 
 import { Event } from '../event';
+import { StreamNotFound, WrongExpectedVersion } from './errors';
 import { AppendResult, AppendStreamOptions, IStore } from './store.interface';
 
 export class Memory implements IStore {
@@ -17,7 +17,28 @@ export class Memory implements IStore {
      */
     private readonly emitter = new EventEmitter();
 
-    subscribeToAll(listener: (event) => void) {
+    private static createEvent({
+        event,
+        streamId,
+        previousRevision,
+    }: {
+        event: Event;
+        streamId: string;
+        previousRevision: number;
+    }): Event {
+        const streamEvent = new Event(JSON.parse(JSON.stringify(event.data)));
+        Reflect.set(
+            streamEvent,
+            'id',
+            `${Math.random().toString(36).slice(2)}-${streamId}`,
+        );
+        Reflect.set(streamEvent, 'streamId', streamId);
+        Reflect.set(streamEvent, 'revision', BigInt(previousRevision + 1));
+        Reflect.set(streamEvent, 'created', Date.now());
+
+        return streamEvent;
+    }
+    subscribeToAll(listener: (event: any) => void) {
         this.emitter.on('data', listener);
 
         // eslint-disable-next-line @typescript-eslint/require-await
@@ -26,7 +47,7 @@ export class Memory implements IStore {
         };
     }
 
-    subscribeToStream(stream: string, listener: (event) => void) {
+    subscribeToStream(stream: string, listener: (event: any) => void) {
         if (!this.emitters.has(stream)) {
             this.emitters.set(stream, new EventEmitter());
         }
@@ -41,27 +62,56 @@ export class Memory implements IStore {
     // eslint-disable-next-line @typescript-eslint/require-await
     async appendToStream(options: AppendStreamOptions): Promise<AppendResult> {
         const { streamId, event, events, expectedRevision } = options;
+        const streamEvents: Event[] = [];
 
-        if (expectedRevision === 'NO_STREAM' && this.store.has(streamId)) {
-            throw new ExpectedNoStream({ streamId });
-        } else if (expectedRevision === 'STREAM_EXISTS' && !this.store.has(streamId)) {
-            throw new ExpectedStreamExists({ streamId });
+        if (
+            (expectedRevision === 'no_stream' && this.store.has(streamId)) ||
+            (expectedRevision === 'stream_exists' && !this.store.has(streamId))
+        ) {
+            throw new WrongExpectedVersion({
+                streamId,
+                expectedRevision,
+            });
         }
-
-        // Expected stream user-s4l1jxeB3Pfl2ff3 exists
 
         if (!this.store.has(streamId)) {
             this.store.set(streamId, []);
         }
 
-        const streamEvents: Event[] = [];
-        if (Array.isArray(events)) {
-            streamEvents.push(...events);
-        } else if (event) {
-            streamEvents.push(event);
-        }
         const allEvents = this.store.get(streamId);
         ok(allEvents);
+
+        if (Array.isArray(events)) {
+            streamEvents.push(
+                ...events.map((event, index) =>
+                    Memory.createEvent({
+                        event,
+                        streamId,
+                        previousRevision: allEvents.length + index,
+                    }),
+                ),
+            );
+        } else if (event) {
+            const streamEvent = Memory.createEvent({
+                event,
+                streamId,
+                previousRevision: allEvents.length,
+            });
+            streamEvents.push(streamEvent);
+        }
+
+        if (typeof expectedRevision === 'bigint') {
+            const lastEvent = last(allEvents);
+            ok(
+                lastEvent?.revision === expectedRevision,
+                new WrongExpectedVersion({
+                    streamId,
+                    expectedRevision,
+                    actualVersion: lastEvent?.revision,
+                }),
+            );
+        }
+
         allEvents.push(...streamEvents);
 
         if (!this.emitters.has(streamId)) {
@@ -70,7 +120,7 @@ export class Memory implements IStore {
 
         for (const streamEvent of streamEvents) {
             this.emitters.get(streamId)?.emit('data', streamEvent);
-            this.emitter.emit('data', event);
+            this.emitter.emit('data', streamEvent);
         }
 
         return {
@@ -78,11 +128,11 @@ export class Memory implements IStore {
         };
     }
 
-    async *readFromStart(stream: string): AsyncGenerator<Event, void> {
-        const streamEvents = this.store.get(stream);
+    async *readFromStart(streamId: string): AsyncGenerator<Event, void> {
+        const streamEvents = this.store.get(streamId);
 
         if (!streamEvents) {
-            throw new Error(`Stream ${stream} not found`);
+            throw new StreamNotFound({ streamId });
         }
 
         for await (const event of streamEvents) {
@@ -90,23 +140,3 @@ export class Memory implements IStore {
         }
     }
 }
-
-/**
- * @constructor
- * @param options
- * @param options.streamId
- */
-const ExpectedNoStream = erroz({
-    code: 'EXPECTED_NO_STREAM',
-    template: 'Expected no stream, but stream %streamId already exists',
-});
-
-/**
- * @constructor
- * @param options
- * @param options.streamId
- */
-const ExpectedStreamExists = erroz({
-    code: 'EXPECTED_STREAM_EXISTS',
-    template: 'Expected stream %streamId exists',
-});

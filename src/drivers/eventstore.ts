@@ -4,9 +4,11 @@ import {
     FORWARDS,
     jsonEvent,
     START,
+    WrongExpectedVersionError,
 } from '@eventstore/db-client';
 
 import { Event } from '../event';
+import { WrongExpectedVersion } from './errors';
 import { AppendResult, AppendStreamOptions, IStore } from './store.interface';
 
 export class EventStore implements IStore {
@@ -31,11 +33,10 @@ export class EventStore implements IStore {
 
     async appendToStream(options: AppendStreamOptions): Promise<AppendResult> {
         {
-            const { streamId } = options;
+            const { streamId, expectedRevision } = options;
             const events = Array.isArray(options.events)
                 ? options.events
                 : [options.event];
-
             const databaseEvents = (events as Event[]).map(event =>
                 jsonEvent<any>({
                     type: event.type,
@@ -43,11 +44,27 @@ export class EventStore implements IStore {
                 }),
             );
 
-            const result = await this.client.appendToStream(streamId, databaseEvents);
-
-            return {
-                expectedRevision: result.nextExpectedRevision,
-            };
+            try {
+                const result = await this.client.appendToStream(
+                    streamId,
+                    databaseEvents,
+                    {
+                        expectedRevision,
+                    },
+                );
+                return {
+                    expectedRevision: result.nextExpectedRevision,
+                };
+            } catch (error: unknown) {
+                if (error instanceof WrongExpectedVersionError) {
+                    throw new WrongExpectedVersion({
+                        streamId: error.streamName,
+                        expectedRevision: error.expectedVersion,
+                        actualVersion: error.actualVersion,
+                    });
+                }
+                return Promise.reject(error);
+            }
         }
     }
 

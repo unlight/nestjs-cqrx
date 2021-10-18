@@ -12,16 +12,6 @@ export class EventStoreService {
         private readonly transformers: TransformerService,
     ) {}
 
-    async save({
-        events,
-        streamId,
-    }: {
-        streamId: string;
-        events: Event[];
-    }): Promise<void> {
-        await this.client.appendToStream({ streamId, events });
-    }
-
     appendToStream(options: AppendStreamOptions): Promise<AppendResult> {
         return this.client.appendToStream(options);
     }

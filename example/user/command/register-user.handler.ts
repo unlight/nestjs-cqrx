@@ -12,7 +12,7 @@ export class RegisterUserHandler implements ICommandHandler<RegisterUser> {
         private readonly userRepository: AggregateRepository<User>,
     ) {}
 
-    public async execute(command: RegisterUser): Promise<UserRegisteredDto> {
+    async execute(command: RegisterUser): Promise<UserRegisteredDto> {
         const user = await this.userRepository.findOne(command.data.email);
         await user.register(command.data.email, command.data.password);
         await this.userRepository.save(user);

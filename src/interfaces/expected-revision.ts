@@ -1,1 +1,1 @@
-export type ExpectedRevision = 'ANY' | 'STREAM_EXISTS' | 'NO_STREAM' | bigint;
+export type ExpectedRevision = 'any' | 'stream_exists' | 'no_stream' | bigint;
