@@ -1,4 +1,6 @@
-export class Event<P = unknown> {
+import { IEvent } from '@nestjs/cqrs';
+
+export class Event<P = unknown> implements IEvent {
     /**
      * The event stream that events belongs to.
      */
