@@ -26,8 +26,9 @@
     "lib": ["esnext"],
     "baseUrl": ".",
     "paths": {
-      "nestjs-cqrx": ["./src/index.ts"]
+      "nestjs-cqrx": ["./src/index.ts"],
+      "@hardyscc/common/*": ["./example-user-account-common/*"]
     }
   },
-  "include": ["src", "example"]
+  "include": ["src", "example", "example-tick-tack-toe-cqrx"]
 }

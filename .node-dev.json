@@ -1,6 +1,5 @@
 {
   "extensions": {
-    "ts": "ts-node/register/transpile-only",
-    "_ts": "@swc/register"
+    "ts": "@swc/register"
   }
 }

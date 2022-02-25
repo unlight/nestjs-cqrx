@@ -10,7 +10,7 @@ import {
 } from './cqrx-core.module';
 import { EventStoreService } from './eventstore.service';
 import { AsyncAggregateRootFactory } from './interfaces';
-import { Transformer } from './transformer.service';
+import { Transformers } from './transform.service';
 
 @Module({})
 export class CqrxModule {
@@ -30,7 +30,7 @@ export class CqrxModule {
 
     static forFeature(
         aggregateRoots: Array<Type<AggregateRoot>>,
-        transformers?: Record<string, Transformer<any>>, // Transforms stream event to domain event
+        transformers: Transformers = [], // Transforms stream event to domain event
     ): DynamicModule {
         const aggregateRepoProviders =
             this.createAggregateRepositoryProviders(aggregateRoots);
@@ -52,8 +52,12 @@ export class CqrxModule {
     ): Provider[] {
         return aggregateRoots.map(aggregateRoot => ({
             provide: aggregateRepositoryToken(aggregateRoot),
-            useFactory: (eventStore: EventStoreService) =>
-                new AggregateRepository(eventStore, aggregateRoot, aggregateRoot.name),
+            useFactory: (eventStoreService: EventStoreService) =>
+                new AggregateRepository(
+                    eventStoreService,
+                    aggregateRoot,
+                    aggregateRoot.name,
+                ),
             inject: [EventStoreService],
         }));
     }

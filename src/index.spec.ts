@@ -1,16 +1,24 @@
 import { INestApplication } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { EventBus } from '@nestjs/cqrs';
 import expect from 'expect';
 import all from 'it-all';
 import { last } from 'lodash';
-import { filter } from 'rxjs';
+import { filter, from, lastValueFrom } from 'rxjs';
+import cuid from 'cuid';
 
-import { CqrxModule, Event } from '.';
-import { AggregateRepository } from './aggregate.repository';
-import { AggregateRoot } from './aggregate-root';
+import {
+    AggregateRoot,
+    AggregateRepository,
+    CqrxModule,
+    Event,
+    EventStoreService,
+    EventHandler,
+    EventPublisher,
+} from '.';
+import { aggregateRepositoryToken } from './aggregate.repository';
 import { CqrxCoreModule } from './cqrx-core.module';
-import { EventStoreService } from './eventstore.service';
+import { RecordedEvent } from './interfaces';
+import { EventBus } from '@nestjs/cqrs';
 
 // eslint-disable-next-line unicorn/prevent-abbreviations
 const eventstoreDbConnectionString = 'esdb://localhost:2113?tls=false';
@@ -24,29 +32,44 @@ describe('event', () => {
         const event = new TestEvent({});
         expect(event.type).toBe('TestEvent');
     });
-});
 
-describe('memory impl', () => {
-    impl({
-        imports: [CqrxCoreModule.forRoot({ inMemory: true })],
-        providers: [],
+    it('copy from other class', () => {
+        class TestEvent {
+            testId = '964';
+        }
+        const event = Event.from(new TestEvent());
+        expect(event.type).toEqual('TestEvent');
+        expect(event.data.testId).toBe('964');
     });
 });
 
-// describe('eventstore impl', () => {
-//     impl({
-//         imports: [CqrxCoreModule.forRoot({ eventstoreDbConnectionString })],
-//         providers: [],
-//     });
-// });
+describe('transformerService', () => {
+    class CatAggregateRoot extends AggregateRoot {}
+    class CatRegisteredEvent extends Event {}
+    class CatFeedEvent extends Event {}
+    class CatStrokedEvent extends Event {}
 
-function impl({ imports = [], providers = [] }: { imports: any[]; providers: any[] }) {
     beforeAll(async () => {
         app = await NestFactory.create(
             {
                 module: CqrxModule,
-                imports,
-                providers,
+                imports: [
+                    CqrxCoreModule.forRoot({ eventstoreDbConnectionString }),
+                    CqrxModule.forFeature(
+                        [CatAggregateRoot],
+                        [
+                            CatStrokedEvent,
+                            CatFeedEvent,
+                            [
+                                'CatRegisteredEvent',
+                                (event: RecordedEvent) => {
+                                    return new CatRegisteredEvent(event.data);
+                                },
+                            ],
+                        ],
+                    ),
+                ],
+                providers: [],
             },
             {
                 logger: false,
@@ -60,8 +83,67 @@ function impl({ imports = [], providers = [] }: { imports: any[]; providers: any
         await app.close();
     });
 
-    it('smoke', () => {
-        expect(app).toBeTruthy();
+    it('read should be transformed', async () => {
+        const event = new CatRegisteredEvent({ name: 'Fluffy' });
+        const streamId = `cat_${cuid()}`;
+        await eventStoreService.appendToStream(streamId, event);
+        const events = await all(eventStoreService.readFromStart(streamId));
+        expect(events).toEqual([
+            { data: { name: 'Fluffy' }, type: 'CatRegisteredEvent' },
+        ]);
+        const names = events.map(event => event.constructor.name);
+        expect(names).toEqual(['CatRegisteredEvent']);
+    });
+
+    it('transform key', async () => {
+        const event = new CatFeedEvent();
+        const streamId = `cat_${cuid()}`;
+        await eventStoreService.appendToStream(streamId, event);
+        const events = await all(eventStoreService.readFromStart(streamId));
+
+        expect(events).toEqual([
+            expect.objectContaining({ data: {}, type: 'CatFeedEvent' }),
+        ]);
+
+        const names = events.map(event => event.constructor.name);
+
+        expect(names).toEqual(['CatFeedEvent']);
+    });
+
+    it('transform ctor name', async () => {
+        const event = new CatStrokedEvent();
+        const streamId = `cat_${cuid()}`;
+        await eventStoreService.appendToStream(streamId, event);
+        const events = await all(eventStoreService.readFromStart(streamId));
+
+        expect(events).toEqual([
+            expect.objectContaining({ data: {}, type: 'CatStrokedEvent' }),
+        ]);
+
+        const names = events.map(event => event.constructor.name);
+
+        expect(names).toEqual(['CatStrokedEvent']);
+    });
+});
+
+describe('eventstore', () => {
+    beforeAll(async () => {
+        app = await NestFactory.create(
+            {
+                module: CqrxModule,
+                imports: [CqrxCoreModule.forRoot({ eventstoreDbConnectionString })],
+                providers: [],
+            },
+            {
+                logger: false,
+            },
+        );
+        await app.init();
+        eventStoreService = app.get(EventStoreService);
+    });
+
+    afterAll(async () => {
+        await app.close();
     });
 
     describe('aggregate root', () => {
@@ -93,11 +175,13 @@ function impl({ imports = [], providers = [] }: { imports: any[]; providers: any
             expect(repository).toBeTruthy();
         });
 
-        it('findOne ok', async () => {
-            const result = await repository.findOne('951');
-            expect(result).toBeTruthy();
-            expect(result.streamId).toBe('user-951');
-            expect(result.version).toBe(-1);
+        it('findOne not found', async () => {
+            const err = (await repository
+                .findOne('951')
+                .catch((error: unknown) => error)) as Error;
+
+            expect(err.message).toEqual('user_951 not found');
+            expect(err.constructor.name).toEqual('StreamNotFoundError');
         });
     });
 
@@ -107,12 +191,9 @@ function impl({ imports = [], providers = [] }: { imports: any[]; providers: any
             const userRegisteredEvent = new Event<typeof userRegisteredDto>(
                 userRegisteredDto,
             );
-            await eventStoreService.appendToStream({
-                streamId: 'user-392',
-                event: userRegisteredEvent,
-            });
+            await eventStoreService.appendToStream('user_392', userRegisteredEvent);
 
-            const events = await all(eventStoreService.readFromStart('user-392'));
+            const events = await all(eventStoreService.readFromStart('user_392'));
             expect(last(events)?.data).toEqual({ id: '392', name: 'ivan' });
         });
 
@@ -121,19 +202,16 @@ function impl({ imports = [], providers = [] }: { imports: any[]; providers: any
             const userRegisteredEvent = new Event<typeof userRegisteredDto>(
                 userRegisteredDto,
             );
-            await eventStoreService.appendToStream({
-                streamId: 'user-555',
-                event: userRegisteredEvent,
-            });
+            await eventStoreService.appendToStream('user_555', userRegisteredEvent);
 
-            const events = await all(eventStoreService.readFromStart('user-555'));
+            const events = await all(eventStoreService.readFromStart('user_555'));
             const event = last(events);
 
             expect(event?.type).toEqual('Event');
-            expect(event?.streamId).toEqual('user-555');
+            expect(event?.streamId).toEqual('user_555');
             expect(typeof event?.id).toBe('string');
-            expect(event?.revision).toBeGreaterThanOrEqual(1n);
-            expect(event?.created.toString().slice(0, 8)).toEqual(
+            expect(event?.revision).toBeGreaterThanOrEqual(0n);
+            expect(event?.created?.toString().slice(0, 8)).toEqual(
                 Date.now().toString().slice(0, 8),
             );
         });
@@ -141,74 +219,74 @@ function impl({ imports = [], providers = [] }: { imports: any[]; providers: any
 
     describe('append stream nostream', () => {
         it('nostream ok', async () => {
-            const result = await eventStoreService.appendToStream({
-                streamId: `user-${Math.random().toString(36).slice(2)}`,
-                event: new Event({ id: '1' }),
-                expectedRevision: 'no_stream',
-            });
+            const streamId = `user_${Math.random().toString(36).slice(2)}`;
+            const result = await eventStoreService.appendToStream(
+                streamId,
+                new Event({ id: '1' }),
+                { expectedRevision: 'no_stream' },
+            );
+
             expect(result).toBeTruthy();
         });
 
         it('nostream error', async () => {
-            const streamId = 'user-123456789';
-            await eventStoreService.appendToStream({
-                streamId: streamId,
-                event: new Event({ id: 'X' }),
-            });
+            const streamId = 'user_123456789';
+            await eventStoreService.appendToStream(streamId, new Event({ id: 'X' }));
 
             await expect(async () => {
-                await eventStoreService.appendToStream({
-                    streamId: streamId,
-                    event: new Event({ id: 'XX' }),
-                    expectedRevision: 'no_stream',
-                });
-            }).rejects.toThrowError(
-                `Expected revision in ${streamId} do not match no_stream`,
-            );
+                await eventStoreService.appendToStream(
+                    streamId,
+                    new Event({ id: 'XX' }),
+                    { expectedRevision: 'no_stream' },
+                );
+            }).rejects.toThrow();
         });
     });
 
     describe('append stream exists', () => {
         it('exists error', async () => {
             await expect(
-                all(eventStoreService.readFromStart('user-s4l1jxeB3Pfl2ff3')),
-            ).rejects.toThrow(/user-s4l1jxeB3Pfl2ff3 not found/);
+                all(eventStoreService.readFromStart('user_s4l1jxeB3Pfl2ff3')),
+            ).rejects.toThrow(/user_s4l1jxeB3Pfl2ff3 not found/);
             await expect(async () => {
-                await eventStoreService.appendToStream({
-                    streamId: 'user-s4l1jxeB3Pfl2ff3',
-                    event: new Event({}),
-                    expectedRevision: 'stream_exists',
-                });
-            }).rejects.toThrowError(
-                'Expected revision in user-s4l1jxeB3Pfl2ff3 do not match stream_exists',
-            );
+                await eventStoreService.appendToStream(
+                    'user_s4l1jxeB3Pfl2ff3',
+                    new Event({}),
+                    { expectedRevision: 'stream_exists' },
+                );
+            }).rejects.toThrow();
         });
 
         it('specific revision', async () => {
-            await eventStoreService.appendToStream({
-                streamId: 'user-f96ace8a',
-                event: new Event({}),
-            });
+            const streamId = 'userf96_' + Math.random().toString(36).slice(2);
+            await eventStoreService.appendToStream(streamId, new Event({}));
             await expect(
-                eventStoreService.appendToStream({
-                    streamId: 'user-f96ace8a',
-                    event: new Event({}),
-                    expectedRevision: 2n,
+                eventStoreService.appendToStream('userf96_', new Event({}), {
+                    expectedRevision: -1n,
                 }),
             ).rejects.toThrowError();
         });
     });
 
     it('contain expected revision', async () => {
+        const streamId = 'user_O3xZqm8DFZla';
+        let nextExpectedRevision = 0n;
+        try {
+            const events = await all(eventStoreService.readFromStart(streamId));
+            const revision = last(events)?.revision;
+            nextExpectedRevision = revision ? revision + 1n : 0n;
+            // eslint-disable-next-line no-empty
+        } catch {}
         const userRegisteredDto = { id: '719', name: 'ivan' };
         const userRegisteredEvent = new Event<typeof userRegisteredDto>(
             userRegisteredDto,
         );
-        const result = await eventStoreService.appendToStream({
-            streamId: 'user-O3xZqm8DFZla',
-            event: userRegisteredEvent,
-        });
-        expect(result.expectedRevision).toBeGreaterThanOrEqual(1n);
+        const result = await eventStoreService.appendToStream(
+            streamId,
+            userRegisteredEvent,
+        );
+
+        expect(result.expectedRevision).toEqual(nextExpectedRevision);
     });
 
     it('subscribe all', async () => {
@@ -223,12 +301,111 @@ function impl({ imports = [], providers = [] }: { imports: any[]; providers: any
             .pipe(filter<typeof event>(event => event.data.r === r))
             .subscribe(event => {
                 expect(event.data.name).toEqual('Joye');
-                resolvePromise();
+                resolvePromise(1);
             });
-        await eventStoreService.appendToStream({
-            streamId: 'user-650',
-            event,
-        });
+        await eventStoreService.appendToStream('user_650', event);
         await p;
     });
-}
+});
+
+describe('aggregateRoot', () => {
+    class UserCreatedEvent extends Event {}
+    class UserChangedEmailEvent extends Event {}
+    class UserAggregateRoot extends AggregateRoot {
+        @EventHandler(UserCreatedEvent)
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        onUserCreated(event) {}
+    }
+    let userAggregateRootRepository: AggregateRepository<UserAggregateRoot>;
+
+    beforeAll(async () => {
+        app = await NestFactory.create(
+            {
+                module: CqrxModule,
+                imports: [
+                    CqrxCoreModule.forRoot({ eventstoreDbConnectionString }),
+                    CqrxModule.forFeature([UserAggregateRoot]),
+                ],
+                providers: [],
+            },
+            {
+                logger: false,
+            },
+        );
+        await app.init();
+        userAggregateRootRepository = app.get<AggregateRepository<UserAggregateRoot>>(
+            aggregateRepositoryToken(UserAggregateRoot),
+        );
+        eventStoreService = app.get(EventStoreService);
+    });
+
+    afterAll(async () => {
+        await app.close();
+    });
+
+    it('version', async () => {
+        const user = new UserAggregateRoot('user', cuid());
+        await user.applyFromHistory(new UserCreatedEvent());
+
+        expect(user.version).toEqual(1);
+    });
+
+    it('commit', async () => {
+        let user = new UserAggregateRoot('user', cuid());
+        const eventPublisher = app.get(EventPublisher);
+        user = eventPublisher.mergeObjectContext(user);
+        user.apply(new UserCreatedEvent());
+        await user.commit();
+
+        const events = await all(eventStoreService.readFromStart(user.streamId));
+
+        expect(events).toHaveLength(1);
+    });
+
+    it('event handler returns observer', async () => {
+        class UserAggregateRoot extends AggregateRoot {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            @EventHandler(UserChangedEmailEvent)
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            userChangedEmail(event) {
+                return from(['tick', 'tack', 'toe']);
+            }
+        }
+        const user = new UserAggregateRoot('user', cuid());
+        const spy = jest.spyOn(user, 'userChangedEmail');
+        await user.applyFromHistory(new UserChangedEmailEvent());
+
+        expect(spy).toHaveBeenCalled();
+        expect(await lastValueFrom(spy.mock.results[0]?.value)).toEqual('toe');
+    });
+
+    it('event handler', async () => {
+        const user = new UserAggregateRoot('user', cuid());
+        const onUserCreatedSpy = jest.spyOn(user, 'onUserCreated');
+        user.apply(new UserCreatedEvent());
+        await userAggregateRootRepository.save(user);
+
+        expect(onUserCreatedSpy).toHaveBeenCalled();
+    });
+
+    it('save uncommit events', async () => {
+        const user = new UserAggregateRoot('user', cuid());
+        user.apply(new UserCreatedEvent());
+        await userAggregateRootRepository.save(user);
+
+        expect(user.getUncommittedEvents()).toHaveLength(0);
+    });
+
+    it('double save', async () => {
+        const user = new UserAggregateRoot('user', cuid());
+        user.apply(new UserCreatedEvent());
+        await userAggregateRootRepository.save(user);
+        await userAggregateRootRepository.save(user);
+
+        const events = await all(eventStoreService.readFromStart(user.streamId));
+
+        expect(events).toHaveLength(1);
+        expect(events).toEqual([expect.objectContaining({ type: 'UserCreatedEvent' })]);
+    });
+});

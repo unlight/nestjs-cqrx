@@ -1,5 +1,6 @@
 import {
     DynamicModule,
+    FactoryProvider,
     Module,
     ModuleMetadata,
     OnModuleInit,
@@ -9,14 +10,15 @@ import {
 import { CqrsModule, EventBus } from '@nestjs/cqrs';
 import assert from 'assert';
 
-import { CQRX_OPTIONS, EVENTSTORE } from './constants';
+import { CQRX_OPTIONS } from './constants';
 import { Event } from './event';
 import { EventStoreService } from './eventstore.service';
-import { TransformerService } from './transformer.service';
+import { TransformService } from './transform.service';
+import { EventStoreDBClient } from '@eventstore/db-client';
+import { EventPublisher } from './event-publisher';
 
 const defaultCqrxOptions = {
     eventstoreDbConnectionString: undefined as string | undefined,
-    inMemory: false,
 };
 
 export type CqrxModuleOptions = typeof defaultCqrxOptions;
@@ -31,20 +33,20 @@ export interface CqrxModuleAsyncOptions extends Pick<ModuleMetadata, 'imports'> 
     useFactory?: (
         ...args: any[]
     ) => Promise<Partial<CqrxModuleOptions>> | Partial<CqrxModuleOptions>;
-    inject?: any[];
+    inject?: FactoryProvider['inject'];
 }
 
 @Module({
     imports: [CqrsModule],
-    providers: [EventStoreService, TransformerService],
-    exports: [CqrsModule, EventStoreService],
+    providers: [EventStoreService, EventPublisher, TransformService],
+    exports: [CqrsModule, EventStoreService, EventPublisher],
 })
 export class CqrxCoreModule implements OnModuleInit {
     private subscription?: () => Promise<void>;
 
     constructor(
         private readonly eventBus$: EventBus<Event>,
-        private readonly eventStore: EventStoreService,
+        private readonly eventStoreService: EventStoreService,
     ) {}
 
     static forRoot(options: Partial<CqrxModuleOptions>): DynamicModule {
@@ -57,9 +59,8 @@ export class CqrxCoreModule implements OnModuleInit {
                     provide: CQRX_OPTIONS,
                     useValue: { ...defaultCqrxOptions, ...options },
                 },
-                this.createEventStoreProvider(),
-                EventStoreService,
-                TransformerService,
+                this.createEventStoreServiceProvider(),
+                TransformService,
             ],
             exports: [EventStoreService],
         };
@@ -71,8 +72,8 @@ export class CqrxCoreModule implements OnModuleInit {
             module: CqrxCoreModule,
             imports: [...(options.imports || [])],
             providers: [
-                EventStoreService,
-                TransformerService,
+                TransformService,
+                this.createEventStoreServiceProvider(),
                 ...this.createAsyncProviders(options),
             ],
             exports: [EventStoreService],
@@ -98,6 +99,27 @@ export class CqrxCoreModule implements OnModuleInit {
         ];
     }
 
+    private static createEventStoreServiceProvider() {
+        return {
+            provide: EventStoreService,
+            useFactory: (
+                options: CqrxModuleOptions,
+                transformers: TransformService,
+            ) => {
+                if (!options.eventstoreDbConnectionString) {
+                    throw new Error(
+                        'Cannot create eventstore client, check module options.',
+                    );
+                }
+                const client = EventStoreDBClient.connectionString(
+                    options.eventstoreDbConnectionString,
+                );
+                return new EventStoreService(client, transformers);
+            },
+            inject: [CQRX_OPTIONS, TransformService],
+        };
+    }
+
     private static createAsyncOptionsProvider(
         options: CqrxModuleAsyncOptions,
     ): Provider {
@@ -118,31 +140,8 @@ export class CqrxCoreModule implements OnModuleInit {
         };
     }
 
-    private static createEventStoreProvider() {
-        return {
-            provide: EVENTSTORE,
-            useFactory: async (options: CqrxModuleOptions) => {
-                if (options.inMemory)
-                    return import('./drivers/memory').then(
-                        ({ Memory }) => new Memory(),
-                    );
-                if (options.eventstoreDbConnectionString) {
-                    return import('./drivers/eventstore').then(
-                        ({ EventStore }) =>
-                            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                            new EventStore(options.eventstoreDbConnectionString!),
-                    );
-                }
-                throw new Error(
-                    'Cannot create eventstore client, check module options.',
-                );
-            },
-            inject: [CQRX_OPTIONS],
-        };
-    }
-
     onModuleInit() {
-        this.subscription = this.eventStore.subscribeToAll(event => {
+        this.subscription = this.eventStoreService.subscribeToAll(event => {
             this.eventBus$.subject$.next(event);
         });
     }

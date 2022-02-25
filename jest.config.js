@@ -1,8 +1,7 @@
 module.exports = {
     testEnvironment: 'node',
-    setupFiles: [`${__dirname}/jest.setup.ts`],
     transform: {
-        '^.+\\.(t|j)sx?$': 'ts-jest',
+        '^.+\\.(t|j)sx?$': ['@swc/jest'],
     },
     collectCoverage: false,
     coverageDirectory: 'coverage',

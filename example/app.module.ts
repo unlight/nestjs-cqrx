@@ -6,8 +6,7 @@ import { UserModule } from './user/user.module';
 @Module({
     imports: [
         CqrxModule.forRoot({
-            inMemory: true,
-            // eventstoreDbConnectionString: 'esdb://localhost:2113?tls=false',
+            eventstoreDbConnectionString: 'esdb://localhost:2113?tls=false',
         }),
         UserModule,
     ],
