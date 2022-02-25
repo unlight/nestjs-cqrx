@@ -3,6 +3,15 @@
   "version": "0.0.0-dev",
   "license": "MIT",
   "description": "CQRS for NestJS",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/unlight/nestjs-cqrx.git"
+  },
+  "bugs": {
+    "url": "https://github.com/unlight/nestjs-cqrx/issues"
+  },
+  "homepage": "https://github.com/unlight/nestjs-cqrx#readme",
   "keywords": [
     "cqrs",
     "nestjs",
