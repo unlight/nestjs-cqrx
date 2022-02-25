@@ -34,7 +34,7 @@ EventStoreDB NestJS CQRS module.
 
 -   http://localhost:2113/web/index.html#/dashboard
 
-## Resouces
+## Resources
 
 -   https://github.com/bradsheppard/nestjs-async-cqrs
 -   https://github.com/valueadd-poland/nestjs-packages/tree/master/packages/typed-cqrs
@@ -47,4 +47,4 @@ EventStoreDB NestJS CQRS module.
 
 ## Todo
 
--   find lib for create errors
+-   find lib for creating errors
