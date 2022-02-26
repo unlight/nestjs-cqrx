@@ -15,12 +15,12 @@ export class User extends AggregateRoot {
         this.password = event.data.password;
     }
 
-    async register(email: string, password: string): Promise<void> {
+    register(email: string, password: string) {
         if (this.isRegistered) {
             throw new ConflictException();
         }
 
-        await this.apply(
+        this.apply(
             new UserRegistered({
                 email,
                 password,

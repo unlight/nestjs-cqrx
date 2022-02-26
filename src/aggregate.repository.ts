@@ -16,11 +16,11 @@ export class AggregateRepository<T extends AggregateRoot> {
     constructor(
         private readonly eventStoreService: EventStoreService,
         private readonly Aggregate: Type<T>,
-        private readonly category: string,
+        private readonly streamName: string,
     ) {}
 
     async findOne(id: string): Promise<T> {
-        const aggregate = new this.Aggregate(this.category, id);
+        const aggregate = new this.Aggregate(this.streamName, id);
         const { streamId } = aggregate;
         const streamEvents = this.eventStoreService.readFromStart(streamId);
 

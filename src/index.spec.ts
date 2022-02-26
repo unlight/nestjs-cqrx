@@ -21,7 +21,8 @@ import { RecordedEvent } from './interfaces';
 import { EventBus } from '@nestjs/cqrs';
 
 // eslint-disable-next-line unicorn/prevent-abbreviations
-const eventstoreDbConnectionString = 'esdb://localhost:2113?tls=false';
+const eventstoreDbConnectionString =
+    'esdb://localhost:2113?tls=false&keepAliveTimeout=120_000&keepAliveInterval=120_000';
 let app: INestApplication;
 let eventStoreService: EventStoreService;
 
