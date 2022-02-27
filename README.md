@@ -2,7 +2,7 @@
 
 EventStoreDB NestJS CQRS module.
 
-## Based On
+## Based on
 
 -   https://github.com/nordfjord/nestjs-cqrs-es
 -   https://github.com/cqrx/cqrx
@@ -11,6 +11,93 @@ EventStoreDB NestJS CQRS module.
 
 -   Asynchronous commit/publish
 -   Event handler decorator
+
+## Usage
+
+```ts
+import { CqrxModule } from 'nestjs-cqrx';
+
+@Module({
+    imports: [
+        CqrxModule.forRoot({
+            eventstoreDbConnectionString: 'esdb://localhost:2113?tls=false',
+        }),
+    ],
+})
+export class AppModule {}
+```
+
+You can generate connection string on [Connection details](https://developers.eventstore.com/clients/grpc/#connection-details) page
+
+#### Example of User model
+
+```ts
+import { ConflictException } from '@nestjs/common';
+import { AggregateRoot, EventHandler } from 'nestjs-cqrx';
+
+import { UserRegistered } from '../events';
+
+export class User extends AggregateRoot {
+    isRegistered = false;
+    email!: string;
+    password!: string;
+
+    @EventHandler(UserRegistered)
+    createUser(event: UserRegistered): void {
+        this.isRegistered = true;
+        this.email = event.data.email;
+        this.password = event.data.password;
+    }
+
+    register(email: string, password: string) {
+        if (this.isRegistered) {
+            throw new ConflictException();
+        }
+
+        this.apply(
+            new UserRegistered({
+                email,
+                password,
+            }),
+        );
+    }
+}
+```
+
+#### Example of events
+
+```ts
+import { Event } from 'nestjs-cqrx';
+
+type UserRegisteredDto = { email: string; password: string };
+
+export class UserRegistered extends Event<UserRegisteredDto> {}
+```
+
+```ts
+@Module({
+    imports: [
+        CqrxModule.forFeature(
+            [User],
+            // Subscribe and transform events from eventstore
+            [['UserRegistered', event => new UserRegistered(event)]],
+        ),
+    ],
+})
+export class UserModule {}
+```
+
+```ts
+// Signature of transformers
+type Transformer = [
+    /* Recorded event type */ string,
+    /* Function which accept stream event (plain object) */ (
+        event: RecordedEvent,
+    ) => Event,
+];
+```
+
+`['UserRegistered', event => new UserRegistered(event)]` is a shorthand for `UserRegistered`
 
 ## Example apps pros/cons
 
