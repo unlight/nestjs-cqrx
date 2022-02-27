@@ -30,12 +30,16 @@ export class Event<P = unknown> implements IEvent {
      * Data of this event.
      */
     readonly data: P;
+    /**
+     * Representing the metadata associated with this event.
+     */
+    readonly metadata?: any;
 
     constructor(event: RecordedEvent);
-    constructor(data: P);
+    constructor(data: P, metadata?: any);
     constructor();
 
-    constructor(args?: any) {
+    constructor(args?: any, metadata?: any) {
         if (Event.isRecordedEvent(args)) {
             this.data = args.data as unknown as P;
             this.type = args.type;
@@ -45,8 +49,9 @@ export class Event<P = unknown> implements IEvent {
             this.revision = args.revision;
             this.isJson = args.isJson;
         } else {
-            this.data = args ?? {};
             this.type = this.constructor.name;
+            this.data = args ?? {};
+            this.metadata = metadata;
         }
     }
 

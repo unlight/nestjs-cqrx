@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Type } from '@nestjs/common';
 import { EventStoreService } from './eventstore.service';
 import { AggregateRoot } from './aggregate-root';
 import { Event } from './event';
@@ -13,9 +13,18 @@ export interface IEventPublisher {
 export class EventPublisher implements IEventPublisher {
     constructor(private readonly eventStoreService: EventStoreService) {}
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    mergeClassContext<T>(metatype: T): T {
-        throw new Error('Method mergeClassContext not implemented.');
+    mergeClassContext<T extends Type<AggregateRoot>>(metatype: T): T {
+        const eventStoreService = this.eventStoreService;
+
+        return class extends metatype {
+            async publish(event: Event) {
+                await eventStoreService.appendToStream(this.streamId, event);
+            }
+
+            async publishAll(events: Event[]) {
+                await eventStoreService.appendToStream(this.streamId, events);
+            }
+        };
     }
 
     mergeObjectContext<T extends AggregateRoot<Event>>(object: T): T {

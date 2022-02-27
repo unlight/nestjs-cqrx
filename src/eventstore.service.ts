@@ -48,11 +48,7 @@ export class EventStoreService {
         {
             const expectedRevision = options?.expectedRevision;
             const databaseEvents = (Array.isArray(events) ? events : [events]).map(
-                event =>
-                    jsonEvent<any>({
-                        type: event.type,
-                        data: event.data,
-                    }),
+                event => jsonEvent<any>(event),
             );
 
             const result = await this.client.appendToStream(streamId, databaseEvents, {

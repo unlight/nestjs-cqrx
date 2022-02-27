@@ -22,7 +22,7 @@ import { EventBus } from '@nestjs/cqrs';
 
 // eslint-disable-next-line unicorn/prevent-abbreviations
 const eventstoreDbConnectionString =
-    'esdb://localhost:2113?tls=false&keepAliveTimeout=120_000&keepAliveInterval=120_000';
+    'esdb://localhost:2113?tls=false&keepAliveTimeout=120000&keepAliveInterval=120000';
 let app: INestApplication;
 let eventStoreService: EventStoreService;
 
@@ -307,9 +307,24 @@ describe('eventstore', () => {
         await eventStoreService.appendToStream('user_650', event);
         await p;
     });
+
+    it('add event without garbage', async () => {
+        type GameStartedDto = { id: string };
+        class GameStartedEvent extends Event<GameStartedDto> {}
+        const streamId = `stream_${cuid()}`;
+
+        const event = new GameStartedEvent({ id: '1' }, { date: new Date() });
+        event['garbage'] = true;
+
+        await eventStoreService.appendToStream(streamId, event);
+
+        const events = await all(eventStoreService.readFromStart(streamId));
+        expect(last(events)?.data).not.toHaveProperty('garbage');
+        expect(last(events)).not.toHaveProperty('garbage');
+    });
 });
 
-describe('aggregateRoot', () => {
+describe('AggregateRoot', () => {
     class UserCreatedEvent extends Event {}
     class UserChangedEmailEvent extends Event {}
     class UserAggregateRoot extends AggregateRoot {
@@ -408,5 +423,47 @@ describe('aggregateRoot', () => {
 
         expect(events).toHaveLength(1);
         expect(events).toEqual([expect.objectContaining({ type: 'UserCreatedEvent' })]);
+    });
+});
+
+describe('EventPublisher', () => {
+    beforeAll(async () => {
+        app = await NestFactory.create(
+            {
+                module: CqrxModule,
+                imports: [CqrxCoreModule.forRoot({ eventstoreDbConnectionString })],
+                providers: [],
+            },
+            {
+                logger: false,
+            },
+        );
+        await app.init();
+    });
+
+    afterAll(async () => {
+        await app.close();
+    });
+
+    class UserAggregateRoot extends AggregateRoot {}
+
+    it('mergeClassContext', async () => {
+        const eventPublisher = app.get(EventPublisher);
+        const UserModel = eventPublisher.mergeClassContext(UserAggregateRoot);
+        const user = new UserModel('user', cuid());
+
+        await user.publish(new Event());
+        const events = await all(eventStoreService.readFromStart(user.streamId));
+        expect(events).toHaveLength(1);
+    });
+
+    it('mergeObjectContext', async () => {
+        const eventPublisher = app.get(EventPublisher);
+        let user = new UserAggregateRoot('user', cuid());
+        user = eventPublisher.mergeObjectContext(user);
+
+        await user.publish(new Event());
+        const events = await all(eventStoreService.readFromStart(user.streamId));
+        expect(events).toHaveLength(1);
     });
 });
