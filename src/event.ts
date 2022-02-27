@@ -1,7 +1,9 @@
 import { IEvent } from '@nestjs/cqrs';
 import { PlainLiteralObject, RecordedEvent } from './interfaces';
 
-export class Event<P = unknown> implements IEvent {
+export type RequiredEvent<P = unknown, M = unknown> = Required<Event<P, M>>;
+
+export class Event<P = unknown, M = unknown> implements IEvent {
     /**
      * The event stream that events belongs to.
      */
@@ -33,13 +35,13 @@ export class Event<P = unknown> implements IEvent {
     /**
      * Representing the metadata associated with this event.
      */
-    readonly metadata?: any;
+    readonly metadata?: M;
 
     constructor(event: RecordedEvent);
-    constructor(data: P, metadata?: any);
+    constructor(data: P, metadata?: M);
     constructor();
 
-    constructor(args?: any, metadata?: any) {
+    constructor(args?: unknown, metadata?: M) {
         if (Event.isRecordedEvent(args)) {
             this.data = args.data as unknown as P;
             this.type = args.type;
@@ -50,7 +52,7 @@ export class Event<P = unknown> implements IEvent {
             this.isJson = args.isJson;
         } else {
             this.type = this.constructor.name;
-            this.data = args ?? {};
+            this.data = (args ?? {}) as P;
             this.metadata = metadata;
         }
     }
@@ -61,14 +63,14 @@ export class Event<P = unknown> implements IEvent {
         return event;
     }
 
-    private static isRecordedEvent(event?: PlainLiteralObject): event is RecordedEvent {
+    private static isRecordedEvent(event?: unknown): event is RecordedEvent {
         return Boolean(
             event &&
-                event.streamId &&
-                event.id &&
-                event.type &&
-                event.created &&
-                typeof event.isJson === 'boolean',
+                (event as PlainLiteralObject).streamId &&
+                (event as PlainLiteralObject).id &&
+                (event as PlainLiteralObject).type &&
+                (event as PlainLiteralObject).created &&
+                typeof (event as PlainLiteralObject).isJson === 'boolean',
         );
     }
 }
