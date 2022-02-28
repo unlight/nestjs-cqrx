@@ -97,7 +97,7 @@ type Transformer = [
 ];
 ```
 
-`['UserRegistered', event => new UserRegistered(event)]` is a shorthand for `UserRegistered`
+`['UserRegistered', event => new UserRegistered(event)]` can be shorthanded to `UserRegistered`
 
 ## Example apps pros/cons
 
