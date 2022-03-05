@@ -3,7 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import expect from 'expect';
 import all from 'it-all';
 import { last } from 'lodash';
-import { filter, from, lastValueFrom } from 'rxjs';
+import { from, lastValueFrom } from 'rxjs';
 import cuid from 'cuid';
 
 import {
@@ -19,6 +19,7 @@ import { aggregateRepositoryToken } from './aggregate.repository';
 import { CqrxCoreModule } from './cqrx-core.module';
 import { RecordedEvent } from './interfaces';
 import { EventBus } from '@nestjs/cqrs';
+import { filter, take } from 'rxjs/operators';
 
 // eslint-disable-next-line unicorn/prevent-abbreviations
 const eventstoreDbConnectionString =
@@ -132,7 +133,10 @@ describe('eventstore', () => {
         app = await NestFactory.create(
             {
                 module: CqrxModule,
-                imports: [CqrxCoreModule.forRoot({ eventstoreDbConnectionString })],
+                imports: [
+                    CqrxCoreModule.forRoot({ eventstoreDbConnectionString }),
+                    CqrxModule.forFeature([], [Event]),
+                ],
                 providers: [],
             },
             {
@@ -291,21 +295,19 @@ describe('eventstore', () => {
     });
 
     it('subscribe all', async () => {
+        const events = app.get<EventBus<typeof event>>(EventBus);
         const r = Math.random();
         const event = new Event({ name: 'Joye', r });
-        const eventBus = app.get<EventBus<typeof event>>(EventBus);
-        let resolvePromise: (_: unknown) => void;
-        const p = new Promise(resolve => {
-            resolvePromise = resolve;
-        });
-        eventBus.subject$
-            .pipe(filter<typeof event>(event => event.data.r === r))
-            .subscribe(event => {
-                expect(event.data.name).toEqual('Joye');
-                resolvePromise(1);
-            });
+        const endData$ = lastValueFrom(
+            events.pipe(
+                filter<typeof event>(event => event.data.r === r),
+                take(1),
+            ),
+        );
         await eventStoreService.appendToStream('user_650', event);
-        await p;
+        await endData$;
+
+        expect(event.data.name).toEqual('Joye');
     });
 
     it('add event without garbage', async () => {

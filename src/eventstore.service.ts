@@ -86,9 +86,12 @@ export class EventStoreService {
             if (!event) {
                 return;
             }
-            const transform = this.transformService.get(event.type);
 
-            listener(transform?.(event) ?? event);
+            const transform = this.transformService.get(event.type);
+            // listener(transform?.(event) ?? event);
+            if (transform) {
+                listener(transform(event));
+            }
         };
     }
 }

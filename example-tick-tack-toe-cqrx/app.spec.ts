@@ -1,6 +1,7 @@
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { CommandBus, EventBus, ofType } from '@nestjs/cqrs';
 import { Test } from '@nestjs/testing';
+import expect from 'expect';
 
 import { AppModule } from './app.module';
 import { CreateGameCommand } from './commands/create-game.command';
@@ -12,12 +13,14 @@ import { GameRepository } from './repositories/game.repository';
 import { map, take } from 'rxjs/operators';
 import { lastValueFrom } from 'rxjs';
 import { GameEndedEvent } from './events/game-ended.event';
+import { GameViewRepository } from './repositories/game-view.repository';
+import { PlayerMoveEvent } from './events/player-move.event';
 
 describe('tick-tack-toe', () => {
     let app: INestApplication;
     let gameId: string;
     let commandBus: CommandBus;
-    beforeAll(async () => {
+    before(async () => {
         const moduleRef = await Test.createTestingModule({
             imports: [AppModule],
         }).compile();
@@ -29,7 +32,7 @@ describe('tick-tack-toe', () => {
         commandBus = app.get(CommandBus);
     });
 
-    afterAll(async () => {
+    after(async () => {
         await app.close();
     });
 
@@ -123,5 +126,38 @@ describe('tick-tack-toe', () => {
                 position: 1,
             }),
         );
+    });
+
+    it('game view repository', async () => {
+        const gameViewRepository = app.get(GameViewRepository);
+        const events = app.get(EventBus);
+        const playerMove$ = lastValueFrom(
+            events.pipe(
+                ofType(PlayerMoveEvent),
+                take(2),
+                map(event => event.data),
+            ),
+        );
+        const { id: gameId } = await commandBus.execute<
+            CreateGameCommand,
+            GameCreatedDtoReponse
+        >(new CreateGameCommand());
+        await commandBus.execute(
+            new PlayerMoveCommand({
+                gameId,
+                playerId: '1',
+                position: 1,
+            }),
+        );
+        await commandBus.execute(
+            new PlayerMoveCommand({
+                gameId,
+                playerId: '2',
+                position: 2,
+            }),
+        );
+        await playerMove$;
+
+        expect(gameViewRepository.countEvents).toEqual(2);
     });
 });

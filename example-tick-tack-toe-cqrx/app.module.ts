@@ -11,6 +11,8 @@ import { Game } from './models/game.model';
 import { PlayerMoveEvent } from './events/player-move.event';
 import { GameEndedEvent } from './events/game-ended.event';
 import { PlayerJoinedEvent } from './events/player-joined.event';
+import { PlayerMoveHandler as EventPlayerMoveHandler } from './events/player-move.handler';
+import { GameViewRepository } from './repositories/game-view.repository';
 
 @Module({
     imports: [
@@ -24,12 +26,14 @@ import { PlayerJoinedEvent } from './events/player-joined.event';
     ],
     providers: [
         GameRepository,
+        GameViewRepository,
         CreateGameHandler,
         PlayerJoinHandler,
         StartGameHandler,
         PlayerMoveHandler,
         GameSagas,
         CheckGameEndHandler,
+        EventPlayerMoveHandler,
     ],
 })
 export class AppModule {}

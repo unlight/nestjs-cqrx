@@ -140,4 +140,5 @@ type Transformer = [
 
 ## Todo
 
+-   automatic add events to transform service
 -   find lib for creating errors
