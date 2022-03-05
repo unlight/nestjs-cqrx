@@ -16,9 +16,9 @@ export class Game extends AggregateRoot {
     constructor(streamName: string, id: string);
     constructor(id: string);
 
-    // @ts-ignore
     constructor(...args: any[]) {
         if (args.length === 1 && typeof args[0] === 'string') {
+            // @ts-ignore
             super('Game', args[0]);
         } else if (
             args.length === 2 &&
