@@ -12,6 +12,12 @@ EventStoreDB NestJS CQRS module.
 -   Asynchronous commit/publish
 -   Event handler decorator
 
+## Install
+
+```sh
+npm install --save nestjs-cqrx
+```
+
 ## Usage
 
 ```ts
