@@ -1,8 +1,6 @@
 import { IEvent } from '@nestjs/cqrs';
 import { PlainLiteralObject, RecordedEvent } from './interfaces';
 
-export type RequiredEvent<P = unknown, M = unknown> = Required<Event<P, M>>;
-
 export class Event<P = unknown, M = unknown> implements IEvent {
     /**
      * The event stream that events belongs to.
