@@ -1,3 +1,10 @@
+## [1.2.0](https://github.com/unlight/nestjs-cqrx/compare/v1.1.1...v1.2.0) (2022-03-06)
+
+
+### Features
+
+* Automatic add events to transform service ([5d8aa9e](https://github.com/unlight/nestjs-cqrx/commit/5d8aa9ea73a8bd48855053e2d1c03948cc642984))
+
 ### [1.1.1](https://github.com/unlight/nestjs-cqrx/compare/v1.1.0...v1.1.1) (2022-03-05)
 
 
