@@ -105,6 +105,9 @@ type Transformer = [
 
 `['UserRegistered', event => new UserRegistered(event)]` can be shorthanded to `UserRegistered`
 
+Note: If you have decorator `EventsHandler` (from `@nestjs/cqrs`) of some event,
+it will be automatically added to transform service.
+
 ## Example apps pros/cons
 
 #### example / example-tick-tack-toe-cqrx

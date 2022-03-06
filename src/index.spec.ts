@@ -18,8 +18,9 @@ import {
 import { aggregateRepositoryToken } from './aggregate.repository';
 import { CqrxCoreModule } from './cqrx-core.module';
 import { RecordedEvent } from './interfaces';
-import { EventBus } from '@nestjs/cqrs';
+import { EventBus, EventsHandler, IEventHandler } from '@nestjs/cqrs';
 import { filter, take } from 'rxjs/operators';
+import { TransformService } from './transform.service';
 
 // eslint-disable-next-line unicorn/prevent-abbreviations
 const eventstoreDbConnectionString =
@@ -125,6 +126,45 @@ describe('transformerService', () => {
         const names = events.map(event => event.constructor.name);
 
         expect(names).toEqual(['CatStrokedEvent']);
+    });
+});
+
+describe('transformerService', () => {
+    class CatFeedEvent extends Event {}
+    class CatStrokedEvent extends Event {}
+
+    @EventsHandler(CatFeedEvent)
+    class CatFeedEventHandler implements IEventHandler<CatFeedEvent> {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        handle(_event: CatFeedEvent) {}
+    }
+
+    beforeAll(async () => {
+        app = await NestFactory.create(
+            {
+                module: CqrxModule,
+                imports: [
+                    CqrxCoreModule.forRoot({ eventstoreDbConnectionString }),
+                    CqrxModule.forFeature([], [CatStrokedEvent]),
+                ],
+                providers: [CatFeedEventHandler],
+            },
+            {
+                logger: false,
+            },
+        );
+        await app.init();
+    });
+
+    afterAll(async () => {
+        await app.close();
+    });
+
+    it('event added to transform from nest cqrs events handler decorator', () => {
+        const transformService = app.get(TransformService);
+        const transform = transformService.get('CatFeedEvent');
+
+        expect(transform).toBeInstanceOf(Function);
     });
 });
 

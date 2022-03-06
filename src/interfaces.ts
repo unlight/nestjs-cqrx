@@ -19,3 +19,4 @@ export type EventHandlerFunction<E extends Event = Event> = (
 export type { PlainLiteralObject, Type } from '@nestjs/common';
 export type { AppendToStreamOptions } from '@eventstore/db-client/dist/streams/appendToStream';
 export type { RecordedEvent } from '@eventstore/db-client/dist/types/events';
+export type { Nullable } from 'simplytyped';
