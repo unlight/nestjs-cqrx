@@ -128,6 +128,7 @@ it will be automatically added to transform service.
 
 ## Development
 
+-   docker-compose up
 -   http://localhost:2113/web/index.html#/dashboard
 
 ## Resources
