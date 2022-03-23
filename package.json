@@ -55,10 +55,10 @@
     ]
   },
   "dependencies": {
-    "@eventstore/db-client": "3.2.0",
     "node-is-class": "^1.0.4"
   },
   "peerDependencies": {
+    "@eventstore/db-client": ">=3",
     "@nestjs/common": ">=8",
     "@nestjs/core": ">=8",
     "@nestjs/cqrs": ">=8",
