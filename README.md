@@ -141,8 +141,8 @@ it will be automatically added to transform service.
 -   https://github.com/tuanitpro/nestjs-sagas-cqrs
 -   https://github.com/ntxinh/nestjs-cqrs-es
 -   https://github.com/ArkerLabs/event-sourcing-nestjs-graphql-example
+-   https://github.com/oskardudycz/EventSourcing.JVM/tree/main/samples/event-sourcing-esdb-simple
 
 ## Todo
 
--   automatic add events to transform service
 -   find lib for creating errors

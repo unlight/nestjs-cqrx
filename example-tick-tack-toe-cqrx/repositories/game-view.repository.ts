@@ -4,6 +4,10 @@ import { Injectable } from '@nestjs/common';
 export class GameViewRepository {
     #countEvents = 0;
 
+    resetCount() {
+        this.#countEvents = 0;
+    }
+
     incEvent() {
         this.#countEvents++;
     }

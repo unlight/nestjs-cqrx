@@ -138,6 +138,7 @@ describe('tick-tack-toe', () => {
                 map(event => event.data),
             ),
         );
+        gameViewRepository.resetCount();
         const { id: gameId } = await commandBus.execute<
             CreateGameCommand,
             GameCreatedDtoReponse

@@ -1,5 +1,6 @@
 {
   "ts-node": {
+    "swc": true,
     "transpileOnly": true,
     "compilerOptions": {
       "module": "commonjs"
@@ -26,8 +27,7 @@
     "lib": ["esnext"],
     "baseUrl": ".",
     "paths": {
-      "nestjs-cqrx": ["./src/index.ts"],
-      "@hardyscc/common/*": ["./example-user-account-common/*"]
+      "nestjs-cqrx": ["./src/index.ts"]
     }
   },
   "include": ["src", "example", "example-tick-tack-toe-cqrx"]

@@ -13,7 +13,7 @@
         "keepClassNames": true,
         "loose": true,
         "externalHelpers": true,
-        "target": "es2019",
+        "target": "es2020",
         "parser":
         {
             "syntax": "typescript",
