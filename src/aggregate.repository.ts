@@ -36,7 +36,8 @@ export class AggregateRepository<T extends AggregateRoot> {
         await this.eventStoreService.appendToStream(aggregate.streamId, events);
         aggregate.uncommit();
         // Commit but no publish
-        const applies = events.map(event => aggregate.applyFromHistory(event));
-        await Promise.all(applies);
+        for (const event of events) {
+            await aggregate.applyFromHistory(event);
+        }
     }
 }

@@ -49,10 +49,10 @@ export abstract class AggregateRoot<E extends Event = Event> {
     }
 
     async commit(): Promise<void> {
-        const applies = this[INTERNAL_EVENTS].map(event =>
-            this.applyFromHistory(event),
-        );
-        await Promise.all(applies);
+        for (const event of this[INTERNAL_EVENTS]) {
+            await this.applyFromHistory(event);
+        }
+
         const events = this.getUncommittedEvents();
         this[INTERNAL_EVENTS].length = 0;
         await this.publishAll(events);

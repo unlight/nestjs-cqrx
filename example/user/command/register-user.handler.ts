@@ -37,6 +37,7 @@ export class RegisterUserHandler implements ICommandHandler<RegisterUser> {
             { expectedRevision: 'no_stream' },
         );
         await user.commit();
+        // TODO: Update projection
         return new UserRegisteredDto(user.email, user.password);
     }
 

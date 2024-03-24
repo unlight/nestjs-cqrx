@@ -147,3 +147,8 @@ it will be automatically added to transform service.
 ## Todo
 
 -   find lib for creating errors
+-   better to split on read/write events
+
+## License
+
+[MIT License](https://opensource.org/licenses/MIT) (c) 2024

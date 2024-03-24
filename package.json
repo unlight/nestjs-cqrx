@@ -97,7 +97,6 @@
     "commitizen": "^4.2.4",
     "conventional-changelog-conventionalcommits": "^4.6.3",
     "cuid": "^2.1.8",
-    "cz-conventional-changelog": "^3.3.0",
     "eslint": "^8.10.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-import-resolver-node": "^0.3.6",
