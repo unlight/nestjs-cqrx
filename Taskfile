@@ -2,18 +2,20 @@
 PATH="$PWD/node_modules/.bin":$PATH
 set -e
 
-build() {
-    set -x
-    rm -rfv dist
-    cp -rfv src dist
-    cat tsconfig.json | jq 'del(.include, .compilerOptions.outDir)' >dist/tsconfig.json
-    cp -fv README.md LICENSE package.json dist
-    cd dist
-    /usr/bin/find . -name '*.spec.ts' | xargs rm -rvf
-    tsc -p .
-    rm -rvf tsconfig.json
-    cd ..
-    set +x
+build_pkgroll() {
+  set -x
+  rm -rf dist
+  mkdir dist
+  # https://esbuild.github.io/api/#target
+  npx pkgroll --target=es2020
+  cp -f README.md dist
+  cat package.json | jq '.main = "./index.cjs"' |
+    jq '.module = "./index.mjs"' |
+    jq '.types = "./index.d.ts"' |
+    jq '.exports.".".import = "./index.mjs"' |
+    jq '.exports.".".require = "./index.cjs"' \
+      >dist/package.json
+  set +x
 }
 
 build_tsup() {
