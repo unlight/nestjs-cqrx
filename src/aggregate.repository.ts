@@ -33,11 +33,11 @@ export class AggregateRepository<T extends AggregateRoot> {
 
   async save(aggregate: T): Promise<void> {
     const events = aggregate.getUncommittedEvents();
-    await this.eventStoreService.appendToStream(aggregate.streamId, events);
     aggregate.uncommit();
-    // Commit but no publish
+    // Commit, but no publish
     for (const event of events) {
       await aggregate.applyFromHistory(event);
     }
+    await this.eventStoreService.appendToStream(aggregate.streamId, events);
   }
 }
