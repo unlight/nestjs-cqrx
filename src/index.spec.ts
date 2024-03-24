@@ -46,7 +46,7 @@ describe('event', () => {
   });
 });
 
-describe.only('transformerService', () => {
+describe('transformerService', () => {
   class CatAggregateRoot extends AggregateRoot {}
   class CatRegisteredEvent extends Event {}
   class CatFeedEvent extends Event {}

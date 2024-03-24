@@ -61,11 +61,15 @@ export class RegisterUserHandler implements ICommandHandler<RegisterUser> {
   //     user.commit();
   // }
 
-  async execute_1(command: RegisterUser): Promise<UserRegisteredDto> {
-    const user = await this.userRepository.findOne(command.data.email);
-    await user.register(command.data.email, command.data.password);
-    await this.userRepository.save(user);
+  // async execute_1(command: RegisterUser): Promise<UserRegisteredDto> {
+  //   const user = await this.userRepository.findOne(command.data.email);
+  //   await user.register(command.data.email, command.data.password);
 
-    return new UserRegisteredDto(user.email, user.password);
-  }
+  //   await this.eventStore.appendToStream(user.streamId, user.getUncommittedEvents(), {
+  //     expectedRevision: 'no_stream',
+  //   });
+  //   await user.commit();
+
+  //   return new UserRegisteredDto(user.email, user.password);
+  // }
 }
