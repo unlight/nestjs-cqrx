@@ -1,3 +1,15 @@
+## [2.0.0](https://github.com/unlight/nestjs-cqrx/compare/v1.2.0...v2.0.0) (2024-03-24)
+
+
+### ⚠ BREAKING CHANGES
+
+* - Update dependencies to latest majors
+
+### Bug Fixes
+
+* Dispose eventstore client on module destroy ([df17f0a](https://github.com/unlight/nestjs-cqrx/commit/df17f0a4590916e79009d4fee2740d65785fce53))
+* Make apply events sequential ([c96c97b](https://github.com/unlight/nestjs-cqrx/commit/c96c97b991d7a97840a7e2ed19cd5c263c879a83))
+
 ## [1.2.0](https://github.com/unlight/nestjs-cqrx/compare/v1.1.1...v1.2.0) (2022-03-06)
 
 
