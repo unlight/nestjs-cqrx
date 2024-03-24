@@ -4,19 +4,19 @@ import { AggregateRepository, InjectAggregateRepository } from 'nestjs-cqrx';
 
 @Injectable()
 export class GameRepository {
-    constructor(
-        @InjectAggregateRepository(Game)
-        private readonly gameAggregateRepository: AggregateRepository<Game>,
-    ) {}
+  constructor(
+    @InjectAggregateRepository(Game)
+    private readonly gameAggregateRepository: AggregateRepository<Game>,
+  ) {}
 
-    async findOne(id: string): Promise<Game | undefined> {
-        const game = await this.gameAggregateRepository.findOne(id);
-        return game;
-    }
+  async findOne(id: string): Promise<Game | undefined> {
+    const game = await this.gameAggregateRepository.findOne(id);
+    return game;
+  }
 
-    async save(game: Game): Promise<string> {
-        await this.gameAggregateRepository.save(game);
+  async save(game: Game): Promise<string> {
+    await this.gameAggregateRepository.save(game);
 
-        return game.id;
-    }
+    return game.id;
+  }
 }

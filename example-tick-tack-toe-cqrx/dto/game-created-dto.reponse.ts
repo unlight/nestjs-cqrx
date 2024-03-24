@@ -1,3 +1,3 @@
 export class GameCreatedDtoReponse {
-    constructor(readonly id: string) {}
+  constructor(readonly id: string) {}
 }

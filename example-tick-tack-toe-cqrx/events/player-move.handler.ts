@@ -7,10 +7,10 @@ import { GameViewRepository } from '../repositories/game-view.repository';
  */
 @EventsHandler(PlayerMoveEvent)
 export class PlayerMoveHandler implements IEventHandler<PlayerMoveEvent> {
-    constructor(private readonly gameViewRepository: GameViewRepository) {}
+  constructor(private readonly gameViewRepository: GameViewRepository) {}
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    handle(_event: PlayerMoveEvent) {
-        this.gameViewRepository.incEvent();
-    }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  handle(_event: PlayerMoveEvent) {
+    this.gameViewRepository.incEvent();
+  }
 }

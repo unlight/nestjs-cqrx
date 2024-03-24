@@ -15,25 +15,22 @@ import { PlayerMoveHandler as EventPlayerMoveHandler } from './events/player-mov
 import { GameViewRepository } from './repositories/game-view.repository';
 
 @Module({
-    imports: [
-        CqrxModule.forRoot({
-            eventstoreDbConnectionString: 'esdb://localhost:2113?tls=false',
-        }),
-        CqrxModule.forFeature(
-            [Game],
-            [PlayerMoveEvent, GameEndedEvent, PlayerJoinedEvent],
-        ),
-    ],
-    providers: [
-        GameRepository,
-        GameViewRepository,
-        CreateGameHandler,
-        PlayerJoinHandler,
-        StartGameHandler,
-        PlayerMoveHandler,
-        GameSagas,
-        CheckGameEndHandler,
-        EventPlayerMoveHandler,
-    ],
+  imports: [
+    CqrxModule.forRoot({
+      eventstoreDbConnectionString: 'esdb://localhost:2113?tls=false',
+    }),
+    CqrxModule.forFeature([Game], [PlayerMoveEvent, GameEndedEvent, PlayerJoinedEvent]),
+  ],
+  providers: [
+    GameRepository,
+    GameViewRepository,
+    CreateGameHandler,
+    PlayerJoinHandler,
+    StartGameHandler,
+    PlayerMoveHandler,
+    GameSagas,
+    CheckGameEndHandler,
+    EventPlayerMoveHandler,
+  ],
 })
 export class AppModule {}

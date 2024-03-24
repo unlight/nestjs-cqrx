@@ -8,26 +8,26 @@ import { EventPublisher } from 'nestjs-cqrx';
 
 @CommandHandler(CreateGameCommand)
 export class CreateGameHandler implements ICommand {
-    constructor(
-        private readonly gameRepository: GameRepository,
-        private readonly eventPublisher: EventPublisher,
-    ) {}
+  constructor(
+    private readonly gameRepository: GameRepository,
+    private readonly eventPublisher: EventPublisher,
+  ) {}
 
-    async execute() {
-        const id = cuid();
-        const game = this.eventPublisher.mergeObjectContext(new Game(id));
-        await game.create();
-        await game.commit();
+  async execute() {
+    const id = cuid();
+    const game = this.eventPublisher.mergeObjectContext(new Game(id));
+    await game.create();
+    await game.commit();
 
-        return new GameCreatedDtoReponse(game.id);
-    }
+    return new GameCreatedDtoReponse(game.id);
+  }
 
-    async execute_2() {
-        const id = cuid();
-        const game = new Game(id);
-        await game.create();
-        await this.gameRepository.save(game);
+  async execute_2() {
+    const id = cuid();
+    const game = new Game(id);
+    await game.create();
+    await this.gameRepository.save(game);
 
-        return new GameCreatedDtoReponse(game.id);
-    }
+    return new GameCreatedDtoReponse(game.id);
+  }
 }

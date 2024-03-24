@@ -6,23 +6,23 @@ import { EventPublisher } from 'nestjs-cqrx';
 
 @CommandHandler(PlayerMoveCommand)
 export class PlayerMoveHandler implements ICommandHandler<PlayerMoveCommand> {
-    constructor(
-        private readonly publisher: EventPublisher,
-        private readonly gameRepository: GameRepository,
-    ) {}
+  constructor(
+    private readonly publisher: EventPublisher,
+    private readonly gameRepository: GameRepository,
+  ) {}
 
-    async execute(command: PlayerMoveCommand) {
-        const {
-            input: { playerId, position, gameId },
-        } = command;
-        let game = await this.gameRepository.findOne(gameId);
-        if (!game) {
-            throw new NotFoundException();
-        }
-        game = this.publisher.mergeObjectContext(game);
-        game.playerMove(playerId, position);
-        await game.commit();
-
-        return { playerId, position };
+  async execute(command: PlayerMoveCommand) {
+    const {
+      input: { playerId, position, gameId },
+    } = command;
+    let game = await this.gameRepository.findOne(gameId);
+    if (!game) {
+      throw new NotFoundException();
     }
+    game = this.publisher.mergeObjectContext(game);
+    game.playerMove(playerId, position);
+    await game.commit();
+
+    return { playerId, position };
+  }
 }

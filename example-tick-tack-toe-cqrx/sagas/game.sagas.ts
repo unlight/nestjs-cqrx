@@ -7,13 +7,13 @@ import { CheckGameEndCommand } from '../commands/check-game-end.command';
 
 @Injectable()
 export class GameSagas {
-    @Saga()
-    playerMove = (events$: Observable<IEvent> /* EventBus */) => {
-        return events$.pipe(
-            ofType(PlayerMoveEvent),
-            map(event => {
-                return new CheckGameEndCommand(event.data.gameId);
-            }),
-        );
-    };
+  @Saga()
+  playerMove = (events$: Observable<IEvent> /* EventBus */) => {
+    return events$.pipe(
+      ofType(PlayerMoveEvent),
+      map(event => {
+        return new CheckGameEndCommand(event.data.gameId);
+      }),
+    );
+  };
 }

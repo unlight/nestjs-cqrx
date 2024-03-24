@@ -9,29 +9,29 @@ import { RegisterUserDto, UserDataDto, UserRegisteredDto } from './dto';
 
 @Controller('user')
 export class UserController {
-    constructor(
-        private readonly queryBus$: QueryBus,
-        private readonly commandBus$: CommandBus,
-        private readonly eventBus$: EventBus,
-    ) {}
+  constructor(
+    private readonly queryBus$: QueryBus,
+    private readonly commandBus$: CommandBus,
+    private readonly eventBus$: EventBus,
+  ) {}
 
-    @Get('index')
-    index() {
-        return { index: 'yes' };
-    }
+  @Get('index')
+  index() {
+    return { index: 'yes' };
+  }
 
-    // @Get(':email')
-    // public async getUser(@Param('email') email: string): Promise<UserDataDto> {
-    //     return this.queryBus$.execute(new GetUser(email));
-    // }
+  // @Get(':email')
+  // public async getUser(@Param('email') email: string): Promise<UserDataDto> {
+  //     return this.queryBus$.execute(new GetUser(email));
+  // }
 
-    @Post('register')
-    async register(@Body() data: RegisterUserDto): Promise<UserRegisteredDto> {
-        return this.commandBus$.execute(new RegisterUser(data));
-    }
+  @Post('register')
+  async register(@Body() data: RegisterUserDto): Promise<UserRegisteredDto> {
+    return this.commandBus$.execute(new RegisterUser(data));
+  }
 
-    // @Sse('registrations')
-    // public getRegistrations$(): Observable<{ data: UserRegisteredDto }> {
-    //     return this.eventBus$.pipe(ofType(UserRegistered));
-    // }
+  // @Sse('registrations')
+  // public getRegistrations$(): Observable<{ data: UserRegisteredDto }> {
+  //     return this.eventBus$.pipe(ofType(UserRegistered));
+  // }
 }

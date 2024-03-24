@@ -8,52 +8,52 @@ import { AppModule } from './app.module';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const d = (o: any) =>
-    console.log(inspect(o, { colors: true, depth: null, compact: true }));
+  console.log(inspect(o, { colors: true, depth: null, compact: true }));
 
 let app: INestApplication;
 let server: any;
 beforeAll(async () => {
-    app = await NestFactory.create(AppModule, { logger: false });
-    app.enableCors();
-    app.useGlobalPipes(new ValidationPipe({}));
-    app.useGlobalFilters(new AllExceptionsFilter(app.getHttpAdapter()));
-    server = app.getHttpServer();
-    await app.init();
+  app = await NestFactory.create(AppModule, { logger: false });
+  app.enableCors();
+  app.useGlobalPipes(new ValidationPipe({}));
+  app.useGlobalFilters(new AllExceptionsFilter(app.getHttpAdapter()));
+  server = app.getHttpServer();
+  await app.init();
 });
 
 afterAll(async () => {
-    await app.close();
+  await app.close();
 });
 
 it('smoke', async () => {
-    const result = await request(server)
-        .get('/user/index')
-        .expect(200)
-        .then(response => response.body);
-    expect(result).toBeTruthy();
+  const result = await request(server)
+    .get('/user/index')
+    .expect(200)
+    .then(response => response.body);
+  expect(result).toBeTruthy();
 });
 
 it('register failure with empty', async () => {
-    const result = await request(server)
-        .post('/user/register')
-        .set('Content-Type', 'application/json')
-        .send({ email: '', password: '' })
-        .then(response => response.body);
-    expect(result).toEqual(expect.objectContaining({ statusCode: 400 }));
+  const result = await request(server)
+    .post('/user/register')
+    .set('Content-Type', 'application/json')
+    .send({ email: '', password: '' })
+    .then(response => response.body);
+  expect(result).toEqual(expect.objectContaining({ statusCode: 400 }));
 });
 
 it('register success', async () => {
-    const response = await request(server)
-        .post('/user/register')
-        .set('Content-Type', 'application/json')
-        .send({ email: 'separation@wordable.edu', password: '0a704641e6b5' })
-        .then(response => response);
-    expect(response).toBeTruthy();
-    expect(response).toEqual(
-        expect.objectContaining({
-            statusCode: 201,
-        }),
-    );
+  const response = await request(server)
+    .post('/user/register')
+    .set('Content-Type', 'application/json')
+    .send({ email: 'separation@wordable.edu', password: '0a704641e6b5' })
+    .then(response => response);
+  expect(response).toBeTruthy();
+  expect(response).toEqual(
+    expect.objectContaining({
+      statusCode: 201,
+    }),
+  );
 });
 
 //     describe('user', () => {

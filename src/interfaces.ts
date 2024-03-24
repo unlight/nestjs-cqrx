@@ -7,13 +7,13 @@ export type RequiredEvent<P = unknown, M = unknown> = Required<Event<P, M>>;
 export type AggregateEventHandlers = Map<Type<Event>, Array<string | symbol>>;
 
 export interface AsyncAggregateRootFactory extends Pick<ModuleMetadata, 'imports'> {
-    name: string;
-    useFactory: (...args: unknown[]) => AggregateRoot | Promise<AggregateRoot>;
-    inject?: FactoryProvider['inject'];
+  name: string;
+  useFactory: (...args: unknown[]) => AggregateRoot | Promise<AggregateRoot>;
+  inject?: FactoryProvider['inject'];
 }
 
 export type EventHandlerFunction<E extends Event = Event> = (
-    event: E,
+  event: E,
 ) => Observable<void> | Promise<void> | void;
 
 export type { PlainLiteralObject, Type } from '@nestjs/common';

@@ -4,13 +4,13 @@ EventStoreDB NestJS CQRS module.
 
 ## Based on
 
--   https://github.com/nordfjord/nestjs-cqrs-es
--   https://github.com/cqrx/cqrx
+- https://github.com/nordfjord/nestjs-cqrs-es
+- https://github.com/cqrx/cqrx
 
 ## Features
 
--   Asynchronous commit/publish
--   Event handler decorator
+- Asynchronous commit/publish
+- Event handler decorator
 
 ## Install
 
@@ -24,11 +24,11 @@ npm install --save nestjs-cqrx
 import { CqrxModule } from 'nestjs-cqrx';
 
 @Module({
-    imports: [
-        CqrxModule.forRoot({
-            eventstoreDbConnectionString: 'esdb://localhost:2113?tls=false',
-        }),
-    ],
+  imports: [
+    CqrxModule.forRoot({
+      eventstoreDbConnectionString: 'esdb://localhost:2113?tls=false',
+    }),
+  ],
 })
 export class AppModule {}
 ```
@@ -44,29 +44,29 @@ import { AggregateRoot, EventHandler } from 'nestjs-cqrx';
 import { UserRegistered } from '../events';
 
 export class User extends AggregateRoot {
-    isRegistered = false;
-    email!: string;
-    password!: string;
+  isRegistered = false;
+  email!: string;
+  password!: string;
 
-    @EventHandler(UserRegistered)
-    createUser(event: UserRegistered): void {
-        this.isRegistered = true;
-        this.email = event.data.email;
-        this.password = event.data.password;
+  @EventHandler(UserRegistered)
+  createUser(event: UserRegistered): void {
+    this.isRegistered = true;
+    this.email = event.data.email;
+    this.password = event.data.password;
+  }
+
+  register(email: string, password: string) {
+    if (this.isRegistered) {
+      throw new ConflictException();
     }
 
-    register(email: string, password: string) {
-        if (this.isRegistered) {
-            throw new ConflictException();
-        }
-
-        this.apply(
-            new UserRegistered({
-                email,
-                password,
-            }),
-        );
-    }
+    this.apply(
+      new UserRegistered({
+        email,
+        password,
+      }),
+    );
+  }
 }
 ```
 
@@ -82,13 +82,13 @@ export class UserRegistered extends Event<UserRegisteredDto> {}
 
 ```ts
 @Module({
-    imports: [
-        CqrxModule.forFeature(
-            [User],
-            // Subscribe and transform events from eventstore
-            [['UserRegistered', event => new UserRegistered(event)]],
-        ),
-    ],
+  imports: [
+    CqrxModule.forFeature(
+      [User],
+      // Subscribe and transform events from eventstore
+      [['UserRegistered', event => new UserRegistered(event)]],
+    ),
+  ],
 })
 export class UserModule {}
 ```
@@ -96,10 +96,10 @@ export class UserModule {}
 ```ts
 // Signature of transformers
 type Transformer = [
-    /* Recorded event type */ string,
-    /* Function which accept stream event (plain object) */ (
-        event: RecordedEvent,
-    ) => Event,
+  /* Recorded event type */ string,
+  /* Function which accept stream event (plain object) */ (
+    event: RecordedEvent,
+  ) => Event,
 ];
 ```
 
@@ -123,31 +123,31 @@ it will be automatically added to transform service.
 
 ## Similar Projects
 
--   https://github.com/cqrx/cqrx
--   https://github.com/nordfjord/nestjs-cqrs-es
+- https://github.com/cqrx/cqrx
+- https://github.com/nordfjord/nestjs-cqrs-es
 
 ## Development
 
--   docker-compose up
--   http://localhost:2113/web/index.html#/dashboard
+- docker-compose up
+- http://localhost:2113/web/index.html#/dashboard
 
 ## Resources
 
--   https://github.com/bradsheppard/nestjs-async-cqrs
--   https://github.com/valueadd-poland/nestjs-packages/tree/master/packages/typed-cqrs
--   https://github.com/ArkerLabs/event-sourcing-nestjs
--   https://github.com/amehat?tab=repositories&q=cqrs
--   https://github.com/orhanveli/nestjs-saga-pattern-example
--   https://github.com/tuanitpro/nestjs-sagas-cqrs
--   https://github.com/ntxinh/nestjs-cqrs-es
--   https://github.com/ArkerLabs/event-sourcing-nestjs-graphql-example
--   https://github.com/oskardudycz/EventSourcing.JVM/tree/main/samples/event-sourcing-esdb-simple
--   https://github.com/PrestaShopCorp/nestjs-geteventstore
+- https://github.com/bradsheppard/nestjs-async-cqrs
+- https://github.com/valueadd-poland/nestjs-packages/tree/master/packages/typed-cqrs
+- https://github.com/ArkerLabs/event-sourcing-nestjs
+- https://github.com/amehat?tab=repositories&q=cqrs
+- https://github.com/orhanveli/nestjs-saga-pattern-example
+- https://github.com/tuanitpro/nestjs-sagas-cqrs
+- https://github.com/ntxinh/nestjs-cqrs-es
+- https://github.com/ArkerLabs/event-sourcing-nestjs-graphql-example
+- https://github.com/oskardudycz/EventSourcing.JVM/tree/main/samples/event-sourcing-esdb-simple
+- https://github.com/PrestaShopCorp/nestjs-geteventstore
 
 ## Todo
 
--   find lib for creating errors
--   better to split on read/write events
+- find lib for creating errors
+- better to split on read/write events
 
 ## License
 
