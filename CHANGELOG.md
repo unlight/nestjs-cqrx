@@ -3,7 +3,7 @@
 
 ### ⚠ BREAKING CHANGES
 
-* - Update dependencies to latest majors
+* Update dependencies to latest majors
 
 ### Bug Fixes
 
