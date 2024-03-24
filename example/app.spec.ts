@@ -43,13 +43,17 @@ it('register failure with empty', async () => {
 });
 
 it('register success', async () => {
-    const { body, statusCode } = await request(server)
+    const response = await request(server)
         .post('/user/register')
         .set('Content-Type', 'application/json')
         .send({ email: 'separation@wordable.edu', password: '0a704641e6b5' })
         .then(response => response);
-    expect(body).toBeTruthy();
-    expect(statusCode).toEqual(201);
+    expect(response).toBeTruthy();
+    expect(response).toEqual(
+        expect.objectContaining({
+            statusCode: 201,
+        }),
+    );
 });
 
 //     describe('user', () => {

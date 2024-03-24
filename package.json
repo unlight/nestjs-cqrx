@@ -36,7 +36,7 @@
     "lint:w": "run-p tscheck:w eslint:w",
     "example": "node-dev -r tsconfig-paths/register example/main.ts",
     "example-tick-tack-toe-cqrx": "node-dev -r tsconfig-paths/register example-tick-tack-toe-cqrx/main.ts",
-    "example:test:w": "npm run mocha -- example/**/*.spec --watch",
+    "example:test:w": "npm run mocha -- example/**/*.spec.ts --watch --watch-files example,src",
     "example:spec": "npm run mocha -- example/**/*.spec",
     "tttx:test:w": "npm run mocha -- example-tick-tack-toe-cqrx/**/*.spec.ts --watch",
     "mocha": "node -r tsconfig-paths/register -r ts-node/register node_modules/mocha/bin/_mocha --timeout=5s --ui=mocha-jested",

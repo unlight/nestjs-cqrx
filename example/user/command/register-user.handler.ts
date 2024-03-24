@@ -30,13 +30,8 @@ export class RegisterUserHandler implements ICommandHandler<RegisterUser> {
     async execute(command: RegisterUser): Promise<UserRegisteredDto> {
         const userId = cuid();
         const user = new User('user', userId);
-        await user.register(command.data.email, command.data.password);
-        await this.eventStore.appendToStream(
-            user.streamId,
-            user.getUncommittedEvents(),
-            { expectedRevision: 'no_stream' },
-        );
-        await user.commit();
+        user.register(command.data.email, command.data.password);
+        await this.userRepository.save(user);
         // TODO: Update projection
         return new UserRegisteredDto(user.email, user.password);
     }
