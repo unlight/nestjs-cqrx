@@ -17,7 +17,7 @@ export class Event<P = unknown, M = unknown> implements IEvent {
     /**
      * Representing when this event was created in the database system.
      */
-    readonly created?: number;
+    readonly created?: Date;
     /**
      * Is JSON or Binary data.
      */

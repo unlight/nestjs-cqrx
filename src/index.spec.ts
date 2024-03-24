@@ -256,9 +256,7 @@ describe('eventstore', () => {
             expect(event?.streamId).toEqual('user_555');
             expect(typeof event?.id).toBe('string');
             expect(event?.revision).toBeGreaterThanOrEqual(0n);
-            expect(event?.created?.toString().slice(0, 8)).toEqual(
-                Date.now().toString().slice(0, 8),
-            );
+            expect(event?.created).toBeInstanceOf(Date);
         });
     });
 
