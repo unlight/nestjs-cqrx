@@ -48,6 +48,7 @@ export class Event<P = unknown, M = unknown> implements IEvent {
       this.created = args.created;
       this.revision = args.revision;
       this.isJson = args.isJson;
+      this.metadata = args.metadata as M;
     } else {
       this.type = this.constructor.name;
       this.data = (args ?? {}) as P;
