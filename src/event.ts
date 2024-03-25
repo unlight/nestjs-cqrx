@@ -64,11 +64,11 @@ export class Event<P = unknown, M = unknown> implements IEvent {
   private static isRecordedEvent(event?: unknown): event is RecordedEvent {
     return Boolean(
       event &&
-        (event as PlainLiteralObject).streamId &&
-        (event as PlainLiteralObject).id &&
-        (event as PlainLiteralObject).type &&
-        (event as PlainLiteralObject).created &&
-        typeof (event as PlainLiteralObject).isJson === 'boolean',
+        event['streamId'] &&
+        event['id'] &&
+        event['type'] &&
+        event['data'] &&
+        typeof event['revision'] === 'bigint',
     );
   }
 }

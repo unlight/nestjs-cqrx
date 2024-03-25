@@ -42,14 +42,13 @@
     "commit": "cz",
     "build": "sh Taskfile build_pkgroll",
     "lint:w": "run-p tscheck:w eslint:w",
-    "example": "node-dev -r tsconfig-paths/register example/main.ts",
-    "example-tick-tack-toe-cqrx": "node-dev -r tsconfig-paths/register example-tick-tack-toe-cqrx/main.ts",
-    "example:test:w": "npm run mocha -- example/**/*.spec.ts --watch --watch-files example,src",
-    "example:spec": "npm run mocha -- example/**/*.spec",
-    "tttx:test:w": "npm run mocha -- example-tick-tack-toe-cqrx/**/*.spec.ts --watch",
-    "mocha": "node -r tsconfig-paths/register -r ts-node/register node_modules/mocha/bin/_mocha --timeout=5s --ui=mocha-jested",
-    "tttx:mocha:r": "npm run mocha -- example-tick-tack-toe-cqrx/**/*.spec.ts",
-    "tttx:mocha:w": "npm run tttx:mocha:r -- --watch-files src,example-tick-tack-toe-cqrx --watch"
+    "dev:user": "node-dev -r tsconfig-paths/register apps/user/main.ts",
+    "dev:ttt": "node-dev -r tsconfig-paths/register apps/tick-tack-toe/main.ts",
+    "test:user:w": "test:user:r --watch --watch-files apps/user,src",
+    "test:user:r": "npm run mocha -- apps/user/**/*.spec.ts",
+    "test:ttt:r": "npm run mocha -- apps/tick-tack-toe/**/*.spec.ts",
+    "test:ttt:w": "npm run test:ttt:r -- --watch --watch-files apps/tick-tack-toe,src",
+    "mocha": "node -r tsconfig-paths/register -r ts-node/register node_modules/mocha/bin/_mocha --timeout=5s --ui=mocha-jested"
   },
   "dependencies": {
     "node-is-class": "^1.0.4"

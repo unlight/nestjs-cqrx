@@ -16,7 +16,7 @@ export class AggregateRepository<T extends AggregateRoot> {
   constructor(
     private readonly eventStoreService: EventStoreService,
     private readonly Aggregate: Type<T>,
-    private readonly streamName: string,
+    private streamName: string,
   ) {}
 
   async findOne(id: string): Promise<T> {
@@ -25,6 +25,7 @@ export class AggregateRepository<T extends AggregateRoot> {
     const streamEvents = this.eventStoreService.readFromStart(streamId);
 
     for await (const event of streamEvents) {
+      console.log('event', event);
       await aggregate.applyFromHistory(event);
     }
 

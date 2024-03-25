@@ -6,11 +6,13 @@ import { AggregateEventHandlers, EventHandlerFunction, Type } from './interfaces
 
 const INTERNAL_EVENTS = Symbol('Internal Events');
 const VERSION = Symbol('Version');
+const REVISION = Symbol('Revision');
 
 export abstract class AggregateRoot<E extends Event = Event> {
   private readonly [INTERNAL_EVENTS]: E[] = [];
   private [VERSION] = 0;
   readonly streamId: string;
+  private [REVISION]: bigint = -1n;
 
   constructor(
     readonly streamName: string,
@@ -21,6 +23,10 @@ export abstract class AggregateRoot<E extends Event = Event> {
 
   get version(): number {
     return this[VERSION];
+  }
+
+  get revision(): bigint {
+    return this[REVISION];
   }
 
   private getEventHandlers(event: E): EventHandlerFunction<E>[] {
@@ -49,6 +55,7 @@ export abstract class AggregateRoot<E extends Event = Event> {
     });
     await Promise.all(calls);
     this[VERSION] += 1;
+    this[REVISION] = event.revision!;
   }
 
   async commit(): Promise<void> {

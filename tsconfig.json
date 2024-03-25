@@ -30,5 +30,5 @@
       "nestjs-cqrx": ["./src/index.ts"]
     }
   },
-  "include": ["src", "example", "example-tick-tack-toe-cqrx"]
+  "include": ["src"]
 }
