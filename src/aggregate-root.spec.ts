@@ -122,4 +122,24 @@ describe('AggregateRoot', () => {
     expect(events).toHaveLength(1);
     expect(events).toEqual([expect.objectContaining({ type: 'UserCreatedEvent' })]);
   });
+
+  it('eventPublisher mergeClassContext', async () => {
+    const eventPublisher = app.get(EventPublisher);
+    const UserModel = eventPublisher.mergeClassContext(UserAggregateRoot);
+    const user = new UserModel('user', cuid());
+
+    await user.publish(new Event());
+    const events = await all(eventStoreService.readFromStart(user.streamId));
+    expect(events).toHaveLength(1);
+  });
+
+  it('eventPublisher mergeObjectContext', async () => {
+    const eventPublisher = app.get(EventPublisher);
+    let user = new UserAggregateRoot('user', cuid());
+    user = eventPublisher.mergeObjectContext(user);
+
+    await user.publish(new Event());
+    const events = await all(eventStoreService.readFromStart(user.streamId));
+    expect(events).toHaveLength(1);
+  });
 });

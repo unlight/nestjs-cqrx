@@ -25,7 +25,6 @@ export class AggregateRepository<T extends AggregateRoot> {
     const streamEvents = this.eventStoreService.readFromStart(streamId);
 
     for await (const event of streamEvents) {
-      console.log('event', event);
       await aggregate.applyFromHistory(event);
     }
 
