@@ -1,3 +1,10 @@
+## [2.0.1](https://github.com/unlight/nestjs-cqrx/compare/v2.0.0...v2.0.1) (2024-03-25)
+
+
+### Bug Fixes
+
+* Add metadata from recorded event ([f934194](https://github.com/unlight/nestjs-cqrx/commit/f9341948547c7833a7f55fc4ddd3ea5dabb1f9e5))
+
 ## [2.0.0](https://github.com/unlight/nestjs-cqrx/compare/v1.2.0...v2.0.0) (2024-03-24)
 
 
