@@ -29,6 +29,5 @@
     "paths": {
       "nestjs-cqrx": ["./src/index.ts"]
     }
-  },
-  "include": ["src"]
+  }
 }

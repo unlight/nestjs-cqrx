@@ -6,14 +6,11 @@ type Keys = Array<string | symbol>;
 
 export function EventHandler<E extends Event>(event: Type<E>) {
   return function eventHandlerDecorator(
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    classPrototype: Object,
+    classPrototype: object,
     key: string | symbol,
     descriptor: TypedPropertyDescriptor<EventHandlerFunction<E>>,
   ): TypedPropertyDescriptor<EventHandlerFunction<E>> {
-    const handlers: AggregateEventHandlers =
-      Reflect.getMetadata(AGGREGATE_EVENT_HANDLERS, classPrototype) ??
-      new Map<Type<Event>, Keys>();
+    const handlers = getEventHandlers(classPrototype);
     const value: Keys = handlers.get(event) ?? [];
 
     value.push(key);
@@ -23,4 +20,12 @@ export function EventHandler<E extends Event>(event: Type<E>) {
 
     return descriptor;
   };
+}
+
+export function getEventHandlers(classPrototype: object) {
+  const handlers: AggregateEventHandlers =
+    Reflect.getMetadata(AGGREGATE_EVENT_HANDLERS, classPrototype) ??
+    new Map<Type<Event>, Keys>();
+
+  return handlers;
 }

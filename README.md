@@ -11,6 +11,7 @@ EventStoreDB NestJS CQRS module.
 
 - Asynchronous commit/publish
 - Event handler decorator
+- Single event for read/write
 
 ## Install
 
@@ -148,6 +149,8 @@ it will be automatically added to transform service.
 
 - find lib for creating errors
 - better to split on read/write events
+- reducer (similar to evolve of emmet)
+- benchmark of current src/event.ts ctor or Object.create(Event.Prototype)
 
 ## License
 

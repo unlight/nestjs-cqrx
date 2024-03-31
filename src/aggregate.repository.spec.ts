@@ -25,9 +25,11 @@ describe('aggregate repository', () => {
   class UserChangedEmailEvent extends Event<{ email: string }> {
     data!: { email: string };
   }
+  class UserBlockedEvent extends Event {}
   class UserAggregateRoot extends AggregateRoot {
     name: string = '';
     email: string = '';
+    isBlocked = false;
     @EventHandler(UserCreatedEvent)
     onUserCreated(event: UserCreatedEvent) {
       this.name = event.data.name;
@@ -37,6 +39,11 @@ describe('aggregate repository', () => {
     onUserChangedEmail(event: UserChangedEmailEvent) {
       this.email = event.data.email;
     }
+
+    @EventHandler(UserBlockedEvent)
+    onBlock(event: UserBlockedEvent) {
+      this.isBlocked = true;
+    }
   }
 
   beforeAll(async () => {
@@ -45,7 +52,10 @@ describe('aggregate repository', () => {
         module: CqrxModule,
         imports: [
           CqrxCoreModule.forRoot({ eventstoreDbConnectionString }),
-          CqrxModule.forFeature([], [Event, UserCreatedEvent, UserChangedEmailEvent]),
+          CqrxModule.forFeature(
+            [UserAggregateRoot],
+            [Event, UserCreatedEvent, UserChangedEmailEvent],
+          ),
         ],
         providers: [],
       },
@@ -94,5 +104,14 @@ describe('aggregate repository', () => {
         revision: 1n,
       }),
     );
+  });
+
+  it('auto register handler from EventHandler decorator', async () => {
+    const streamId = cuid();
+    const streamName = `user_${streamId}`;
+    await eventStoreService.appendToStream(streamName, [new UserBlockedEvent()]);
+    const user = await repository.findOne(streamId);
+
+    expect(user.isBlocked).toEqual(true);
   });
 });

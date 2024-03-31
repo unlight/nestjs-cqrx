@@ -5,6 +5,9 @@ import { inspect } from 'util';
 
 import { AllExceptionsFilter } from './app.exception-filter';
 import { AppModule } from './app.module';
+import expect from 'expect';
+import { User } from './user/model/user';
+import { AggregateRepository, aggregateRepositoryToken } from 'nestjs-cqrx';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const d = (o: any) =>
@@ -54,6 +57,17 @@ it('register success', async () => {
       statusCode: 201,
     }),
   );
+});
+
+it('register and view', async () => {
+  const repository: AggregateRepository<User> = app.get(aggregateRepositoryToken(User));
+  const id = Math.random().toString(36).slice(2);
+  const user = new User('User', id);
+  user.register('reflective@exemplifiable.net', 'password');
+  await repository.save(user);
+
+  const user2 = await repository.findOne(id);
+  console.log({ user, user2 });
 });
 
 //     describe('user', () => {

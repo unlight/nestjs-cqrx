@@ -11,6 +11,7 @@ import {
 import { EventStoreService } from './eventstore.service';
 import { AsyncAggregateRootFactory } from './interfaces';
 import { Transformers } from './transform.service';
+import { getEventHandlers } from './event-handler.decorator';
 
 @Module({})
 export class CqrxModule {
@@ -29,14 +30,21 @@ export class CqrxModule {
   }
 
   static forFeature(
-    aggregateRoots: Array<Type<AggregateRoot>>,
-    transformers: Transformers = [], // Transforms stream event to domain event
+    aggregateRoots: Type<AggregateRoot>[],
+    classTransformers: Transformers = [], // Transforms stream event to domain event
   ): DynamicModule {
     const aggregateRepoProviders =
       this.createAggregateRepositoryProviders(aggregateRoots);
+    // Auto create transformers from event handler decorator
+    const autoTransformers = aggregateRoots
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      .map(klass => getEventHandlers(klass.prototype))
+      .flatMap(events => [...events.keys()]);
+    const transformers = new Set([...autoTransformers, ...classTransformers]);
+
     const transformersProvider = {
       provide: EVENT_TRANSFORMERS,
-      useValue: transformers,
+      useValue: [...transformers],
     } as const;
 
     return {
