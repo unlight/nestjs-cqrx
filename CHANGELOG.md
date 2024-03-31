@@ -1,3 +1,10 @@
+## [2.0.2](https://github.com/unlight/nestjs-cqrx/compare/v2.0.1...v2.0.2) (2024-03-31)
+
+
+### Bug Fixes
+
+* Auto register transform ([d957bc2](https://github.com/unlight/nestjs-cqrx/commit/d957bc24837c396d244cbbd8117a5606a3134e11))
+
 ## [2.0.1](https://github.com/unlight/nestjs-cqrx/compare/v2.0.0...v2.0.1) (2024-03-25)
 
 
