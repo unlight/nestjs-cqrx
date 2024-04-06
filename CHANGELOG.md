@@ -1,3 +1,10 @@
+## [2.0.3](https://github.com/unlight/nestjs-cqrx/compare/v2.0.2...v2.0.3) (2024-04-06)
+
+
+### Bug Fixes
+
+* Parameters are not decorated ([9120971](https://github.com/unlight/nestjs-cqrx/commit/9120971f186a8b4ec40468e6c7eacffbaee31ee2))
+
 ## [2.0.2](https://github.com/unlight/nestjs-cqrx/compare/v2.0.1...v2.0.2) (2024-03-31)
 
 
