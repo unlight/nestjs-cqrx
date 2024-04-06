@@ -19,11 +19,20 @@ build_pkgroll() {
 }
 
 build_tsup() {
-    set -x
-    rm -rfv dist
-    # npm i tsup --no-save on CI/CD
-    npx tsup src/index.ts --format cjs --target es2020 --dts --no-sourcemap
-    cp -fv README.md LICENSE package.json dist
+  set -x
+  rm -rfv dist
+  tsup src/index.ts --format cjs,esm --target es2020 --no-sourcemap --cjsInterop --keep-names
+  mv dist/index.js dist/index.cjs
+  tsup src/index.ts --dts-only
+  cp -fv README.md dist
+
+  cat package.json | jq '.main = "./index.cjs"' |
+    jq '.module = "./index.mjs"' |
+    jq '.types = "./index.d.ts"' |
+    jq '.exports.".".import = "./index.mjs"' |
+    jq '.exports.".".require = "./index.cjs"' \
+      >dist/package.json
+  set +x
 }
 
 "$@"

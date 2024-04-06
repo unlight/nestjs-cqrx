@@ -44,7 +44,7 @@
     "format:src": "prettier src --write",
     "commit_lint": "sh Taskfile commit_lint",
     "commit": "cz",
-    "build": "sh Taskfile build_pkgroll",
+    "build": "sh Taskfile build_tsup",
     "lint:w": "run-p tscheck:w eslint:w",
     "dev:user": "node-dev -r tsconfig-paths/register apps/user/main.ts",
     "dev:ttt": "node-dev -r tsconfig-paths/register apps/tick-tack-toe/main.ts",
@@ -118,7 +118,6 @@
     "mocha-jested": "^2.4.1",
     "node-dev": "^8.0.0",
     "npm-run-all": "^4.1.5",
-    "pkgroll": "^2.0.2",
     "precise-commits": "^1.0.2",
     "prettier": "^3.2.5",
     "reflect-metadata": "^0.1.12",
@@ -131,6 +130,7 @@
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
     "tslib": "^2.6.2",
+    "tsup": "^8.0.2",
     "typescript": "^5.4.3",
     "watchexec-bin": "^1.0.0"
   }
