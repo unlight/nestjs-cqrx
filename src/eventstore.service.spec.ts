@@ -14,11 +14,13 @@ import expect from 'expect';
 
 import { EventBus } from '@nestjs/cqrs';
 import { filter, take } from 'rxjs/operators';
+import { EventStoreDBClient } from '@eventstore/db-client';
+
+const eventstoreDbConnectionString =
+  'esdb://localhost:2113?tls=false&keepAliveTimeout=120000&keepAliveInterval=120000';
 
 describe('eventstore', () => {
   // eslint-disable-next-line unicorn/prevent-abbreviations
-  const eventstoreDbConnectionString =
-    'esdb://localhost:2113?tls=false&keepAliveTimeout=120000&keepAliveInterval=120000';
   let app: INestApplication;
   let eventStoreService: EventStoreService;
 
@@ -182,5 +184,75 @@ describe('eventstore', () => {
     const events = await all(eventStoreService.readFromStart(streamId));
     expect(last(events)?.data).not.toHaveProperty('garbage');
     expect(last(events)).not.toHaveProperty('garbage');
+  });
+});
+
+describe('benchmark', () => {
+  let stream: string;
+  let client: EventStoreDBClient;
+
+  beforeAll(async () => {
+    stream = 'benchmark_stream_' + Math.random().toString(36).slice(2);
+    const events = Array.from({ length: 9999 }).map((_, index) => ({
+      type: 'SimpleAdd',
+      data: { index },
+    }));
+
+    client = EventStoreDBClient.connectionString(eventstoreDbConnectionString);
+    const eventStoreService = new EventStoreService(client, new Map() as any);
+
+    await eventStoreService.appendToStream(stream, events);
+  });
+
+  afterAll(async () => {
+    await client?.dispose();
+  });
+
+  it('plain', async () => {
+    const eventStoreService = new EventStoreService(client, new Map() as any);
+    const streamEvents = eventStoreService.readFromStart(stream);
+    const recordedEvents: any[] = [];
+    for await (const event of streamEvents) {
+      recordedEvents.push(event);
+    }
+  });
+
+  it('transform new class', async () => {
+    class MyEvent extends Event {}
+    const transform: any = {
+      get(type) {
+        return event => new MyEvent(event);
+      },
+    };
+    const eventStoreService = new EventStoreService(client, transform);
+    const streamEvents = eventStoreService.readFromStart(stream);
+    const recordedEvents: any[] = [];
+    for await (const event of streamEvents) {
+      recordedEvents.push(event);
+    }
+  });
+
+  it('object create', async () => {
+    class MyEvent extends Event {}
+    const transform: any = {
+      get(type) {
+        return event => {
+          Object.create(MyEvent.prototype, {
+            type: { value: event.type },
+            data: { value: event.data },
+            position: { value: event.position },
+            metadata: { value: event.metadata },
+            created: { value: event.created },
+          });
+        };
+      },
+    };
+
+    const eventStoreService = new EventStoreService(client, transform);
+    const streamEvents = eventStoreService.readFromStart(stream);
+    const recordedEvents: any[] = [];
+    for await (const event of streamEvents) {
+      recordedEvents.push(event);
+    }
   });
 });

@@ -45,7 +45,7 @@ export abstract class AggregateRoot<E extends Event = Event> {
     this[INTERNAL_EVENTS].push(event);
   }
 
-  async applyFromHistory<T extends E = E>(event: T): Promise<void> {
+  private async callEventHandlers<T extends E = E>(event: T): Promise<void> {
     const handlers = this.getEventHandlers(event);
     const calls = handlers.map(async handler => {
       const response$ = handler.call(this, event);
@@ -54,25 +54,22 @@ export abstract class AggregateRoot<E extends Event = Event> {
       }
     });
     await Promise.all(calls);
+  }
+
+  async applyFromHistory<T extends E = E>(event: T): Promise<void> {
+    await this.callEventHandlers(event);
     this[VERSION] += 1;
     this[REVISION] = event.revision!;
   }
 
   async commit(): Promise<void> {
     for (const event of this[INTERNAL_EVENTS]) {
-      await this.applyFromHistory(event);
+      await this.callEventHandlers(event);
     }
 
     const events = this.getUncommittedEvents();
     this[INTERNAL_EVENTS].length = 0;
     await this.publishAll(events);
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async loadFromHistory(history: E[]): Promise<void> {
-    for (const event of history) {
-      await this.applyFromHistory(event);
-    }
   }
 
   getUncommittedEvents(): E[] {

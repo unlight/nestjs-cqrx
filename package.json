@@ -52,7 +52,7 @@
     "test:user:r": "npm run mocha -- apps/user/**/*.spec.ts",
     "test:ttt:r": "npm run mocha -- apps/tick-tack-toe/**/*.spec.ts",
     "test:ttt:w": "npm run test:ttt:r -- --watch --watch-files apps/tick-tack-toe,src",
-    "mocha": "node -r tsconfig-paths/register -r ts-node/register node_modules/mocha/bin/_mocha --timeout=5s --ui=mocha-jested"
+    "mocha": "node -r tsconfig-paths/register -r ts-node/register node_modules/mocha/bin/_mocha --no-timeouts --ui=mocha-jested"
   },
   "dependencies": {
     "node-is-class": "^1.0.4"
