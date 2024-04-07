@@ -1,3 +1,10 @@
+## [2.2.0](https://github.com/unlight/nestjs-cqrx/compare/v2.1.0...v2.2.0) (2024-04-07)
+
+
+### Features
+
+* Aggregate constructor overloads ([1d466df](https://github.com/unlight/nestjs-cqrx/commit/1d466dfc493647ea15ebbe7583268db6d505a239))
+
 ## [2.1.0](https://github.com/unlight/nestjs-cqrx/compare/v2.0.4...v2.1.0) (2024-04-07)
 
 
