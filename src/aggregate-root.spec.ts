@@ -56,6 +56,22 @@ describe('AggregateRoot', () => {
     await app.close();
   });
 
+  it('constructor overload 1', () => {
+    const user = new UserAggregateRoot('123');
+    expect(user.streamId).toEqual('UserAggregateRoot_123');
+  });
+
+  it('constructor overload 2', () => {
+    const user = new UserAggregateRoot('User', '123');
+    expect(user.streamId).toEqual('User_123');
+  });
+
+  it('constructor invalid call', () => {
+    expect(() => {
+      new UserAggregateRoot(null as any);
+    }).toThrowError();
+  });
+
   it('version', async () => {
     const user = new UserAggregateRoot('user', cuid());
     await user.applyFromHistory(new UserCreatedEvent());

@@ -35,7 +35,7 @@ export class AggregateRepository<T extends AggregateRoot> {
     const events = aggregate.getUncommittedEvents();
     // Commit, but no publish
     for (const event of events) {
-      await aggregate.applyFromHistory(event);
+      await aggregate.callEventHandlers(event);
     }
     const result = await this.eventStoreService.appendToStream(
       aggregate.streamId,
