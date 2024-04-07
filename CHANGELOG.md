@@ -1,3 +1,10 @@
+## [2.0.4](https://github.com/unlight/nestjs-cqrx/compare/v2.0.3...v2.0.4) (2024-04-07)
+
+
+### Bug Fixes
+
+* Return commit from append result ([47bd6e6](https://github.com/unlight/nestjs-cqrx/commit/47bd6e6daaf7e5cd8f330f15cfeecb15ebcf0787))
+
 ## [2.0.3](https://github.com/unlight/nestjs-cqrx/compare/v2.0.2...v2.0.3) (2024-04-06)
 
 
