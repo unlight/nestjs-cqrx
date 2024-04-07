@@ -152,7 +152,7 @@ describe('eventstore', () => {
       userRegisteredEvent,
     );
 
-    expect(result.expectedRevision).toEqual(nextExpectedRevision);
+    expect(result.nextExpectedRevision).toEqual(nextExpectedRevision);
   });
 
   it('subscribe all', async () => {

@@ -15,7 +15,8 @@ export type AppendResult = {
   /**
    * The current revision of the stream, to be passed as the `expectedRevision` in the next call.
    */
-  expectedRevision: bigint;
+  nextExpectedRevision: bigint;
+  commit?: bigint;
 };
 
 @Injectable()
@@ -55,7 +56,8 @@ export class EventStoreService {
         expectedRevision,
       });
       return {
-        expectedRevision: result.nextExpectedRevision,
+        nextExpectedRevision: result.nextExpectedRevision,
+        commit: result.position?.commit,
       };
     }
   }
