@@ -1,3 +1,10 @@
+## [2.1.0](https://github.com/unlight/nestjs-cqrx/compare/v2.0.4...v2.1.0) (2024-04-07)
+
+
+### Features
+
+* Return append result from save ([26bb6f2](https://github.com/unlight/nestjs-cqrx/commit/26bb6f2b2d4be926b85ef60d1e291930e3c9f0ea))
+
 ## [2.0.4](https://github.com/unlight/nestjs-cqrx/compare/v2.0.3...v2.0.4) (2024-04-07)
 
 
