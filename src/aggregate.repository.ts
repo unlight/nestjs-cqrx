@@ -1,7 +1,7 @@
 import { Inject } from '@nestjs/common';
 
 import { AggregateRoot } from './aggregate-root';
-import { EventStoreService } from './eventstore.service';
+import { AppendResult, EventStoreService } from './eventstore.service';
 import { Type } from './interfaces';
 
 export function aggregateRepositoryToken(value: { readonly name: string }) {
@@ -31,13 +31,18 @@ export class AggregateRepository<T extends AggregateRoot> {
     return aggregate;
   }
 
-  async save(aggregate: T): Promise<void> {
+  async save(aggregate: T): Promise<AppendResult> {
     const events = aggregate.getUncommittedEvents();
     // Commit, but no publish
     for (const event of events) {
       await aggregate.applyFromHistory(event);
     }
-    await this.eventStoreService.appendToStream(aggregate.streamId, events);
+    const result = await this.eventStoreService.appendToStream(
+      aggregate.streamId,
+      events,
+    );
     aggregate.uncommit();
+
+    return result;
   }
 }
