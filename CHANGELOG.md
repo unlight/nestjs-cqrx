@@ -1,3 +1,10 @@
+## [2.3.0](https://github.com/unlight/nestjs-cqrx/compare/v2.2.0...v2.3.0) (2024-04-29)
+
+
+### Features
+
+* Add publish method ([edbbead](https://github.com/unlight/nestjs-cqrx/commit/edbbeadb23d9cd9da6968b2c66c3cc72ddb581b4))
+
 ## [2.2.0](https://github.com/unlight/nestjs-cqrx/compare/v2.1.0...v2.2.0) (2024-04-07)
 
 
