@@ -1,18 +1,16 @@
 import ExtensibleCustomError from 'extensible-custom-error';
 import { NO_STREAM, STREAM_EXISTS, ANY } from './constants';
 
+type ExpectedRevision = bigint | typeof STREAM_EXISTS | typeof NO_STREAM | typeof ANY;
+
 export class WrongExpectedVersion extends ExtensibleCustomError {
   readonly code = 'WRONG_EXPECTED_VERSION';
   readonly streamId: string;
-  readonly expectedRevision:
-    | bigint
-    | typeof STREAM_EXISTS
-    | typeof NO_STREAM
-    | typeof ANY;
+  readonly expectedRevision: ExpectedRevision;
 
   constructor(args: {
     streamId: string;
-    expectedRevision: bigint | typeof STREAM_EXISTS | typeof NO_STREAM | typeof ANY;
+    expectedRevision: ExpectedRevision;
     error?: Error;
   }) {
     super(

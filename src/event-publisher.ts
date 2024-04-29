@@ -38,4 +38,21 @@ export class EventPublisher implements IEventPublisher {
 
     return object;
   }
+
+  async publish<T extends AggregateRoot<Event>, E extends Event>(
+    object: T,
+    event: E | E[],
+  ): Promise<void>;
+  async publish<E extends Event>(streamId: string, event: E): Promise<void>;
+
+  async publish<E extends Event>(
+    objectOrStreamId: AggregateRoot<Event> | string,
+    event: E | E[],
+  ): Promise<void> {
+    const streamId =
+      typeof objectOrStreamId === 'string'
+        ? objectOrStreamId
+        : objectOrStreamId.streamId;
+    await this.eventStoreService.appendToStream(streamId, event);
+  }
 }
