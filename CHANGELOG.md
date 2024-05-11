@@ -1,3 +1,10 @@
+## [2.4.2](https://github.com/unlight/nestjs-cqrx/compare/v2.4.1...v2.4.2) (2024-05-11)
+
+
+### Bug Fixes
+
+* Rework `streamIdAndAggregate` method ([71671a9](https://github.com/unlight/nestjs-cqrx/commit/71671a927cc45147fc7ee1ae192845ba57f51823))
+
 ## [2.4.1](https://github.com/unlight/nestjs-cqrx/compare/v2.4.0...v2.4.1) (2024-05-11)
 
 
