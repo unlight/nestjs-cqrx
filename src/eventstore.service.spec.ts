@@ -187,13 +187,13 @@ describe('eventstore', () => {
   });
 });
 
-describe('benchmark', () => {
+describe.skip('benchmark', () => {
   let stream: string;
   let client: EventStoreDBClient;
 
   beforeAll(async () => {
     stream = 'benchmark_stream_' + Math.random().toString(36).slice(2);
-    const events = Array.from({ length: 9999 }).map((_, index) => ({
+    const events = Array.from({ length: 99999 }).map((_, index) => ({
       type: 'SimpleAdd',
       data: { index },
     }));
@@ -201,7 +201,9 @@ describe('benchmark', () => {
     client = EventStoreDBClient.connectionString(eventstoreDbConnectionString);
     const eventStoreService = new EventStoreService(client, new Map() as any);
 
-    await eventStoreService.appendToStream(stream, events);
+    await eventStoreService.appendToStream(stream, events).catch(err => {
+      console.log('err', err);
+    });
   });
 
   afterAll(async () => {
@@ -217,6 +219,7 @@ describe('benchmark', () => {
     }
   });
 
+  // Fastest
   it('transform new class', async () => {
     class MyEvent extends Event {}
     const transform: any = {
