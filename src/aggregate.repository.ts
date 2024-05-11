@@ -21,15 +21,16 @@ export class AggregateRepository<T extends AggregateRoot> {
 
   async streamIdAndAggregate(argument: T): Promise<[string, T]>;
   async streamIdAndAggregate(argument: string): Promise<[string, T]>;
+  async streamIdAndAggregate(argument: string | T): Promise<[string, T]>;
   /**
    * Return stream id (uid) and aggregate
    */
-  async streamIdAndAggregate(argument: string | T): Promise<[string, T]> {
+  async streamIdAndAggregate(argument: unknown): Promise<[string, T]> {
     if (typeof argument === 'string') {
       const aggregate = await this.load(argument);
       return [argument, aggregate];
     } else if (argument instanceof AggregateRoot) {
-      return [argument.id, argument];
+      return [argument.id, argument as T];
     }
     throw new TypeError('Invalid argument, expected string or aggregate root');
   }
