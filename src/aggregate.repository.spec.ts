@@ -81,7 +81,7 @@ describe('aggregate repository', () => {
 
   it('findOne not found', async () => {
     const err = (await repository
-      .findOne('951')
+      .load('951')
       .catch((error: unknown) => error)) as Error;
 
     expect(err.message).toEqual('user_951 not found');
@@ -95,7 +95,7 @@ describe('aggregate repository', () => {
       new UserCreatedEvent({ name: 'Ivan' }),
       new UserChangedEmailEvent({ email: 'ivan@mail.com' }),
     ]);
-    const user = await repository.findOne(streamId);
+    const user = await repository.load(streamId);
 
     expect(user).toEqual(
       expect.objectContaining({
@@ -110,8 +110,43 @@ describe('aggregate repository', () => {
     const streamId = cuid();
     const streamName = `user_${streamId}`;
     await eventStoreService.appendToStream(streamName, [new UserBlockedEvent()]);
-    const user = await repository.findOne(streamId);
+    const user = await repository.load(streamId);
 
     expect(user.isBlocked).toEqual(true);
+  });
+
+  describe('parse stream id and aggregate', () => {
+    const streamId = cuid();
+    before(async () => {
+      const streamName = `user_${streamId}`;
+      await eventStoreService.appendToStream(streamName, [
+        new UserCreatedEvent({ name: 'Ivan' }),
+      ]);
+    });
+
+    it('given string id', async () => {
+      const [id, aggregate] = await repository.streamIdAndAggregate(streamId);
+      expect(id).toEqual(streamId);
+      expect(aggregate).toEqual(
+        expect.objectContaining({
+          id: streamId,
+          name: 'Ivan',
+          streamId: `user_${streamId}`,
+        }),
+      );
+    });
+
+    it('given aggregate', async () => {
+      const model = await repository.load(streamId);
+      const [id, aggregate] = await repository.streamIdAndAggregate(model);
+      expect(id).toEqual(streamId);
+      expect(aggregate).toEqual(
+        expect.objectContaining({
+          id: streamId,
+          name: 'Ivan',
+          streamId: `user_${streamId}`,
+        }),
+      );
+    });
   });
 });

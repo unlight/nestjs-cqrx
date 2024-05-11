@@ -66,7 +66,7 @@ it('register and view', async () => {
   user.register('reflective@exemplifiable.net', 'password');
   await repository.save(user);
 
-  const user2 = await repository.findOne(id);
+  const user2 = await repository.load(id);
   console.log({ user, user2 });
 });
 

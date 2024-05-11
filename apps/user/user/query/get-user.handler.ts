@@ -14,7 +14,7 @@ export class GetUserHandler implements IQueryHandler<GetUser, UserDataDto> {
   ) {}
 
   public async execute(query: GetUser): Promise<UserDataDto> {
-    const user = await this.userRepository.findOne(query.email);
+    const user = await this.userRepository.load(query.email);
 
     if (user.version === -1) {
       throw new NotFoundException();

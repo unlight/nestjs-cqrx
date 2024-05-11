@@ -10,7 +10,7 @@ export class GameRepository {
   ) {}
 
   async findOne(id: string): Promise<Game | undefined> {
-    const game = await this.gameAggregateRepository.findOne(id);
+    const game = await this.gameAggregateRepository.load(id);
     return game;
   }
 
