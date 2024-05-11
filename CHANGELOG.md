@@ -1,3 +1,10 @@
+## [2.4.0](https://github.com/unlight/nestjs-cqrx/compare/v2.3.0...v2.4.0) (2024-05-11)
+
+
+### Features
+
+* Add new method ([7245059](https://github.com/unlight/nestjs-cqrx/commit/7245059b7676bde25a7e43d0b5150bf3c0a8b055))
+
 ## [2.3.0](https://github.com/unlight/nestjs-cqrx/compare/v2.2.0...v2.3.0) (2024-04-29)
 
 
