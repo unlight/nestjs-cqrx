@@ -3,6 +3,7 @@ import { Inject } from '@nestjs/common';
 import { AggregateRoot } from './aggregate-root';
 import { AppendResult, EventStoreService } from './eventstore.service';
 import { Type } from './interfaces';
+import { EventPublisher } from './event-publisher';
 
 export function aggregateRepositoryToken(value: { readonly name: string }) {
   return `AggregateRepository${value.name}`;
@@ -19,6 +20,16 @@ export class AggregateRepository<T extends AggregateRoot> {
     private streamName: string,
   ) {}
 
+  create(id: string): T;
+  create(streamName: string, id: string): T;
+  create(...args: string[]): T {
+    const aggregate: T = new this.Aggregate(...args);
+    const eventPublisher = new EventPublisher(this.eventStoreService);
+    eventPublisher.mergeObjectContext(aggregate);
+
+    return aggregate;
+  }
+
   async streamIdAndAggregate(argument: T): Promise<[string, T]>;
   async streamIdAndAggregate(argument: string): Promise<[string, T]>;
   async streamIdAndAggregate(argument: string | T): Promise<[string, T]>;
@@ -32,7 +43,7 @@ export class AggregateRepository<T extends AggregateRoot> {
     } else if (argument instanceof AggregateRoot) {
       return [argument.id, argument as T];
     }
-    throw new TypeError('Invalid argument, expected string or aggregate root');
+    throw new TypeError('Invalid argument, expected string or aggregate');
   }
 
   /**
@@ -51,13 +62,6 @@ export class AggregateRepository<T extends AggregateRoot> {
   }
 
   /**
-   * @see load
-   */
-  async findOne(id: string): Promise<T> {
-    return this.load(id);
-  }
-
-  /**
    * Get uncommited events from aggregate and append to stream
    */
   async save(aggregate: T): Promise<AppendResult> {
@@ -73,5 +77,13 @@ export class AggregateRepository<T extends AggregateRoot> {
     aggregate.uncommit();
 
     return result;
+  }
+
+  /**
+   * @deprecated
+   * @see load
+   */
+  async findOne(id: string): Promise<T> {
+    return this.load(id);
   }
 }

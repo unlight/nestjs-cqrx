@@ -71,6 +71,19 @@ export class User extends AggregateRoot {
 }
 ```
 
+#### Example of usage
+
+```ts
+const user = new User('123');
+user.apply(new UserRegistered({ data }));
+await userAggregateRepository.save(user);
+// Or you can create aggregate from repository
+// In this case you can use commit method
+const user = userAggregateRepository.create('123');
+user.apply(new UserRegistered({ data }));
+await user.commit();
+```
+
 #### Example of events
 
 ```ts

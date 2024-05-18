@@ -149,4 +149,21 @@ describe('aggregate repository', () => {
       );
     });
   });
+
+  describe('create', () => {
+    it('one argument', () => {
+      const aggregate = repository.create('123');
+      expect(aggregate.id).toBe('123');
+    });
+
+    it('two arguments', () => {
+      const aggregate2 = repository.create('user', '123');
+      expect(aggregate2.streamId).toBe('user_123');
+    });
+
+    it('commit should not fail', async () => {
+      const aggregate = repository.create('359');
+      await aggregate.commit();
+    });
+  });
 });
