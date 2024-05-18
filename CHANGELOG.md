@@ -1,3 +1,10 @@
+## [2.5.0](https://github.com/unlight/nestjs-cqrx/compare/v2.4.2...v2.5.0) (2024-05-18)
+
+
+### Features
+
+* Create aggregate from repository ([2b0efdc](https://github.com/unlight/nestjs-cqrx/commit/2b0efdc39a9fc4524b91ed37b02551ae1ec458e2))
+
 ## [2.4.2](https://github.com/unlight/nestjs-cqrx/compare/v2.4.1...v2.4.2) (2024-05-11)
 
 
