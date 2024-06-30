@@ -158,4 +158,13 @@ describe('AggregateRoot', () => {
     const events = await all(eventStoreService.readFromStart(user.streamId));
     expect(events).toHaveLength(1);
   });
+
+  it('custom name', () => {
+    class UserAggregateRoot extends AggregateRoot {
+      static streamName = 'User';
+    }
+    const id = cuid();
+    let user = new UserAggregateRoot(id);
+    expect(user.streamId).toEqual(`User_${id}`);
+  });
 });

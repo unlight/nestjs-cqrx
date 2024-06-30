@@ -9,6 +9,7 @@ const VERSION = Symbol('Version');
 const REVISION = Symbol('Revision');
 
 export abstract class AggregateRoot<E extends Event = Event> {
+  protected static readonly streamName: string = '';
   private readonly [INTERNAL_EVENTS]: E[] = [];
   private [VERSION] = 0;
   private [REVISION]: bigint = -1n;
@@ -29,7 +30,7 @@ export abstract class AggregateRoot<E extends Event = Event> {
     let streamName: string = '';
     if (args.length === 1) {
       id = args[0]!;
-      streamName = this.constructor.name;
+      streamName = this.constructor['streamName'] || this.constructor.name;
     } else if (args.length === 2) {
       streamName = args[0]!;
       id = args[1]!;
