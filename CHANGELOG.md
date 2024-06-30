@@ -1,3 +1,10 @@
+## [2.6.1](https://github.com/unlight/nestjs-cqrx/compare/v2.6.0...v2.6.1) (2024-06-30)
+
+
+### Bug Fixes
+
+* Remove 2nd argument when creating repository ([aba4909](https://github.com/unlight/nestjs-cqrx/commit/aba4909b055f6a92562122c8fd6be997f87ff970))
+
 ## [2.6.0](https://github.com/unlight/nestjs-cqrx/compare/v2.5.0...v2.6.0) (2024-06-30)
 
 
