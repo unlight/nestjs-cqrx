@@ -25,6 +25,7 @@ describe('AggregateRoot', () => {
   class UserCreatedEvent extends Event {}
   class UserChangedEmailEvent extends Event {}
   class UserAggregateRoot extends AggregateRoot {
+    protected static readonly streamName: string = 'user';
     @EventHandler(UserCreatedEvent)
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     onUserCreated(event) {}
@@ -56,31 +57,15 @@ describe('AggregateRoot', () => {
     await app.close();
   });
 
-  it('constructor overload 1', () => {
-    const user = new UserAggregateRoot('123');
-    expect(user.streamId).toEqual('UserAggregateRoot_123');
-  });
-
-  it('constructor overload 2', () => {
-    const user = new UserAggregateRoot('User', '123');
-    expect(user.streamId).toEqual('User_123');
-  });
-
-  it('constructor invalid call', () => {
-    expect(() => {
-      new UserAggregateRoot(null as any);
-    }).toThrowError();
-  });
-
   it('version', async () => {
-    const user = new UserAggregateRoot('user', cuid());
+    const user = new UserAggregateRoot(cuid());
     await user.applyFromHistory(new UserCreatedEvent());
 
     expect(user.version).toEqual(1);
   });
 
   it('commit', async () => {
-    let user = new UserAggregateRoot('user', cuid());
+    let user = new UserAggregateRoot(cuid());
     const eventPublisher = app.get(EventPublisher);
     user = eventPublisher.mergeObjectContext(user);
     user.apply(new UserCreatedEvent());
@@ -101,7 +86,7 @@ describe('AggregateRoot', () => {
         return from(['tick', 'tack', 'toe']);
       }
     }
-    const user = new UserAggregateRoot('user', cuid());
+    const user = new UserAggregateRoot(cuid());
     const spy = jest.spyOn(user, 'userChangedEmail');
     await user.applyFromHistory(new UserChangedEmailEvent());
 
@@ -111,7 +96,7 @@ describe('AggregateRoot', () => {
   });
 
   it('event handler', async () => {
-    const user = new UserAggregateRoot('user', cuid());
+    const user = new UserAggregateRoot(cuid());
     const onUserCreatedSpy = jest.spyOn(user, 'onUserCreated');
     user.apply(new UserCreatedEvent());
     await userAggregateRootRepository.save(user);
@@ -120,7 +105,7 @@ describe('AggregateRoot', () => {
   });
 
   it('save uncommit events', async () => {
-    const user = new UserAggregateRoot('user', cuid());
+    const user = new UserAggregateRoot(cuid());
     user.apply(new UserCreatedEvent());
     await userAggregateRootRepository.save(user);
 
@@ -128,7 +113,7 @@ describe('AggregateRoot', () => {
   });
 
   it('double save', async () => {
-    const user = new UserAggregateRoot('user', cuid());
+    const user = new UserAggregateRoot(cuid());
     user.apply(new UserCreatedEvent());
     await userAggregateRootRepository.save(user);
     await userAggregateRootRepository.save(user);
@@ -142,7 +127,7 @@ describe('AggregateRoot', () => {
   it('eventPublisher mergeClassContext', async () => {
     const eventPublisher = app.get(EventPublisher);
     const UserModel = eventPublisher.mergeClassContext(UserAggregateRoot);
-    const user = new UserModel('user', cuid());
+    const user = new UserModel(cuid());
 
     await user.publish(new Event());
     const events = await all(eventStoreService.readFromStart(user.streamId));
@@ -151,7 +136,7 @@ describe('AggregateRoot', () => {
 
   it('eventPublisher mergeObjectContext', async () => {
     const eventPublisher = app.get(EventPublisher);
-    let user = new UserAggregateRoot('user', cuid());
+    let user = new UserAggregateRoot(cuid());
     user = eventPublisher.mergeObjectContext(user);
 
     await user.publish(new Event());

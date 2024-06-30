@@ -22,22 +22,8 @@ export abstract class AggregateRoot<E extends Event = Event> {
    */
   readonly id: string;
 
-  constructor(id: string);
-  constructor(streamName: string, id: string);
-
-  constructor(...args: string[]) {
-    let id: string = '';
-    let streamName: string = '';
-    if (args.length === 1) {
-      id = args[0]!;
-      streamName = this.constructor['streamName'] || this.constructor.name;
-    } else if (args.length === 2) {
-      streamName = args[0]!;
-      id = args[1]!;
-    }
-    if (!(typeof id === 'string' && id)) throw new TypeError('Invalid parameter: id');
-    if (!(typeof streamName === 'string' && streamName))
-      throw new TypeError('Invalid parameter: streamName');
+  constructor(id: string) {
+    const streamName = this.constructor['streamName'] || this.constructor.name;
 
     this.id = id;
     this.streamId = `${streamName}_${id}`;

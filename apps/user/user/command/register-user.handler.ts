@@ -29,7 +29,7 @@ export class RegisterUserHandler implements ICommandHandler<RegisterUser> {
   // cqrs example style (without aggregate repository)
   async execute(command: RegisterUser): Promise<UserRegisteredDto> {
     const userId = cuid();
-    const user = new User('user', userId);
+    const user = new User(userId);
     user.register(command.data.email, command.data.password);
     await this.userRepository.save(user);
     // TODO: Update projection

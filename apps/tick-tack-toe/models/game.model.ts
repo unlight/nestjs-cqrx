@@ -13,24 +13,6 @@ export class Game extends AggregateRoot {
   #isGameEnded = false;
   private isGameStarted = false;
 
-  constructor(streamName: string, id: string);
-  constructor(id: string);
-
-  constructor(...args: any[]) {
-    if (args.length === 1 && typeof args[0] === 'string') {
-      // @ts-ignore
-      super('Game', args[0]);
-    } else if (
-      args.length === 2 &&
-      typeof args[0] === 'string' &&
-      typeof args[1] === 'string'
-    ) {
-      super(args[0], args[1]);
-    } else {
-      throw new TypeError('Invalid game constructor call');
-    }
-  }
-
   get isGameEnded() {
     return this.#isGameEnded;
   }

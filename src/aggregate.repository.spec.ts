@@ -27,6 +27,7 @@ describe('aggregate repository', () => {
   }
   class UserBlockedEvent extends Event {}
   class UserAggregateRoot extends AggregateRoot {
+    protected static readonly streamName = 'user';
     name: string = '';
     email: string = '';
     isBlocked = false;
@@ -72,7 +73,7 @@ describe('aggregate repository', () => {
   });
 
   beforeEach(() => {
-    repository = new AggregateRepository(eventStoreService, UserAggregateRoot, 'user');
+    repository = new AggregateRepository(eventStoreService, UserAggregateRoot);
   });
 
   it('smoke', () => {
@@ -157,7 +158,7 @@ describe('aggregate repository', () => {
     });
 
     it('two arguments', () => {
-      const aggregate2 = repository.create('user', '123');
+      const aggregate2 = repository.create('123');
       expect(aggregate2.streamId).toBe('user_123');
     });
 

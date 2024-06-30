@@ -4,6 +4,7 @@ import { AggregateRoot, EventHandler } from 'nestjs-cqrx';
 import { UserRegistered } from '../events';
 
 export class User extends AggregateRoot {
+  protected static readonly streamName: string = 'user';
   isRegistered = false;
   email!: string;
   password!: string;

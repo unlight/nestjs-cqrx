@@ -17,13 +17,10 @@ export class AggregateRepository<T extends AggregateRoot> {
   constructor(
     private readonly eventStoreService: EventStoreService,
     private readonly Aggregate: Type<T>,
-    private streamName: string,
   ) {}
 
-  create(id: string): T;
-  create(streamName: string, id: string): T;
-  create(...args: string[]): T {
-    const aggregate: T = new this.Aggregate(...args);
+  create(id: string): T {
+    const aggregate: T = new this.Aggregate(id);
     const eventPublisher = new EventPublisher(this.eventStoreService);
     eventPublisher.mergeObjectContext(aggregate);
 
@@ -50,9 +47,8 @@ export class AggregateRepository<T extends AggregateRoot> {
    * Read events from stream id (uid) and apply
    */
   async load(id: string): Promise<T> {
-    const aggregate = new this.Aggregate(this.streamName, id);
-    const { streamId } = aggregate;
-    const streamEvents = this.eventStoreService.readFromStart(streamId);
+    const aggregate = new this.Aggregate(id);
+    const streamEvents = this.eventStoreService.readFromStart(aggregate.streamId);
 
     for await (const event of streamEvents) {
       await aggregate.applyFromHistory(event);

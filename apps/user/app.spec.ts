@@ -62,7 +62,7 @@ it('register success', async () => {
 it('register and view', async () => {
   const repository: AggregateRepository<User> = app.get(aggregateRepositoryToken(User));
   const id = Math.random().toString(36).slice(2);
-  const user = new User('User', id);
+  const user = new User(id);
   user.register('reflective@exemplifiable.net', 'password');
   await repository.save(user);
 

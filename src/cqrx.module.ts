@@ -61,7 +61,7 @@ export class CqrxModule {
     return aggregateRoots.map(aggregateRoot => ({
       provide: aggregateRepositoryToken(aggregateRoot),
       useFactory: (eventStoreService: EventStoreService) =>
-        new AggregateRepository(eventStoreService, aggregateRoot, aggregateRoot.name),
+        new AggregateRepository(eventStoreService, aggregateRoot),
       inject: [EventStoreService],
     }));
   }

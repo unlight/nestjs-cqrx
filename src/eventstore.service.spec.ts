@@ -47,11 +47,13 @@ describe('eventstore', () => {
   });
 
   describe('aggregate root', () => {
-    class UserAggregateRoot extends AggregateRoot {}
+    class UserAggregateRoot extends AggregateRoot {
+      protected static readonly streamName = 'user';
+    }
     let aggregate: UserAggregateRoot;
 
     beforeEach(() => {
-      aggregate = new UserAggregateRoot('user', '532');
+      aggregate = new UserAggregateRoot('532');
     });
 
     it('aggregate root smoke', () => {
