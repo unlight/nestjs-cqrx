@@ -1,3 +1,10 @@
+## [2.6.0](https://github.com/unlight/nestjs-cqrx/compare/v2.5.0...v2.6.0) (2024-06-30)
+
+
+### Features
+
+* Set stream name via static property ([c0faa70](https://github.com/unlight/nestjs-cqrx/commit/c0faa70f4be28b4710dd710613d7f38bb01fc497))
+
 ## [2.5.0](https://github.com/unlight/nestjs-cqrx/compare/v2.4.2...v2.5.0) (2024-05-18)
 
 
