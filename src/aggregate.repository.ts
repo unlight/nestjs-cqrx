@@ -74,12 +74,4 @@ export class AggregateRepository<T extends AggregateRoot> {
 
     return result;
   }
-
-  /**
-   * @deprecated
-   * @see load
-   */
-  async findOne(id: string): Promise<T> {
-    return this.load(id);
-  }
 }
