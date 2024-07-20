@@ -1,3 +1,14 @@
+## [3.0.0](https://github.com/unlight/nestjs-cqrx/compare/v2.6.1...v3.0.0) (2024-07-20)
+
+
+### ⚠ BREAKING CHANGES
+
+* Remove deprecated functions
+
+### Miscellaneous Chores
+
+* Remove deprecated functions ([e5aa920](https://github.com/unlight/nestjs-cqrx/commit/e5aa9203d83f3317268ba459b9145a8bd70427dc))
+
 ## [2.6.1](https://github.com/unlight/nestjs-cqrx/compare/v2.6.0...v2.6.1) (2024-06-30)
 
 
