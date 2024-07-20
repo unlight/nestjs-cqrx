@@ -8,24 +8,24 @@ import {
   CqrxModuleAsyncOptions,
   CqrxModuleOptions,
 } from './cqrx-core.module';
+import { getEventHandlers } from './event-handler.decorator';
 import { EventStoreService } from './eventstore.service';
 import { AsyncAggregateRootFactory } from './interfaces';
 import { Transformers } from './transform.service';
-import { getEventHandlers } from './event-handler.decorator';
 
 @Module({})
 export class CqrxModule {
   static forRoot(options: Partial<CqrxModuleOptions>): DynamicModule {
     return {
-      module: CqrxModule,
       imports: [CqrxCoreModule.forRoot(options)],
+      module: CqrxModule,
     };
   }
 
   static forRootAsync(options: CqrxModuleAsyncOptions): DynamicModule {
     return {
-      module: CqrxModule,
       imports: [CqrxCoreModule.forRootAsync(options)],
+      module: CqrxModule,
     };
   }
 
@@ -48,10 +48,10 @@ export class CqrxModule {
     } as const;
 
     return {
-      module: CqrxModule,
-      imports: [],
-      providers: [transformersProvider, ...aggregateRepoProviders],
       exports: [transformersProvider, ...aggregateRepoProviders],
+      imports: [],
+      module: CqrxModule,
+      providers: [transformersProvider, ...aggregateRepoProviders],
     };
   }
 
@@ -59,10 +59,10 @@ export class CqrxModule {
     aggregateRoots: Array<Type<AggregateRoot>>,
   ): Provider[] {
     return aggregateRoots.map(aggregateRoot => ({
+      inject: [EventStoreService],
       provide: aggregateRepositoryToken(aggregateRoot),
       useFactory: (eventStoreService: EventStoreService) =>
         new AggregateRepository(eventStoreService, aggregateRoot),
-      inject: [EventStoreService],
     }));
   }
 
@@ -71,8 +71,8 @@ export class CqrxModule {
   ): Provider[] {
     return factories.map(factory => {
       return {
-        provide: aggregateRepositoryToken(factory),
         inject: [...(factory.inject || [])],
+        provide: aggregateRepositoryToken(factory),
         useFactory: (...args: unknown[]) => factory.useFactory(...args),
       };
     });
@@ -83,10 +83,10 @@ export class CqrxModule {
     const imports = factories.flatMap(factory => factory.imports || []);
 
     return {
-      module: CqrxModule,
-      imports: [...imports],
-      providers: providers,
       exports: providers,
+      imports: [...imports],
+      module: CqrxModule,
+      providers: providers,
     };
   }
 }

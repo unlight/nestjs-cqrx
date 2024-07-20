@@ -1,12 +1,12 @@
 import { INestApplication } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import cuid from 'cuid';
 import expect from 'expect';
+import all from 'it-all';
 
 import { AggregateRoot, CqrxModule, Event, EventStoreService, RecordedEvent } from '.';
 import { CqrxCoreModule } from './cqrx-core.module';
 import { TransformService } from './transform.service';
-import cuid from 'cuid';
-import all from 'it-all';
 
 // eslint-disable-next-line unicorn/prevent-abbreviations
 const eventstoreDbConnectionString =
@@ -23,7 +23,6 @@ describe('transformerService', () => {
   beforeAll(async () => {
     app = await NestFactory.create(
       {
-        module: CqrxModule,
         imports: [
           CqrxCoreModule.forRoot({ eventstoreDbConnectionString }),
           CqrxModule.forFeature(
@@ -40,6 +39,7 @@ describe('transformerService', () => {
             ],
           ),
         ],
+        module: CqrxModule,
         providers: [],
       },
       {

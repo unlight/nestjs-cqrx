@@ -1,8 +1,9 @@
 import { INestApplication } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { randomInt } from 'crypto';
+import cuid from 'cuid';
 import expect from 'expect';
 
-import cuid from 'cuid';
 import {
   AggregateRepository,
   AggregateRoot,
@@ -12,7 +13,6 @@ import {
   EventStoreService,
 } from '.';
 import { CqrxCoreModule } from './cqrx-core.module';
-import { randomInt } from 'crypto';
 
 describe('aggregate repository', () => {
   // eslint-disable-next-line unicorn/prevent-abbreviations
@@ -51,7 +51,6 @@ describe('aggregate repository', () => {
   beforeAll(async () => {
     app = await NestFactory.create(
       {
-        module: CqrxModule,
         imports: [
           CqrxCoreModule.forRoot({ eventstoreDbConnectionString }),
           CqrxModule.forFeature(
@@ -59,6 +58,7 @@ describe('aggregate repository', () => {
             [Event, UserCreatedEvent, UserChangedEmailEvent],
           ),
         ],
+        module: CqrxModule,
         providers: [],
       },
       {
@@ -82,12 +82,12 @@ describe('aggregate repository', () => {
   });
 
   it('findOne not found', async () => {
-    const err = (await repository
+    const error = (await repository
       .load('951')
       .catch((error: unknown) => error)) as Error;
 
-    expect(err.message).toEqual('user_951 not found');
-    expect(err.constructor.name).toEqual('StreamNotFoundError');
+    expect(error.message).toEqual('user_951 not found');
+    expect(error.constructor.name).toEqual('StreamNotFoundError');
   });
 
   it('load from event store', async () => {
@@ -101,8 +101,8 @@ describe('aggregate repository', () => {
 
     expect(user).toEqual(
       expect.objectContaining({
-        name: 'Ivan',
         email: 'ivan@mail.com',
+        name: 'Ivan',
         revision: 1n,
       }),
     );

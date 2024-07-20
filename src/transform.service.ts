@@ -63,7 +63,6 @@ export class TransformService {
   private initialize(modules: ModulesContainer) {
     for (const nestModule of modules.values()) {
       const transformers: Transformers =
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         nestModule.getProviderByKey(EVENT_TRANSFORMERS)?.instance ?? [];
 
       for (const transformer of transformers) {

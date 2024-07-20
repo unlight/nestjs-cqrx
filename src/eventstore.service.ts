@@ -7,11 +7,12 @@ import {
   START,
 } from '@eventstore/db-client';
 import { Injectable } from '@nestjs/common';
-import { TransformService } from './transform.service';
+
+import { ANY } from './constants';
+import { WrongExpectedVersion } from './errors';
 import { Event } from './event';
 import { AppendResult, AppendToStreamOptions } from './interfaces';
-import { WrongExpectedVersion } from './errors';
-import { ANY } from './constants';
+import { TransformService } from './transform.service';
 
 @Injectable()
 export class EventStoreService {
@@ -51,8 +52,8 @@ export class EventStoreService {
       });
 
       return {
-        nextExpectedRevision: result.nextExpectedRevision,
         commit: result.position?.commit,
+        nextExpectedRevision: result.nextExpectedRevision,
       };
     }
   }

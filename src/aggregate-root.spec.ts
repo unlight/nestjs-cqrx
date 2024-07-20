@@ -35,11 +35,11 @@ describe('AggregateRoot', () => {
   beforeAll(async () => {
     app = await NestFactory.create(
       {
-        module: CqrxModule,
         imports: [
           CqrxCoreModule.forRoot({ eventstoreDbConnectionString }),
           CqrxModule.forFeature([UserAggregateRoot]),
         ],
+        module: CqrxModule,
         providers: [],
       },
       {
@@ -149,7 +149,7 @@ describe('AggregateRoot', () => {
       static streamName = 'User';
     }
     const id = cuid();
-    let user = new UserAggregateRoot(id);
+    const user = new UserAggregateRoot(id);
     expect(user.streamId).toEqual(`User_${id}`);
   });
 });

@@ -1,4 +1,5 @@
 import { IEvent } from '@nestjs/cqrs';
+
 import { PlainLiteralObject, RecordedEvent } from './interfaces';
 
 export class Event<P = unknown, M = unknown> implements IEvent {

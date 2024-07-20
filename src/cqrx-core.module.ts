@@ -1,3 +1,4 @@
+import { EventStoreDBClient } from '@eventstore/db-client';
 import {
   DynamicModule,
   FactoryProvider,
@@ -12,10 +13,9 @@ import assert from 'assert';
 
 import { CQRX_OPTIONS } from './constants';
 import { Event } from './event';
+import { EventPublisher } from './event-publisher';
 import { EventStoreService } from './eventstore.service';
 import { TransformService } from './transform.service';
-import { EventStoreDBClient } from '@eventstore/db-client';
-import { EventPublisher } from './event-publisher';
 
 const defaultCqrxOptions = {
   eventstoreDbConnectionString: undefined as string | undefined,
@@ -37,9 +37,9 @@ export interface CqrxModuleAsyncOptions extends Pick<ModuleMetadata, 'imports'> 
 }
 
 @Module({
+  exports: [CqrsModule, EventStoreService, EventPublisher],
   imports: [CqrsModule],
   providers: [EventStoreService, EventPublisher, TransformService],
-  exports: [CqrsModule, EventStoreService, EventPublisher],
 })
 export class CqrxCoreModule implements OnModuleInit {
   private subscription?: () => Promise<void>;
@@ -51,6 +51,7 @@ export class CqrxCoreModule implements OnModuleInit {
 
   static forRoot(options: Partial<CqrxModuleOptions>): DynamicModule {
     return {
+      exports: [EventStoreService],
       global: true,
       imports: [],
       module: CqrxCoreModule,
@@ -62,21 +63,20 @@ export class CqrxCoreModule implements OnModuleInit {
         this.createEventStoreServiceProvider(),
         TransformService,
       ],
-      exports: [EventStoreService],
     };
   }
 
   static forRootAsync(options: CqrxModuleAsyncOptions): DynamicModule {
     return {
+      exports: [EventStoreService],
       global: true,
-      module: CqrxCoreModule,
       imports: [...(options.imports || [])],
+      module: CqrxCoreModule,
       providers: [
         TransformService,
         this.createEventStoreServiceProvider(),
         ...this.createAsyncProviders(options),
       ],
-      exports: [EventStoreService],
     };
   }
 
@@ -98,6 +98,7 @@ export class CqrxCoreModule implements OnModuleInit {
 
   private static createEventStoreServiceProvider() {
     return {
+      inject: [CQRX_OPTIONS, TransformService],
       provide: EventStoreService,
       useFactory: (options: CqrxModuleOptions, transformers: TransformService) => {
         if (!options.eventstoreDbConnectionString) {
@@ -108,23 +109,22 @@ export class CqrxCoreModule implements OnModuleInit {
         );
         return new EventStoreService(client, transformers);
       },
-      inject: [CQRX_OPTIONS, TransformService],
     };
   }
 
   private static createAsyncOptionsProvider(options: CqrxModuleAsyncOptions): Provider {
     if (options.useFactory) {
       return {
+        inject: options.inject || [],
         provide: CQRX_OPTIONS,
         useFactory: options.useFactory,
-        inject: options.inject || [],
       };
     }
 
     return {
+      inject: [(options.useClass || options.useExisting) as Type<CqrxOptionsFactory>],
       provide: CQRX_OPTIONS,
       useFactory: (factory: CqrxOptionsFactory) => factory.createCqrxOptions(),
-      inject: [(options.useClass || options.useExisting) as Type<CqrxOptionsFactory>],
     };
   }
 

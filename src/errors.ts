@@ -1,5 +1,6 @@
 import ExtensibleCustomError from 'extensible-custom-error';
-import { NO_STREAM, STREAM_EXISTS, ANY } from './constants';
+
+import { ANY, NO_STREAM, STREAM_EXISTS } from './constants';
 
 type ExpectedRevision = bigint | typeof STREAM_EXISTS | typeof NO_STREAM | typeof ANY;
 

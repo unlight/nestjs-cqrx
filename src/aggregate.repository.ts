@@ -1,9 +1,9 @@
 import { Inject } from '@nestjs/common';
 
 import { AggregateRoot } from './aggregate-root';
+import { EventPublisher } from './event-publisher';
 import { EventStoreService } from './eventstore.service';
 import { Type } from './interfaces';
-import { EventPublisher } from './event-publisher';
 
 export function aggregateRepositoryToken(value: { readonly name: string }) {
   return `AggregateRepository${value.name}`;

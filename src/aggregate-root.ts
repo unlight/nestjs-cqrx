@@ -44,7 +44,7 @@ export abstract class AggregateRoot<E extends Event = Event> {
   private getEventHandlers(event: E): EventHandlerFunction<E>[] {
     const handlers: AggregateEventHandlers | undefined = Reflect.getMetadata(
       AGGREGATE_EVENT_HANDLERS,
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+
       Reflect.getPrototypeOf(this)!,
     );
 

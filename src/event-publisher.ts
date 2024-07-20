@@ -1,9 +1,10 @@
 import { Injectable, Type } from '@nestjs/common';
-import { EventStoreService } from './eventstore.service';
-import { AggregateRoot } from './aggregate-root';
-import { Event } from './event';
 import { Constructor } from '@nestjs/cqrs';
+
+import { AggregateRoot } from './aggregate-root';
 import { ANY, NO_STREAM } from './constants';
+import { Event } from './event';
+import { EventStoreService } from './eventstore.service';
 
 export interface IEventPublisher {
   mergeClassContext<T extends Constructor<AggregateRoot<Event>>>(object: T): T;

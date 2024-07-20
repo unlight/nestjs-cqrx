@@ -1,37 +1,37 @@
+import { EventStoreDBClient } from '@eventstore/db-client';
 import { INestApplication } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { EventBus } from '@nestjs/cqrs';
+import cuid from 'cuid';
+import expect from 'expect';
 import all from 'it-all';
 import { last } from 'lodash';
 import { lastValueFrom } from 'rxjs';
+import { filter, take } from 'rxjs/operators';
+
 import { AggregateRoot } from './aggregate-root';
-import { CqrxCoreModule } from './cqrx-core.module';
 import { CqrxModule } from './cqrx.module';
+import { CqrxCoreModule } from './cqrx-core.module';
 import { Event } from './event';
 import { EventStoreService } from './eventstore.service';
 
-import cuid from 'cuid';
-import expect from 'expect';
-
-import { EventBus } from '@nestjs/cqrs';
-import { filter, take } from 'rxjs/operators';
-import { EventStoreDBClient } from '@eventstore/db-client';
-
-const eventstoreDbConnectionString =
+const eventstoreDatabaseConnectionString =
   'esdb://localhost:2113?tls=false&keepAliveTimeout=120000&keepAliveInterval=120000';
 
 describe('eventstore', () => {
-  // eslint-disable-next-line unicorn/prevent-abbreviations
   let app: INestApplication;
   let eventStoreService: EventStoreService;
 
   beforeAll(async () => {
     app = await NestFactory.create(
       {
-        module: CqrxModule,
         imports: [
-          CqrxCoreModule.forRoot({ eventstoreDbConnectionString }),
+          CqrxCoreModule.forRoot({
+            eventstoreDbConnectionString: eventstoreDatabaseConnectionString,
+          }),
           CqrxModule.forFeature([], [Event]),
         ],
+        module: CqrxModule,
         providers: [],
       },
       {
@@ -196,15 +196,15 @@ describe.skip('benchmark', () => {
   beforeAll(async () => {
     stream = 'benchmark_stream_' + Math.random().toString(36).slice(2);
     const events = Array.from({ length: 99999 }).map((_, index) => ({
-      type: 'SimpleAdd',
       data: { index },
+      type: 'SimpleAdd',
     }));
 
-    client = EventStoreDBClient.connectionString(eventstoreDbConnectionString);
+    client = EventStoreDBClient.connectionString(eventstoreDatabaseConnectionString);
     const eventStoreService = new EventStoreService(client, new Map() as any);
 
-    await eventStoreService.appendToStream(stream, events).catch(err => {
-      console.log('err', err);
+    await eventStoreService.appendToStream(stream, events).catch(error => {
+      console.log('err', error);
     });
   });
 
@@ -243,11 +243,11 @@ describe.skip('benchmark', () => {
       get(type) {
         return event => {
           Object.create(MyEvent.prototype, {
-            type: { value: event.type },
-            data: { value: event.data },
-            position: { value: event.position },
-            metadata: { value: event.metadata },
             created: { value: event.created },
+            data: { value: event.data },
+            metadata: { value: event.metadata },
+            position: { value: event.position },
+            type: { value: event.type },
           });
         };
       },
