@@ -39,6 +39,7 @@ jobs:
       - name: 'Install depependencies'
         run: |
           npm install
+          npm install tsup --no-save
       - name: 'Build'
         run: npm run build
       - name: 'Release'
