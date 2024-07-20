@@ -12,6 +12,7 @@ import {
   EventStoreService,
 } from '.';
 import { CqrxCoreModule } from './cqrx-core.module';
+import { randomInt } from 'crypto';
 
 describe('aggregate repository', () => {
   // eslint-disable-next-line unicorn/prevent-abbreviations
@@ -165,6 +166,34 @@ describe('aggregate repository', () => {
     it('commit should not fail', async () => {
       const aggregate = repository.create('359');
       await aggregate.commit();
+    });
+  });
+
+  describe('expected revision', () => {
+    it('for new stream', async () => {
+      const user = repository.create(randomInt(999_999_999).toString());
+      user.apply(new UserChangedEmailEvent({ email: 'toxostoma@wankly.co.uk' }));
+      await user.commit();
+    });
+
+    it('for existing stream', async () => {
+      const streamId = randomInt(999_999_999).toString();
+      const user = repository.create(streamId);
+      user.apply(new UserChangedEmailEvent({ email: 'promiscuity@lapicide1.net' }));
+      user.apply(new UserChangedEmailEvent({ email: 'promiscuity@lapicide2.net' }));
+      await user.commit();
+      const user2 = await repository.load(streamId);
+      user2.apply(new UserChangedEmailEvent({ email: 'promiscuity@lapicide3.net' }));
+      await user2.commit();
+    });
+
+    it('error when wrong revision', async () => {
+      const streamId = randomInt(999_999_999).toString();
+      const user = repository.create(streamId);
+
+      user.revision = 1000n;
+
+      await expect(user.commit()).rejects.toThrowError();
     });
   });
 });

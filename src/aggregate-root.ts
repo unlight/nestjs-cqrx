@@ -37,6 +37,10 @@ export abstract class AggregateRoot<E extends Event = Event> {
     return this[REVISION];
   }
 
+  set revision(value: bigint) {
+    this[REVISION] = value;
+  }
+
   private getEventHandlers(event: E): EventHandlerFunction<E>[] {
     const handlers: AggregateEventHandlers | undefined = Reflect.getMetadata(
       AGGREGATE_EVENT_HANDLERS,

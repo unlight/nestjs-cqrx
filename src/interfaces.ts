@@ -20,3 +20,11 @@ export type { PlainLiteralObject, Type } from '@nestjs/common';
 export type { AppendToStreamOptions } from '@eventstore/db-client/dist/streams/appendToStream';
 export type { RecordedEvent } from '@eventstore/db-client/dist/types/events';
 export type { Nullable } from 'simplytyped';
+
+export type AppendResult = {
+  /**
+   * The current revision of the stream, to be passed as the `expectedRevision` in the next call.
+   */
+  nextExpectedRevision: bigint;
+  commit?: bigint;
+};

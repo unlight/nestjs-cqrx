@@ -2,28 +2,20 @@ name: Build and Release
 on:
   - push
   - pull_request
+
 jobs:
   build:
-    name: 'Test on Node ${{ matrix.node }} and ${{ matrix.os }}'
-    runs-on: '${{ matrix.os }}'
-    strategy:
-      matrix:
-        node:
-          - 20
-          # - 18
-        os:
-          - ubuntu-latest
-          # - windows-latest
-          # - macOS-latest
+    name: 'Test'
+    runs-on: ubuntu-latest
     steps:
       - name: 'Checkout repository'
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: 'Start containers'
         run: docker-compose up -d
-      - name: 'Setup Node ${{ matrix.node }}'
-        uses: actions/setup-node@v2
+      - name: 'Setup Node'
+        uses: actions/setup-node@v3
         with:
-          node-version: '${{ matrix.node }}'
+          node-version: 22
       - name: 'Install depependencies'
         run: npm install
       - name: 'Test'
@@ -31,6 +23,7 @@ jobs:
       - name: 'Stop containers'
         if: always()
         run: docker-compose down
+
   release:
     name: 'Release'
     runs-on: ubuntu-latest
@@ -38,15 +31,14 @@ jobs:
     if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/next')
     steps:
       - name: 'Checkout repository'
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: 'Setup Node'
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
-          node-version: 20
+          node-version: 22
       - name: 'Install depependencies'
         run: |
           npm install
-          npm install tsup --no-save
       - name: 'Build'
         run: npm run build
       - name: 'Release'

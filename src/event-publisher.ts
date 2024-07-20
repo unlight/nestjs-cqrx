@@ -3,6 +3,7 @@ import { EventStoreService } from './eventstore.service';
 import { AggregateRoot } from './aggregate-root';
 import { Event } from './event';
 import { Constructor } from '@nestjs/cqrs';
+import { ANY, NO_STREAM } from './constants';
 
 export interface IEventPublisher {
   mergeClassContext<T extends Constructor<AggregateRoot<Event>>>(object: T): T;
@@ -13,27 +14,39 @@ export interface IEventPublisher {
 export class EventPublisher implements IEventPublisher {
   constructor(private readonly eventStoreService: EventStoreService) {}
 
+  private static async publish(
+    eventStoreService: EventStoreService,
+    aggregate: AggregateRoot,
+    events: Event[],
+  ) {
+    const result = await eventStoreService.appendToStream(aggregate.streamId, events, {
+      expectedRevision: aggregate.revision > 0 ? aggregate.revision : NO_STREAM,
+    });
+
+    aggregate.revision = result.nextExpectedRevision;
+  }
+
   mergeClassContext<T extends Type<AggregateRoot>>(metatype: T): T {
     const eventStoreService = this.eventStoreService;
 
     return class extends metatype {
       async publish(event: Event) {
-        await eventStoreService.appendToStream(this.streamId, event);
+        return EventPublisher.publish(eventStoreService, this, [event]);
       }
 
       async publishAll(events: Event[]) {
-        await eventStoreService.appendToStream(this.streamId, events);
+        return EventPublisher.publish(eventStoreService, this, events);
       }
     };
   }
 
   mergeObjectContext<T extends AggregateRoot<Event>>(object: T): T {
     object.publish = async event => {
-      await this.eventStoreService.appendToStream(object.streamId, event);
+      return EventPublisher.publish(this.eventStoreService, object, [event]);
     };
 
     object.publishAll = async events => {
-      await this.eventStoreService.appendToStream(object.streamId, events);
+      return EventPublisher.publish(this.eventStoreService, object, events);
     };
 
     return object;

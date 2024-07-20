@@ -9,15 +9,9 @@ import {
 import { Injectable } from '@nestjs/common';
 import { TransformService } from './transform.service';
 import { Event } from './event';
-import { AppendToStreamOptions } from './interfaces';
-
-export type AppendResult = {
-  /**
-   * The current revision of the stream, to be passed as the `expectedRevision` in the next call.
-   */
-  nextExpectedRevision: bigint;
-  commit?: bigint;
-};
+import { AppendResult, AppendToStreamOptions } from './interfaces';
+import { WrongExpectedVersion } from './errors';
+import { ANY } from './constants';
 
 @Injectable()
 export class EventStoreService {
@@ -55,6 +49,7 @@ export class EventStoreService {
       const result = await this.client.appendToStream(streamId, databaseEvents, {
         expectedRevision,
       });
+
       return {
         nextExpectedRevision: result.nextExpectedRevision,
         commit: result.position?.commit,

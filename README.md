@@ -161,6 +161,7 @@ it will be automatically added to transform service.
 
 ## Todo
 
+- read from specific position
 - find lib for creating errors
 - better to split on read/write events
 - reducer (similar to evolve of emmet)

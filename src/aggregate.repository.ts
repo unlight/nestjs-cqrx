@@ -1,7 +1,7 @@
 import { Inject } from '@nestjs/common';
 
 import { AggregateRoot } from './aggregate-root';
-import { AppendResult, EventStoreService } from './eventstore.service';
+import { EventStoreService } from './eventstore.service';
 import { Type } from './interfaces';
 import { EventPublisher } from './event-publisher';
 
@@ -17,12 +17,14 @@ export class AggregateRepository<T extends AggregateRoot> {
   constructor(
     private readonly eventStoreService: EventStoreService,
     private readonly Aggregate: Type<T>,
+    private readonly eventPublisher: EventPublisher = new EventPublisher(
+      eventStoreService,
+    ),
   ) {}
 
   create(id: string): T {
     const aggregate: T = new this.Aggregate(id);
-    const eventPublisher = new EventPublisher(this.eventStoreService);
-    eventPublisher.mergeObjectContext(aggregate);
+    this.eventPublisher.mergeObjectContext(aggregate);
 
     return aggregate;
   }
@@ -48,6 +50,7 @@ export class AggregateRepository<T extends AggregateRoot> {
    */
   async load(id: string): Promise<T> {
     const aggregate = new this.Aggregate(id);
+    this.eventPublisher.mergeObjectContext(aggregate);
     const streamEvents = this.eventStoreService.readFromStart(aggregate.streamId);
 
     for await (const event of streamEvents) {
@@ -60,18 +63,13 @@ export class AggregateRepository<T extends AggregateRoot> {
   /**
    * Get uncommited events from aggregate and append to stream
    */
-  async save(aggregate: T): Promise<AppendResult> {
+  async save(aggregate: T): Promise<void> {
     const events = aggregate.getUncommittedEvents();
     // Commit, but no publish
     for (const event of events) {
       await aggregate.callEventHandlers(event);
     }
-    const result = await this.eventStoreService.appendToStream(
-      aggregate.streamId,
-      events,
-    );
+    await this.eventStoreService.appendToStream(aggregate.streamId, events);
     aggregate.uncommit();
-
-    return result;
   }
 }
