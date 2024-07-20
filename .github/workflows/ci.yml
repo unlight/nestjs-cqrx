@@ -37,8 +37,7 @@ jobs:
         with:
           node-version: 22
       - name: 'Install depependencies'
-        run: |
-          npm install --force
+        run: npm install --force
       - name: 'Build'
         run: npm run build
       - name: 'Release'
