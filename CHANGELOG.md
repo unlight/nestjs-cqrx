@@ -1,3 +1,9 @@
+## [3.0.1](https://github.com/unlight/nestjs-cqrx/compare/v3.0.0...v3.0.1) (2024-07-20)
+
+### Bug Fixes
+
+* Minor fixes ([387affc](https://github.com/unlight/nestjs-cqrx/commit/387affc754e46e732c4008904888e99e6cea1712))
+
 ## [3.0.0](https://github.com/unlight/nestjs-cqrx/compare/v2.6.1...v3.0.0) (2024-07-20)
 
 
