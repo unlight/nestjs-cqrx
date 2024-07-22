@@ -57,7 +57,8 @@
   },
   "dependencies": {
     "extensible-custom-error": "^0.0.7",
-    "node-is-class": "^1.0.4"
+    "node-is-class": "^1.0.4",
+    "tslib": "^2.6.3"
   },
   "peerDependencies": {
     "@eventstore/db-client": "6",
@@ -126,7 +127,6 @@
     "supertest": "^7.0.0",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
-    "tslib": "^2.6.3",
     "tsup": "^8.2.1",
     "typescript": "^5.5.3",
     "typescript-eslint": "^7.16.1",
