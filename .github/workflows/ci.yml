@@ -19,8 +19,8 @@ jobs:
       - name: 'Install depependencies'
         run: npm install --force
 
-      - name: 'Check docker-compose version'
-        run: docker compose --version
+      - name: 'Check docker compose version'
+        run: docker compose version
 
       - name: 'Start containers'
         run: docker compose up -d
