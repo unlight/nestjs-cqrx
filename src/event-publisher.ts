@@ -2,11 +2,11 @@ import { Injectable, Type } from '@nestjs/common';
 import { Constructor } from '@nestjs/cqrs';
 
 import { AggregateRoot } from './aggregate-root';
-import { ANY, NO_STREAM } from './constants';
+import { NO_STREAM } from './constants';
 import { Event } from './event';
 import { EventStoreService } from './eventstore.service';
 
-export interface IEventPublisher {
+interface IEventPublisher {
   mergeClassContext<T extends Constructor<AggregateRoot<Event>>>(object: T): T;
   mergeObjectContext<T extends AggregateRoot<Event>>(object: T): T;
 }
@@ -27,8 +27,8 @@ export class EventPublisher implements IEventPublisher {
     aggregate.revision = result.nextExpectedRevision;
   }
 
-  mergeClassContext<T extends Type<AggregateRoot>>(metatype: T): T {
-    const eventStoreService = this.eventStoreService;
+  mergeClassContext = <T extends Type<AggregateRoot>>(metatype: T): T => {
+    const { eventStoreService } = this;
 
     return class extends metatype {
       async publish(event: Event) {
@@ -39,19 +39,27 @@ export class EventPublisher implements IEventPublisher {
         return EventPublisher.publish(eventStoreService, this, events);
       }
     };
-  }
+  };
 
-  mergeObjectContext<T extends AggregateRoot<Event>>(object: T): T {
-    object.publish = async event => {
-      return EventPublisher.publish(this.eventStoreService, object, [event]);
-    };
+  mergeObjectContext = <T extends AggregateRoot<Event>>(object: T): T => {
+    const { eventStoreService } = this;
 
-    object.publishAll = async events => {
-      return EventPublisher.publish(this.eventStoreService, object, events);
-    };
+    Object.defineProperty(object, 'publish', {
+      enumerable: false,
+      value: async event => {
+        return EventPublisher.publish(eventStoreService, object, [event]);
+      },
+    });
+
+    Object.defineProperty(object, 'publishAll', {
+      enumerable: false,
+      value: async events => {
+        return EventPublisher.publish(eventStoreService, object, events);
+      },
+    });
 
     return object;
-  }
+  };
 
   async publish<T extends AggregateRoot<Event>, E extends Event>(
     object: T,

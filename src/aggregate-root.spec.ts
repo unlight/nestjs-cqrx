@@ -152,4 +152,18 @@ describe('AggregateRoot', () => {
     const user = new UserAggregateRoot(id);
     expect(user.streamId).toEqual(`User_${id}`);
   });
+
+  it('publish and publishAll are not enumerable', () => {
+    const eventPublisher = app.get(EventPublisher);
+    const UserModel = eventPublisher.mergeClassContext(UserAggregateRoot);
+    const user1 = new UserModel(cuid());
+
+    expect(Object.keys(user1)).not.toContainEqual('publish');
+    expect(Object.keys(user1)).not.toContainEqual('publishAll');
+
+    const user2 = userAggregateRootRepository.create(cuid());
+
+    expect(Object.keys(user2)).not.toContainEqual('publish');
+    expect(Object.keys(user2)).not.toContainEqual('publishAll');
+  });
 });
