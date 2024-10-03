@@ -1,3 +1,9 @@
+## [3.0.2](https://github.com/unlight/nestjs-cqrx/compare/v3.0.1...v3.0.2) (2024-10-03)
+
+### Bug Fixes
+
+* Make merged publish methods are not enumerable ([65686bb](https://github.com/unlight/nestjs-cqrx/commit/65686bb6cb0f9c3d4bb66016e4a171cdb9d5ecfd))
+
 ## [3.0.1](https://github.com/unlight/nestjs-cqrx/compare/v3.0.0...v3.0.1) (2024-07-20)
 
 ### Bug Fixes
