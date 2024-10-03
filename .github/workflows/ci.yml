@@ -10,19 +10,27 @@ jobs:
     steps:
       - name: 'Checkout repository'
         uses: actions/checkout@v3
+
       - name: 'Setup Node'
         uses: actions/setup-node@v3
         with:
-          node-version: 20
+          node-version: 22
+
       - name: 'Install depependencies'
         run: npm install --force
+
+      - name: 'Check docker-compose version'
+        run: docker compose --version
+
       - name: 'Start containers'
-        run: docker-compose up -d
+        run: docker compose up -d
+
       - name: 'Test'
         run: npm run test
+
       - name: 'Stop containers'
         if: always()
-        run: docker-compose down
+        run: docker compose down
 
   release:
     name: 'Release'
@@ -32,14 +40,18 @@ jobs:
     steps:
       - name: 'Checkout repository'
         uses: actions/checkout@v3
+
       - name: 'Setup Node'
         uses: actions/setup-node@v3
         with:
-          node-version: 20
+          node-version: 22
+
       - name: 'Install depependencies'
         run: npm install --force
+
       - name: 'Build'
         run: npm run build
+
       - name: 'Release'
         run: |
           npx semantic-release
