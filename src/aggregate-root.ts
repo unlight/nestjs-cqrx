@@ -75,12 +75,13 @@ export abstract class AggregateRoot<E extends Event = Event> {
   }
 
   async commit(): Promise<void> {
-    for (const event of this[INTERNAL_EVENTS]) {
+    const events = this.getUncommittedEvents();
+    this[INTERNAL_EVENTS].length = 0;
+
+    for (const event of events) {
       await this.callEventHandlers(event);
     }
 
-    const events = this.getUncommittedEvents();
-    this[INTERNAL_EVENTS].length = 0;
     await this.publishAll(events);
   }
 

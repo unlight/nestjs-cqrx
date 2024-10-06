@@ -56,7 +56,6 @@
     "mocha": "node -r tsconfig-paths/register -r ts-node/register node_modules/mocha/bin/_mocha --no-timeouts --ui=mocha-jested"
   },
   "dependencies": {
-    "extensible-custom-error": "^0.0.7",
     "node-is-class": "^1.0.4",
     "tslib": "^2.7.0"
   },

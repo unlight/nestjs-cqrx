@@ -8,8 +8,6 @@ import {
 } from '@eventstore/db-client';
 import { Injectable } from '@nestjs/common';
 
-import { ANY } from './constants';
-import { WrongExpectedVersion } from './errors';
 import { Event } from './event';
 import { AppendResult, AppendToStreamOptions } from './interfaces';
 import { TransformService } from './transform.service';
