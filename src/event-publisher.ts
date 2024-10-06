@@ -21,7 +21,7 @@ export class EventPublisher implements IEventPublisher {
     events: Event[],
   ) {
     const result = await eventStoreService.appendToStream(aggregate.streamId, events, {
-      expectedRevision: aggregate.revision > 0 ? aggregate.revision : NO_STREAM,
+      expectedRevision: aggregate.revision >= 0 ? aggregate.revision : NO_STREAM,
     });
 
     aggregate.revision = result.nextExpectedRevision;

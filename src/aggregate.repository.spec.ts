@@ -195,5 +195,18 @@ describe('aggregate repository', () => {
 
       await expect(user.commit()).rejects.toThrowError();
     });
+
+    it('revision after apply and commit', async () => {
+      const streamId = randomInt(999_999_999).toString();
+      const user = repository.create(streamId);
+
+      user.apply(new UserCreatedEvent({ name: 'Ivan' }));
+      await user.commit();
+
+      user.apply(new UserChangedEmailEvent({ email: 'haploscope@meteograph.org' }));
+      await user.commit();
+
+      expect(user.revision).toBe(1n);
+    });
   });
 });
