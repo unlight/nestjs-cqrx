@@ -208,5 +208,19 @@ describe('aggregate repository', () => {
 
       expect(user.revision).toBe(1n);
     });
+
+    it.skip('force ignore expected revision', async () => {
+      const streamId = randomInt(999_999_999).toString();
+      const user = repository.create(streamId);
+
+      user.apply(new UserCreatedEvent({ name: 'Sam' }));
+      await user.commit();
+
+      // Some error happened and we must compensate event in any case
+      user.revision = 100n;
+
+      user.apply(new UserBlockedEvent({}, { anyRevision: true }));
+      await user.commit();
+    });
   });
 });

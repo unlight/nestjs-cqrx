@@ -56,8 +56,7 @@
     "mocha": "node -r tsconfig-paths/register -r ts-node/register node_modules/mocha/bin/_mocha --no-timeouts --ui=mocha-jested"
   },
   "dependencies": {
-    "node-is-class": "^1.0.4",
-    "tslib": "^2.7.0"
+    "node-is-class": "^1.0.4"
   },
   "peerDependencies": {
     "@eventstore/db-client": "6",
@@ -67,11 +66,11 @@
     "rxjs": "6 - 7"
   },
   "devDependencies": {
-    "@apollo/gateway": "^2.9.2",
+    "@apollo/gateway": "^2.9.3",
     "@commitlint/cli": "^19.5.0",
     "@commitlint/config-conventional": "^19.5.0",
-    "@eslint/compat": "^1.1.1",
-    "@eslint/js": "^9.11.1",
+    "@eslint/compat": "^1.2.1",
+    "@eslint/js": "^9.13.0",
     "@eventstore/db-client": "^6.1.0",
     "@nestjs/common": "10",
     "@nestjs/core": "10",
@@ -97,13 +96,13 @@
     "commitizen": "^4.3.1",
     "conventional-changelog-conventionalcommits": "^8.0.0",
     "cuid": "^2.1.8",
-    "eslint": "^9.11.1",
+    "eslint": "^9.12.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-only-warn": "^1.1.0",
     "eslint-plugin-perfectionist": "^3.8.0",
     "eslint-plugin-prettier": "^5.2.1",
     "eslint-plugin-simple-import-sort": "^12.1.1",
-    "eslint-plugin-unicorn": "^55.0.0",
+    "eslint-plugin-unicorn": "^56.0.0",
     "eslint-plugin-wix-editor": "^3.3.0",
     "expect": "^29.7.0",
     "globals": "^15.10.0",
