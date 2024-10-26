@@ -4,15 +4,11 @@ import { AGGREGATE_EVENT_HANDLERS } from './constants';
 import { Event } from './event';
 import { AggregateEventHandlers, EventHandlerFunction, Type } from './interfaces';
 
-const INTERNAL_EVENTS = Symbol('Internal Events');
-const VERSION = Symbol('Version');
-const REVISION = Symbol('Revision');
-
 export abstract class AggregateRoot<E extends Event = Event> {
   protected static readonly streamName: string = '';
-  private readonly [INTERNAL_EVENTS]: E[] = [];
-  private [VERSION] = 0;
-  private [REVISION]: bigint = -1n;
+  readonly #INTERNAL_EVENTS: E[] = [];
+  #VERSION = 0;
+  #REVISION: bigint = -1n;
   /**
    * Stream name without suffix identifier
    */
@@ -23,30 +19,33 @@ export abstract class AggregateRoot<E extends Event = Event> {
   readonly id: string;
 
   constructor(id: string) {
-    const streamName = this.constructor['streamName'] || this.constructor.name;
+    const streamName =
+      ('streamName' in this.constructor &&
+        typeof this.constructor.streamName === 'string' &&
+        this.constructor.streamName) ||
+      this.constructor.name;
 
     this.id = id;
     this.streamId = `${streamName}_${id}`;
   }
 
   get version(): number {
-    return this[VERSION];
+    return this.#VERSION;
   }
 
   get revision(): bigint {
-    return this[REVISION];
+    return this.#REVISION;
   }
 
   set revision(value: bigint) {
-    this[REVISION] = value;
+    this.#REVISION = value;
   }
 
   private getEventHandlers(event: E): EventHandlerFunction<E>[] {
     const handlers: AggregateEventHandlers | undefined = Reflect.getMetadata(
       AGGREGATE_EVENT_HANDLERS,
-
       Reflect.getPrototypeOf(this)!,
-    );
+    ) as AggregateEventHandlers | undefined;
 
     return (handlers?.get(event.constructor as unknown as Type<E>) ?? []).map(
       key => this[key] as unknown as EventHandlerFunction<E>,
@@ -54,7 +53,7 @@ export abstract class AggregateRoot<E extends Event = Event> {
   }
 
   apply<T extends E = E>(event: T): void {
-    this[INTERNAL_EVENTS].push(event);
+    this.#INTERNAL_EVENTS.push(event);
   }
 
   async callEventHandlers<T extends E = E>(event: T): Promise<void> {
@@ -70,13 +69,13 @@ export abstract class AggregateRoot<E extends Event = Event> {
 
   async applyFromHistory<T extends E = E>(event: T): Promise<void> {
     await this.callEventHandlers(event);
-    this[VERSION] += 1;
-    this[REVISION] = event.revision!;
+    this.#VERSION += 1;
+    this.#REVISION = event.revision!;
   }
 
   async commit(): Promise<void> {
     const events = this.getUncommittedEvents();
-    this[INTERNAL_EVENTS].length = 0;
+    this.#INTERNAL_EVENTS.length = 0;
 
     for (const event of events) {
       await this.callEventHandlers(event);
@@ -86,11 +85,11 @@ export abstract class AggregateRoot<E extends Event = Event> {
   }
 
   getUncommittedEvents(): E[] {
-    return [...this[INTERNAL_EVENTS]];
+    return [...this.#INTERNAL_EVENTS];
   }
 
   uncommit(): void {
-    this[INTERNAL_EVENTS].length = 0;
+    this.#INTERNAL_EVENTS.length = 0;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

@@ -43,7 +43,8 @@ describe('aggregate repository', () => {
     }
 
     @EventHandler(UserBlockedEvent)
-    onBlock(event: UserBlockedEvent) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    onBlock(_: UserBlockedEvent) {
       this.isBlocked = true;
     }
   }

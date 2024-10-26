@@ -13,9 +13,9 @@ export interface AsyncAggregateRootFactory extends Pick<ModuleMetadata, 'imports
   inject?: FactoryProvider['inject'];
 }
 
-export type EventHandlerFunction<E extends Event = Event> = (
-  event: E,
-) => Observable<void> | Promise<void> | void;
+export type EventHandlerFunction<E extends Event = Event> =
+  | ((event: E) => Observable<void> | Promise<void> | void)
+  | (() => Observable<void> | Promise<void> | void);
 
 export type { AppendToStreamOptions } from '@eventstore/db-client/dist/streams/appendToStream';
 export type { RecordedEvent } from '@eventstore/db-client/dist/types/events';
