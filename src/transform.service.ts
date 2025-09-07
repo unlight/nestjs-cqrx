@@ -1,7 +1,7 @@
 import { Injectable, Type } from '@nestjs/common';
 import { ModulesContainer } from '@nestjs/core';
-import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
-import { EVENTS_HANDLER_METADATA } from '@nestjs/cqrs/dist/decorators/constants';
+import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper.js';
+import { EVENTS_HANDLER_METADATA } from '@nestjs/cqrs/dist/decorators/constants.js';
 import isClass from 'node-is-class';
 
 import { EVENT_TRANSFORMERS } from './constants';
