@@ -1,3 +1,9 @@
+## [4.0.2](https://github.com/unlight/nestjs-cqrx/compare/v4.0.1...v4.0.2) (2025-09-07)
+
+### Bug Fixes
+
+* Imports file extensions ([361defd](https://github.com/unlight/nestjs-cqrx/commit/361defd19609cf1784713c62e3d459fe049eab49))
+
 ## [4.0.1](https://github.com/unlight/nestjs-cqrx/compare/v4.0.0...v4.0.1) (2025-09-07)
 
 ### Bug Fixes
