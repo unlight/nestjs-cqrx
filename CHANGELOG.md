@@ -1,3 +1,9 @@
+## [4.0.1](https://github.com/unlight/nestjs-cqrx/compare/v4.0.0...v4.0.1) (2025-09-07)
+
+### Bug Fixes
+
+* Remove package private property ([cf3f4ac](https://github.com/unlight/nestjs-cqrx/commit/cf3f4ac1145b5615d8bb286f6f16fd216ccbcf62))
+
 ## [4.0.0](https://github.com/unlight/nestjs-cqrx/compare/v3.0.3...v4.0.0) (2025-09-07)
 
 ### ⚠ BREAKING CHANGES
