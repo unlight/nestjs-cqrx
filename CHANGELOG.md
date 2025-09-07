@@ -1,3 +1,13 @@
+## [4.0.0](https://github.com/unlight/nestjs-cqrx/compare/v3.0.3...v4.0.0) (2025-09-07)
+
+### ⚠ BREAKING CHANGES
+
+* Package is ESM only
+
+### Miscellaneous Chores
+
+* Package is ESM only ([ea35741](https://github.com/unlight/nestjs-cqrx/commit/ea357413035a9a6cf7af1172fe567f442e5cdecd))
+
 ## [3.0.3](https://github.com/unlight/nestjs-cqrx/compare/v3.0.2...v3.0.3) (2024-10-06)
 
 ### Bug Fixes
