@@ -2,7 +2,11 @@ import { lastValueFrom, Observable } from 'rxjs';
 
 import { AGGREGATE_EVENT_HANDLERS } from './constants';
 import { Event } from './event';
-import { AggregateEventHandlers, EventHandlerFunction, Type } from './interfaces';
+import {
+  AggregateEventHandlers,
+  EventHandlerFunction,
+  Type,
+} from './interfaces';
 
 export abstract class AggregateRoot<E extends Event = Event> {
   protected static readonly streamName: string = '';

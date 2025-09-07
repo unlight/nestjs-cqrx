@@ -86,9 +86,10 @@ describe('tick-tack-toe', () => {
   });
 
   it('create game', async () => {
-    const gameDto = await commandBus.execute<CreateGameCommand, GameCreatedDtoReponse>(
-      new CreateGameCommand(),
-    );
+    const gameDto = await commandBus.execute<
+      CreateGameCommand,
+      GameCreatedDtoReponse
+    >(new CreateGameCommand());
     expect(gameDto).toBeTruthy();
 
     gameId = gameDto.id;
@@ -96,10 +97,14 @@ describe('tick-tack-toe', () => {
 
   it('players join the game', async () => {
     // Join player 1
-    const result1 = await commandBus.execute(new PlayerJoinCommand(gameId, '1'));
+    const result1 = await commandBus.execute(
+      new PlayerJoinCommand(gameId, '1'),
+    );
     expect(result1).toBeTruthy();
     // Join player 2
-    const result2 = await commandBus.execute(new PlayerJoinCommand(gameId, '2'));
+    const result2 = await commandBus.execute(
+      new PlayerJoinCommand(gameId, '2'),
+    );
     expect(result2).toBeTruthy();
   });
 

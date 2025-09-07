@@ -4,11 +4,6 @@ import globals from 'globals';
 import pluginJs from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import prettier from 'eslint-plugin-prettier/recommended';
-import * as unicorn from 'eslint-plugin-unicorn';
-import perfectionist from 'eslint-plugin-perfectionist';
-import simpleImportSort from 'eslint-plugin-simple-import-sort';
-import wixEditor from 'eslint-plugin-wix-editor';
-import { fixupPluginRules } from '@eslint/compat';
 
 /** @type {import('@typescript-eslint/utils').TSESLint.FlatConfig.ConfigFile} */
 export default [
@@ -36,56 +31,6 @@ export default [
       'max-lines': [1, { max: 300 }],
       'max-params': [1, { max: 5 }],
       'no-unneeded-ternary': [1],
-    },
-  },
-  {
-    plugins: {
-      'wix-editor': fixupPluginRules(wixEditor),
-    },
-    rules: {
-      'wix-editor/no-instanceof-array': 1,
-      'wix-editor/no-not-not': 1,
-      'wix-editor/no-unneeded-match': 1,
-      'wix-editor/prefer-filter': 1,
-      'wix-editor/prefer-ternary': 1,
-      'wix-editor/return-boolean': 1,
-      'wix-editor/simplify-boolean-expression': 1,
-    },
-  },
-  {
-    ...unicorn.configs['flat/recommended'],
-    rules: {
-      'unicorn/prevent-abbreviations': [
-        'warn',
-        {
-          replacements: {
-            args: false,
-          },
-        },
-      ],
-    },
-  },
-  {
-    plugins: {
-      perfectionist,
-    },
-    rules: {
-      'perfectionist/sort-objects': [
-        'warn',
-        {
-          type: 'natural',
-          order: 'asc',
-        },
-      ],
-    },
-  },
-  {
-    plugins: {
-      'simple-import-sort': simpleImportSort,
-    },
-    rules: {
-      'simple-import-sort/imports': 'warn',
-      'simple-import-sort/exports': 'warn',
     },
   },
   {

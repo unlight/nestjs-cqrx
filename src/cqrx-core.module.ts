@@ -1,4 +1,4 @@
-import { EventStoreDBClient } from '@eventstore/db-client';
+import { KurrentDBClient } from '@kurrent/kurrentdb-client';
 import {
   DynamicModule,
   FactoryProvider,
@@ -18,7 +18,7 @@ import { EventStoreService } from './eventstore.service';
 import { TransformService } from './transform.service';
 
 const defaultCqrxOptions = {
-  eventstoreDbConnectionString: undefined as string | undefined,
+  eventstoreConnectionString: undefined as string | undefined,
 };
 
 export type CqrxModuleOptions = typeof defaultCqrxOptions;
@@ -27,7 +27,8 @@ interface CqrxOptionsFactory {
   createCqrxOptions(): Partial<CqrxModuleOptions>;
 }
 
-export interface CqrxModuleAsyncOptions extends Pick<ModuleMetadata, 'imports'> {
+export interface CqrxModuleAsyncOptions
+  extends Pick<ModuleMetadata, 'imports'> {
   useClass?: Type<CqrxOptionsFactory>;
   useExisting?: Type<CqrxOptionsFactory>;
   useFactory?: (
@@ -80,12 +81,17 @@ export class CqrxCoreModule implements OnModuleInit {
     };
   }
 
-  private static createAsyncProviders(options: CqrxModuleAsyncOptions): Provider[] {
+  private static createAsyncProviders(
+    options: CqrxModuleAsyncOptions,
+  ): Provider[] {
     if (options.useFactory || options.useExisting) {
       return [this.createAsyncOptionsProvider(options)];
     }
 
-    assert(options.useClass, 'useClass, useFactory or useExisting must be provided');
+    assert(
+      options.useClass,
+      'useClass, useFactory or useExisting must be provided',
+    );
 
     return [
       this.createAsyncOptionsProvider(options),
@@ -100,19 +106,26 @@ export class CqrxCoreModule implements OnModuleInit {
     return {
       inject: [CQRX_OPTIONS, TransformService],
       provide: EventStoreService,
-      useFactory: (options: CqrxModuleOptions, transformers: TransformService) => {
-        if (!options.eventstoreDbConnectionString) {
-          throw new Error('Cannot create eventstore client, check module options.');
+      useFactory: (
+        options: CqrxModuleOptions,
+        transformers: TransformService,
+      ) => {
+        if (!options.eventstoreConnectionString) {
+          throw new Error(
+            'Cannot create eventstore client, check module options.',
+          );
         }
-        const client = EventStoreDBClient.connectionString(
-          options.eventstoreDbConnectionString,
+        const client = KurrentDBClient.connectionString(
+          options.eventstoreConnectionString,
         );
         return new EventStoreService(client, transformers);
       },
     };
   }
 
-  private static createAsyncOptionsProvider(options: CqrxModuleAsyncOptions): Provider {
+  private static createAsyncOptionsProvider(
+    options: CqrxModuleAsyncOptions,
+  ): Provider {
     if (options.useFactory) {
       return {
         inject: options.inject || [],
@@ -122,7 +135,9 @@ export class CqrxCoreModule implements OnModuleInit {
     }
 
     return {
-      inject: [(options.useClass || options.useExisting) as Type<CqrxOptionsFactory>],
+      inject: [
+        (options.useClass || options.useExisting) as Type<CqrxOptionsFactory>,
+      ],
       provide: CQRX_OPTIONS,
       useFactory: (factory: CqrxOptionsFactory) => factory.createCqrxOptions(),
     };

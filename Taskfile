@@ -2,22 +2,22 @@
 PATH="$PWD/node_modules/.bin":$PATH
 set -e
 
-build_tsup() {
+buildMicrobundle5() {
   set -x
   rm -rfv dist
-  tsup src/index.ts --format cjs,esm --target es2020 --no-sourcemap --cjsInterop --keep-names
-  mv dist/index.js dist/index.cjs
-  tsup src/index.ts --dts-only
-  cp -fv README.md dist
-
-  cat package.json | jq '.main = "./index.cjs"' |
-    jq 'del(.private)' |
-    jq 'del(.workspaces)' |
-    jq '.module = "./index.mjs"' |
-    jq '.types = "./index.d.ts"' |
-    jq '.exports.".".import = "./index.mjs"' |
-    jq '.exports.".".require = "./index.cjs"' \
-      >dist/package.json
+  dts-bundle-generator -o dist/index.d.ts src/index.ts || true
+  microbundle -i src/index.ts --tsconfig tsconfig.build.json --no-generateTypes --no-sourcemap --no-compress --target node -f esm -o dist
+  name=$(cat package.json | jq -r '.name')
+  cp -v README.md package.json dist
+  cd dist
+  mv index.d.ts "$name.d.ts"
+  cat ../package.json | jq --arg name "$name" '
+    .type = "module" |
+    .module = "./\($name).mjs" |
+    .types = "./\($name).d.ts"
+  ' > package.json
+  # .exports.".".default = "./\($name).mjs"
+  cd ..
   set +x
 }
 

@@ -51,7 +51,9 @@ export class AggregateRepository<T extends AggregateRoot> {
   async load(id: string): Promise<T> {
     const aggregate = new this.Aggregate(id);
     this.eventPublisher.mergeObjectContext(aggregate);
-    const streamEvents = this.eventStoreService.readFromStart(aggregate.streamId);
+    const streamEvents = this.eventStoreService.readFromStart(
+      aggregate.streamId,
+    );
 
     for await (const event of streamEvents) {
       await aggregate.applyFromHistory(event);

@@ -1,6 +1,9 @@
 import { DynamicModule, Module, Provider, Type } from '@nestjs/common';
 
-import { AggregateRepository, aggregateRepositoryToken } from './aggregate.repository';
+import {
+  AggregateRepository,
+  aggregateRepositoryToken,
+} from './aggregate.repository';
 import { AggregateRoot } from './aggregate-root';
 import { EVENT_TRANSFORMERS } from './constants';
 import {
@@ -78,7 +81,9 @@ export class CqrxModule {
     });
   }
 
-  static forFeatureAsync(factories: AsyncAggregateRootFactory[] = []): DynamicModule {
+  static forFeatureAsync(
+    factories: AsyncAggregateRootFactory[] = [],
+  ): DynamicModule {
     const providers = this.createAsyncAggregateRepositoryProviders(factories);
     const imports = factories.flatMap(factory => factory.imports || []);
 

@@ -51,7 +51,9 @@ export class TransformService {
         for (const instanceWrapper of instanceWrappers.values()) {
           if (
             instanceWrapper instanceof InstanceWrapper &&
-            (instanceWrapper.metatype as Nullable<typeof instanceWrapper.metatype>)
+            (instanceWrapper.metatype as Nullable<
+              typeof instanceWrapper.metatype
+            >)
           ) {
             yield instanceWrapper;
           }
@@ -71,7 +73,9 @@ export class TransformService {
       }
     }
 
-    for (const instanceWrapper of TransformService.instanceWrapperIterator(modules)) {
+    for (const instanceWrapper of TransformService.instanceWrapperIterator(
+      modules,
+    )) {
       const events =
         (Reflect.getMetadata(
           EVENTS_HANDLER_METADATA,

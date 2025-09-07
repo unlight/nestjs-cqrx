@@ -11,21 +11,17 @@ import {
   Event,
   EventHandler,
   EventStoreService,
-} from '.';
+} from './index';
 import { CqrxCoreModule } from './cqrx-core.module';
+import { StreamNotFoundError } from './interfaces';
 
 describe('aggregate repository', () => {
-  // eslint-disable-next-line unicorn/prevent-abbreviations
-  const eventstoreDbConnectionString = 'esdb://localhost:2113?tls=false';
+  const eventstoreConnectionString = 'kurrentdb://localhost:34605?tls=false';
   let app: INestApplication;
   let eventStoreService: EventStoreService;
   let repository: AggregateRepository<UserAggregateRoot>;
-  class UserCreatedEvent extends Event<{ name: string }> {
-    data!: { name: string };
-  }
-  class UserChangedEmailEvent extends Event<{ email: string }> {
-    data!: { email: string };
-  }
+  class UserCreatedEvent extends Event<{ name: string }> {}
+  class UserChangedEmailEvent extends Event<{ email: string }> {}
   class UserBlockedEvent extends Event {}
   class UserAggregateRoot extends AggregateRoot {
     protected static readonly streamName = 'user';
@@ -49,11 +45,11 @@ describe('aggregate repository', () => {
     }
   }
 
-  beforeAll(async () => {
+  before(async () => {
     app = await NestFactory.create(
       {
         imports: [
-          CqrxCoreModule.forRoot({ eventstoreDbConnectionString }),
+          CqrxCoreModule.forRoot({ eventstoreConnectionString }),
           CqrxModule.forFeature(
             [UserAggregateRoot],
             [Event, UserCreatedEvent, UserChangedEmailEvent],
@@ -70,7 +66,7 @@ describe('aggregate repository', () => {
     eventStoreService = app.get(EventStoreService);
   });
 
-  afterAll(async () => {
+  after(async () => {
     await app.close();
   });
 
@@ -85,10 +81,9 @@ describe('aggregate repository', () => {
   it('findOne not found', async () => {
     const error = (await repository
       .load('951')
-      .catch((error: unknown) => error)) as Error;
+      .catch((error: unknown) => error)) as StreamNotFoundError;
 
-    expect(error.message).toEqual('user_951 not found');
-    expect(error.constructor.name).toEqual('StreamNotFoundError');
+    expect(error.streamName).toEqual('user_951');
   });
 
   it('load from event store', async () => {
@@ -104,15 +99,17 @@ describe('aggregate repository', () => {
       expect.objectContaining({
         email: 'ivan@mail.com',
         name: 'Ivan',
-        revision: 1n,
       }),
     );
+    expect(user.revision).toEqual(1);
   });
 
   it('auto register handler from EventHandler decorator', async () => {
     const streamId = cuid();
     const streamName = `user_${streamId}`;
-    await eventStoreService.appendToStream(streamName, [new UserBlockedEvent()]);
+    await eventStoreService.appendToStream(streamName, [
+      new UserBlockedEvent(),
+    ]);
     const user = await repository.load(streamId);
 
     expect(user.isBlocked).toEqual(true);
@@ -173,18 +170,26 @@ describe('aggregate repository', () => {
   describe('expected revision', () => {
     it('for new stream', async () => {
       const user = repository.create(randomInt(999_999_999).toString());
-      user.apply(new UserChangedEmailEvent({ email: 'toxostoma@wankly.co.uk' }));
+      user.apply(
+        new UserChangedEmailEvent({ email: 'toxostoma@wankly.co.uk' }),
+      );
       await user.commit();
     });
 
     it('for existing stream', async () => {
       const streamId = randomInt(999_999_999).toString();
       const user = repository.create(streamId);
-      user.apply(new UserChangedEmailEvent({ email: 'promiscuity@lapicide1.net' }));
-      user.apply(new UserChangedEmailEvent({ email: 'promiscuity@lapicide2.net' }));
+      user.apply(
+        new UserChangedEmailEvent({ email: 'promiscuity@lapicide1.net' }),
+      );
+      user.apply(
+        new UserChangedEmailEvent({ email: 'promiscuity@lapicide2.net' }),
+      );
       await user.commit();
       const user2 = await repository.load(streamId);
-      user2.apply(new UserChangedEmailEvent({ email: 'promiscuity@lapicide3.net' }));
+      user2.apply(
+        new UserChangedEmailEvent({ email: 'promiscuity@lapicide3.net' }),
+      );
       await user2.commit();
     });
 
@@ -194,7 +199,7 @@ describe('aggregate repository', () => {
 
       user.revision = 1000n;
 
-      await expect(user.commit()).rejects.toThrowError();
+      await expect(user.commit()).rejects.toThrow();
     });
 
     it('revision after apply and commit', async () => {
@@ -204,7 +209,9 @@ describe('aggregate repository', () => {
       user.apply(new UserCreatedEvent({ name: 'Ivan' }));
       await user.commit();
 
-      user.apply(new UserChangedEmailEvent({ email: 'haploscope@meteograph.org' }));
+      user.apply(
+        new UserChangedEmailEvent({ email: 'haploscope@meteograph.org' }),
+      );
       await user.commit();
 
       expect(user.revision).toBe(1n);

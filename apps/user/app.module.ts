@@ -6,8 +6,8 @@ import { UserModule } from './user/user.module';
 @Module({
   imports: [
     CqrxModule.forRoot({
-      eventstoreDbConnectionString:
-        'esdb://localhost:2113?tls=false&keepAliveTimeout=120000',
+      eventstoreConnectionString:
+        'kurrentdb://localhost:34605?tls=false&keepAliveTimeout=120000',
     }),
     UserModule,
   ],

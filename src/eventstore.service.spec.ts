@@ -1,4 +1,4 @@
-import { EventStoreDBClient } from '@eventstore/db-client';
+import { KurrentDBClient } from '@kurrent/kurrentdb-client';
 import { INestApplication } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { EventBus } from '@nestjs/cqrs';
@@ -14,20 +14,22 @@ import { CqrxModule } from './cqrx.module';
 import { CqrxCoreModule } from './cqrx-core.module';
 import { Event } from './event';
 import { EventStoreService } from './eventstore.service';
+import { randomInt } from 'node:crypto';
 
+const randomString = () => randomInt(2 ** 48 - 1).toString(36);
 const eventstoreDatabaseConnectionString =
-  'esdb://localhost:2113?tls=false&keepAliveTimeout=120000&keepAliveInterval=120000';
+  'kurrentdb://localhost:34605?tls=false&keepAliveTimeout=120000&keepAliveInterval=120000';
 
 describe('eventstore', () => {
   let app: INestApplication;
   let eventStoreService: EventStoreService;
 
-  beforeAll(async () => {
+  before(async () => {
     app = await NestFactory.create(
       {
         imports: [
           CqrxCoreModule.forRoot({
-            eventstoreDbConnectionString: eventstoreDatabaseConnectionString,
+            eventstoreConnectionString: eventstoreDatabaseConnectionString,
           }),
           CqrxModule.forFeature([], [Event]),
         ],
@@ -42,7 +44,7 @@ describe('eventstore', () => {
     eventStoreService = app.get(EventStoreService);
   });
 
-  afterAll(async () => {
+  after(async () => {
     await app.close();
   });
 
@@ -93,11 +95,11 @@ describe('eventstore', () => {
 
   describe('append stream nostream', () => {
     it('nostream ok', async () => {
-      const streamId = `user_${Math.random().toString(36).slice(2)}`;
+      const streamId = `user_${randomString()}`;
       const result = await eventStoreService.appendToStream(
         streamId,
         new Event({ id: '1' }),
-        { expectedRevision: 'no_stream' },
+        { streamState: 'no_stream' },
       );
 
       expect(result).toBeTruthy();
@@ -108,9 +110,13 @@ describe('eventstore', () => {
       await eventStoreService.appendToStream(streamId, new Event({ id: 'X' }));
 
       await expect(async () => {
-        await eventStoreService.appendToStream(streamId, new Event({ id: 'XX' }), {
-          expectedRevision: 'no_stream',
-        });
+        await eventStoreService.appendToStream(
+          streamId,
+          new Event({ id: 'XX' }),
+          {
+            streamState: 'no_stream',
+          },
+        );
       }).rejects.toThrow();
     });
   });
@@ -119,36 +125,43 @@ describe('eventstore', () => {
     it('exists error', async () => {
       await expect(
         all(eventStoreService.readFromStart('user_s4l1jxeB3Pfl2ff3')),
-      ).rejects.toThrow(/user_s4l1jxeB3Pfl2ff3 not found/);
+      ).rejects.toThrow();
       await expect(async () => {
-        await eventStoreService.appendToStream('user_s4l1jxeB3Pfl2ff3', new Event({}), {
-          expectedRevision: 'stream_exists',
-        });
+        await eventStoreService.appendToStream(
+          'user_s4l1jxeB3Pfl2ff3',
+          new Event({}),
+          {
+            streamState: 'stream_exists',
+          },
+        );
       }).rejects.toThrow();
     });
 
     it('specific revision', async () => {
-      const streamId = 'userf96_' + Math.random().toString(36).slice(2);
+      const streamId = 'userf96_' + randomString();
       await eventStoreService.appendToStream(streamId, new Event({}));
       await expect(
         eventStoreService.appendToStream('userf96_', new Event({}), {
-          expectedRevision: -1n,
+          streamState: -1n,
         }),
-      ).rejects.toThrowError();
+      ).rejects.toThrow();
     });
   });
 
-  it('contain expected revision', async () => {
-    const streamId = 'user_O3xZqm8DFZla';
-    let nextExpectedRevision = 0n;
-    try {
-      const events = await all(eventStoreService.readFromStart(streamId));
-      const revision = last(events)?.revision;
-      nextExpectedRevision = revision ? revision + 1n : 0n;
-      // eslint-disable-next-line no-empty
-    } catch {}
-    const userRegisteredDto = { id: '719', name: 'ivan' };
-    const userRegisteredEvent = new Event<typeof userRegisteredDto>(userRegisteredDto);
+  it('contain expected revision exiting stream', async () => {
+    // Arrange
+    const streamId = 'user_' + randomString();
+    const userRegisteredDto = { id: '0', name: 'ivan0' };
+    const userRegisteredEvent = new Event<typeof userRegisteredDto>(
+      userRegisteredDto,
+    );
+    await eventStoreService.appendToStream(streamId, userRegisteredEvent);
+
+    const events = await all(eventStoreService.readFromStart(streamId));
+    const revision = last(events)!.revision!;
+    expect(revision).toBeDefined();
+
+    const nextExpectedRevision = BigInt(revision) + 1n;
     const result = await eventStoreService.appendToStream(
       streamId,
       userRegisteredEvent,
@@ -159,7 +172,7 @@ describe('eventstore', () => {
 
   it('subscribe all', async () => {
     const events = app.get<EventBus<typeof event>>(EventBus);
-    const r = Math.random();
+    const r = randomString();
     const event = new Event({ name: 'Joye', r });
     const endData$ = lastValueFrom(
       events.pipe(
@@ -191,16 +204,18 @@ describe('eventstore', () => {
 
 describe.skip('benchmark', () => {
   let stream: string;
-  let client: EventStoreDBClient;
+  let client: KurrentDBClient;
 
-  beforeAll(async () => {
-    stream = 'benchmark_stream_' + Math.random().toString(36).slice(2);
+  before(async () => {
+    stream = 'benchmark_stream_' + randomString();
     const events = Array.from({ length: 99999 }).map((_, index) => ({
       data: { index },
       type: 'SimpleAdd',
     }));
 
-    client = EventStoreDBClient.connectionString(eventstoreDatabaseConnectionString);
+    client = KurrentDBClient.connectionString(
+      eventstoreDatabaseConnectionString,
+    );
     const eventStoreService = new EventStoreService(client, new Map() as any);
 
     await eventStoreService.appendToStream(stream, events).catch(error => {
@@ -208,7 +223,7 @@ describe.skip('benchmark', () => {
     });
   });
 
-  afterAll(async () => {
+  after(async () => {
     await client?.dispose();
   });
 

@@ -8,6 +8,7 @@ import { AppModule } from './app.module';
 import expect from 'expect';
 import { User } from './user/model/user';
 import { AggregateRepository, aggregateRepositoryToken } from 'nestjs-cqrx';
+import { randomInt } from 'node:crypto';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const d = (o: any) =>
@@ -15,7 +16,7 @@ const d = (o: any) =>
 
 let app: INestApplication;
 let server: any;
-beforeAll(async () => {
+before(async () => {
   app = await NestFactory.create(AppModule, { logger: false });
   app.enableCors();
   app.useGlobalPipes(new ValidationPipe({}));
@@ -24,7 +25,7 @@ beforeAll(async () => {
   await app.init();
 });
 
-afterAll(async () => {
+after(async () => {
   await app.close();
 });
 
@@ -60,8 +61,10 @@ it('register success', async () => {
 });
 
 it('register and view', async () => {
-  const repository: AggregateRepository<User> = app.get(aggregateRepositoryToken(User));
-  const id = Math.random().toString(36).slice(2);
+  const repository: AggregateRepository<User> = app.get(
+    aggregateRepositoryToken(User),
+  );
+  const id = randomInt(2 ** 48 - 1).toString(36);
   const user = new User(id);
   user.register('reflective@exemplifiable.net', 'password');
   await repository.save(user);

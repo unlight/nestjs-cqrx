@@ -1,33 +1,39 @@
 {
+  "$schema": "https://json.schemastore.org/tsconfig",
   "ts-node": {
-    "swc": true,
     "transpileOnly": true,
+    "swc": true,
+    "require": ["tsconfig-paths/register"],
     "compilerOptions": {
       "module": "commonjs"
     }
   },
   "compilerOptions": {
-    "target": "es2020",
+    "target": "es2022",
     "module": "commonjs",
+    "allowSyntheticDefaultImports": true,
     "moduleResolution": "node",
     "importHelpers": true,
     "strict": true,
+    "allowImportingTsExtensions": false,
     "noUncheckedIndexedAccess": true,
     "noImplicitAny": false,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
+    "esModuleInterop": true,
     "outDir": "dist",
     "pretty": true,
-    "esModuleInterop": true,
     "removeComments": false,
     "sourceMap": true,
-    "declaration": false,
+    "declaration": true,
     "declarationMap": false,
     "skipLibCheck": true,
     "lib": ["esnext"],
     "baseUrl": ".",
     "paths": {
       "nestjs-cqrx": ["./src/index.ts"]
-    }
-  }
+    },
+    "plugins": []
+  },
+  "include": ["src"]
 }

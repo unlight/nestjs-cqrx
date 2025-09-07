@@ -20,9 +20,13 @@ export class EventPublisher implements IEventPublisher {
     aggregate: AggregateRoot,
     events: Event[],
   ) {
-    const result = await eventStoreService.appendToStream(aggregate.streamId, events, {
-      expectedRevision: aggregate.revision >= 0 ? aggregate.revision : NO_STREAM,
-    });
+    const result = await eventStoreService.appendToStream(
+      aggregate.streamId,
+      events,
+      {
+        streamState: aggregate.revision >= 0 ? aggregate.revision : NO_STREAM,
+      },
+    );
 
     aggregate.revision = result.nextExpectedRevision;
   }

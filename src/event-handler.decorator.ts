@@ -1,6 +1,10 @@
 import { AGGREGATE_EVENT_HANDLERS } from './constants';
 import { Event } from './event';
-import { AggregateEventHandlers, EventHandlerFunction, Type } from './interfaces';
+import {
+  AggregateEventHandlers,
+  EventHandlerFunction,
+  Type,
+} from './interfaces';
 
 type Keys = Array<string | symbol>;
 

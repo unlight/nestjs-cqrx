@@ -1,9 +1,9 @@
 import { INestApplication } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import cuid from 'cuid';
-import expect from 'expect';
 import all from 'it-all';
 import { from, lastValueFrom } from 'rxjs';
+import { mock, MockFunctionContext } from 'node:test';
 
 import {
   AggregateRepository,
@@ -13,13 +13,13 @@ import {
   EventHandler,
   EventPublisher,
   EventStoreService,
-} from '.';
+} from './index';
 import { aggregateRepositoryToken } from './aggregate.repository';
 import { CqrxCoreModule } from './cqrx-core.module';
+import expect from 'expect';
 
 describe('AggregateRoot', () => {
-  // eslint-disable-next-line unicorn/prevent-abbreviations
-  const eventstoreDbConnectionString = 'esdb://localhost:2113?tls=false';
+  const eventstoreConnectionString = 'kurrentdb://localhost:34605?tls=false';
   let app: INestApplication;
   let eventStoreService: EventStoreService;
   class UserCreatedEvent extends Event {}
@@ -32,29 +32,31 @@ describe('AggregateRoot', () => {
   }
   let userAggregateRootRepository: AggregateRepository<UserAggregateRoot>;
 
-  beforeAll(async () => {
+  before(async () => {
     app = await NestFactory.create(
       {
         imports: [
-          CqrxCoreModule.forRoot({ eventstoreDbConnectionString }),
+          CqrxCoreModule.forRoot({ eventstoreConnectionString }),
           CqrxModule.forFeature([UserAggregateRoot]),
         ],
         module: CqrxModule,
         providers: [],
       },
-      {
-        logger: false,
-      },
+      { logger: false },
     );
     await app.init();
-    userAggregateRootRepository = app.get<AggregateRepository<UserAggregateRoot>>(
-      aggregateRepositoryToken(UserAggregateRoot),
-    );
+    userAggregateRootRepository = app.get<
+      AggregateRepository<UserAggregateRoot>
+    >(aggregateRepositoryToken(UserAggregateRoot));
     eventStoreService = app.get(EventStoreService);
   });
 
-  afterAll(async () => {
+  after(async () => {
     await app.close();
+  });
+
+  it('smoke', () => {
+    expect(app).toBeDefined();
   });
 
   it('version', async () => {
@@ -78,30 +80,38 @@ describe('AggregateRoot', () => {
 
   it('event handler returns observer', async () => {
     class UserAggregateRoot extends AggregateRoot {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
+      // @ts-expect-error Unknown
       @EventHandler(UserChangedEmailEvent)
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      userChangedEmail(event) {
+      userChangedEmail() {
         return from(['tick', 'tack', 'toe']);
       }
     }
     const user = new UserAggregateRoot(cuid());
-    const spy = jest.spyOn(user, 'userChangedEmail');
-    await user.applyFromHistory(new UserChangedEmailEvent());
+    mock.method(user, 'userChangedEmail');
+    const spy = user.userChangedEmail['mock'] as MockFunctionContext<
+      typeof user.userChangedEmail
+    >;
 
-    expect(spy).toHaveBeenCalled();
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    expect(await lastValueFrom(spy.mock.results[0]?.value)).toEqual('toe');
+    // Act
+    await user.applyFromHistory(new UserChangedEmailEvent());
+    // Assert
+    expect(spy.calls).toHaveLength(1);
+
+    const result = spy.calls[0]?.result;
+
+    expect(result && (await lastValueFrom(result))).toEqual('toe');
   });
 
   it('event handler', async () => {
     const user = new UserAggregateRoot(cuid());
-    const onUserCreatedSpy = jest.spyOn(user, 'onUserCreated');
+    mock.method(user, 'onUserCreated');
+    const spy = user.onUserCreated['mock'] as MockFunctionContext<
+      typeof user.onUserCreated
+    >;
     user.apply(new UserCreatedEvent());
     await userAggregateRootRepository.save(user);
 
-    expect(onUserCreatedSpy).toHaveBeenCalled();
+    expect(spy.calls).toHaveLength(1);
   });
 
   it('save uncommit events', async () => {
@@ -121,7 +131,9 @@ describe('AggregateRoot', () => {
     const events = await all(eventStoreService.readFromStart(user.streamId));
 
     expect(events).toHaveLength(1);
-    expect(events).toEqual([expect.objectContaining({ type: 'UserCreatedEvent' })]);
+    expect(events).toEqual([
+      expect.objectContaining({ type: 'UserCreatedEvent' }),
+    ]);
   });
 
   it('eventPublisher mergeClassContext', async () => {

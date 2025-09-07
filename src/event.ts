@@ -63,14 +63,14 @@ export class Event<P = unknown, M = unknown> implements IEvent {
     return event;
   }
 
-  private static isRecordedEvent(event?: unknown): event is RecordedEvent {
+  static isRecordedEvent(event?: unknown): event is RecordedEvent {
     return Boolean(
       event &&
         event['streamId'] &&
         event['id'] &&
         event['type'] &&
         event['data'] &&
-        typeof event['revision'] === 'bigint',
+        event['revision'] >= 0,
     );
   }
 }

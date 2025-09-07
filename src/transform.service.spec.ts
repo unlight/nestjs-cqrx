@@ -1,16 +1,21 @@
 import { INestApplication } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import cuid from 'cuid';
-import expect from 'expect';
 import all from 'it-all';
 
-import { AggregateRoot, CqrxModule, Event, EventStoreService, RecordedEvent } from '.';
 import { CqrxCoreModule } from './cqrx-core.module';
+import {
+  AggregateRoot,
+  CqrxModule,
+  Event,
+  EventStoreService,
+  RecordedEvent,
+} from './index';
 import { TransformService } from './transform.service';
+import expect from 'expect';
 
-// eslint-disable-next-line unicorn/prevent-abbreviations
-const eventstoreDbConnectionString =
-  'esdb://localhost:2113?tls=false&keepAliveTimeout=120000&keepAliveInterval=120000';
+const eventstoreConnectionString =
+  'kurrentdb://localhost:34605?tls=false&keepAliveTimeout=120000&keepAliveInterval=120000';
 let app: INestApplication;
 let eventStoreService: EventStoreService;
 
@@ -20,11 +25,11 @@ describe('transformerService', () => {
   class CatFeedEvent extends Event {}
   class CatStrokedEvent extends Event {}
 
-  beforeAll(async () => {
+  before(async () => {
     app = await NestFactory.create(
       {
         imports: [
-          CqrxCoreModule.forRoot({ eventstoreDbConnectionString }),
+          CqrxCoreModule.forRoot({ eventstoreConnectionString }),
           CqrxModule.forFeature(
             [CatAggregateRoot],
             [
@@ -42,15 +47,13 @@ describe('transformerService', () => {
         module: CqrxModule,
         providers: [],
       },
-      {
-        logger: false,
-      },
+      // { logger: false },
     );
     await app.init();
     eventStoreService = app.get(EventStoreService);
   });
 
-  afterAll(async () => {
+  after(async () => {
     await app.close();
   });
 
@@ -59,7 +62,9 @@ describe('transformerService', () => {
     const streamId = `cat_${cuid()}`;
     await eventStoreService.appendToStream(streamId, event);
     const events = await all(eventStoreService.readFromStart(streamId));
-    expect(events).toEqual([{ data: { name: 'Fluffy' }, type: 'CatRegisteredEvent' }]);
+    expect(events).toEqual([
+      { data: { name: 'Fluffy' }, type: 'CatRegisteredEvent' },
+    ]);
     const names = events.map(event => event.constructor.name);
     expect(names).toEqual(['CatRegisteredEvent']);
   });
@@ -69,10 +74,11 @@ describe('transformerService', () => {
     const streamId = `cat_${cuid()}`;
     await eventStoreService.appendToStream(streamId, event);
     const events = await all(eventStoreService.readFromStart(streamId));
-
-    expect(events).toEqual([
+    // Assert
+    expect(events).toHaveLength(1);
+    expect(events[0]).toEqual(
       expect.objectContaining({ data: {}, type: 'CatFeedEvent' }),
-    ]);
+    );
 
     const names = events.map(event => event.constructor.name);
 

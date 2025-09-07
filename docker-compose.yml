@@ -1,31 +1,23 @@
 services:
-  eventstore.db:
-    image: eventstore/eventstore:23.10.0-bookworm-slim
+  kurrentdb:
+    image: kurrentplatform/kurrentdb:25.0.1-x64-8.0-bookworm-slim
     environment:
-      - EVENTSTORE_CLUSTER_SIZE=1
-      - EVENTSTORE_RUN_PROJECTIONS=None
-      - EVENTSTORE_START_STANDARD_PROJECTIONS=false
-      - EVENTSTORE_EXT_TCP_PORT=1113
-      - EVENTSTORE_HTTP_PORT=2113
-      - EVENTSTORE_INSECURE=true
-      - EVENTSTORE_ENABLE_EXTERNAL_TCP=true
-      - EVENTSTORE_ENABLE_ATOM_PUB_OVER_HTTP=true
-      - EVENTSTORE_MEM_DB=true
-      # - EVENTSTORE_COMMIT_TIMEOUT_MS=10000
-      # - EVENTSTORE_PREPARE_TIMEOUT_MS=99000
-      - EVENTSTORE_MAX_APPEND_SIZE=16767216
-      - EVENTSTORE_WRITE_TIMEOUT_MS=10000
+      KURRENTDB_CLUSTER_SIZE: 1
+      KURRENTDB_RUN_PROJECTIONS: 'All'
+      KURRENTDB_START_STANDARD_PROJECTIONS: 'true'
+      KURRENTDB_NODE_PORT: 2113
+      KURRENTDB_INSECURE: 'true'
+      KURRENTDB_ENABLE_ATOM_PUB_OVER_HTTP: 'true'
     ports:
-      - '1113:1113'
-      - '2113:2113'
+      - '34605:2113'
     volumes:
       - type: volume
-        source: eventstore-volume-data
-        target: /var/lib/eventstore
+        source: kurrentdb-volume-data
+        target: /var/lib/kurrentdb
       - type: volume
-        source: eventstore-volume-logs
-        target: /var/log/eventstore
+        source: kurrentdb-volume-logs
+        target: /var/log/kurrentdb
 
 volumes:
-  eventstore-volume-data:
-  eventstore-volume-logs:
+  kurrentdb-volume-data:
+  kurrentdb-volume-logs:

@@ -1,11 +1,11 @@
 import {
   END,
-  EventStoreDBClient,
+  KurrentDBClient,
   FORWARDS,
   jsonEvent,
   ResolvedEvent,
   START,
-} from '@eventstore/db-client';
+} from '@kurrent/kurrentdb-client';
 import { Injectable } from '@nestjs/common';
 
 import { Event } from './event';
@@ -15,7 +15,7 @@ import { TransformService } from './transform.service';
 @Injectable()
 export class EventStoreService {
   constructor(
-    private readonly client: EventStoreDBClient,
+    private readonly client: KurrentDBClient,
     private readonly transformService: TransformService,
   ) {}
 
@@ -40,14 +40,18 @@ export class EventStoreService {
     options?: AppendToStreamOptions,
   ): Promise<AppendResult> {
     {
-      const expectedRevision = options?.expectedRevision;
-      const databaseEvents = (Array.isArray(events) ? events : [events]).map(event =>
-        jsonEvent<any>(event),
+      const { streamState } = options || {};
+      const databaseEvents = (Array.isArray(events) ? events : [events]).map(
+        event => jsonEvent<any>(event),
       );
 
-      const result = await this.client.appendToStream(streamId, databaseEvents, {
-        expectedRevision,
-      });
+      const result = await this.client.appendToStream(
+        streamId,
+        databaseEvents,
+        {
+          streamState,
+        },
+      );
 
       return {
         commit: result.position?.commit,

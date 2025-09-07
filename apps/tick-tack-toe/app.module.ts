@@ -17,9 +17,12 @@ import { GameViewRepository } from './repositories/game-view.repository';
 @Module({
   imports: [
     CqrxModule.forRoot({
-      eventstoreDbConnectionString: 'esdb://localhost:2113?tls=false',
+      eventstoreConnectionString: 'kurrentdb://localhost:34605?tls=false',
     }),
-    CqrxModule.forFeature([Game], [PlayerMoveEvent, GameEndedEvent, PlayerJoinedEvent]),
+    CqrxModule.forFeature(
+      [Game],
+      [PlayerMoveEvent, GameEndedEvent, PlayerJoinedEvent],
+    ),
   ],
   providers: [
     GameRepository,

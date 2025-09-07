@@ -27,14 +27,14 @@ import { CqrxModule } from 'nestjs-cqrx';
 @Module({
   imports: [
     CqrxModule.forRoot({
-      eventstoreDbConnectionString: 'esdb://localhost:2113?tls=false',
+      eventstoreConnectionString: 'kurrentdb://localhost:34605?tls=false',
     }),
   ],
 })
 export class AppModule {}
 ```
 
-You can generate connection string on [Connection details](https://developers.eventstore.com/clients/grpc/#connection-details) page
+You can generate connection string on [Connection details](https://docs.kurrent.io/clients/node/v1.0/getting-started.html#connecting-to-kurrentdb) page
 
 #### Example of User model
 
@@ -144,7 +144,7 @@ it will be automatically added to transform service.
 ## Development
 
 - docker-compose up
-- http://localhost:2113/web/index.html#/dashboard
+- http://localhost:34605/web/index.html#/dashboard
 
 ## Resources
 
@@ -168,4 +168,4 @@ it will be automatically added to transform service.
 
 ## License
 
-[MIT License](https://opensource.org/licenses/MIT) (c) 2024
+[MIT License](https://opensource.org/licenses/MIT) (c) 2025
