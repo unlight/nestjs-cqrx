@@ -77,10 +77,12 @@ export class TransformService {
       modules,
     )) {
       const events =
-        (Reflect.getMetadata(
-          EVENTS_HANDLER_METADATA,
-          instanceWrapper.metatype,
-        ) as Nullable<Type<Event>[]>) ?? [];
+        (instanceWrapper.metatype &&
+          (Reflect.getMetadata(
+            EVENTS_HANDLER_METADATA,
+            instanceWrapper.metatype,
+          ) as Nullable<Type<Event>[]>)) ??
+        [];
 
       for (const eventClass of events) {
         if (!this.transforms.has(eventClass.name)) {
