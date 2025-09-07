@@ -15,7 +15,7 @@
     "url": "https://github.com/unlight/nestjs-cqrx/issues"
   },
   "homepage": "https://github.com/unlight/nestjs-cqrx#readme",
-  "keywords": ["cqrs", "nestjs", "eventstore", "eventstoredb"],
+  "keywords": ["cqrs", "nestjs", "eventstore", "eventstoredb", "kurrentdb"],
   "scripts": {
     "test": "npm run eslint && npm run tscheck && npm run test:r",
     "test:r": "ts-node node_modules/mocha/bin/mocha.js src/**/*.spec.ts",
