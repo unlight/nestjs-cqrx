@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   $schema: 'https://swc.rs/schema.json',
   sourceMaps: false,
   module: {
