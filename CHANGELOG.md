@@ -1,3 +1,13 @@
+## [5.0.0](https://github.com/unlight/nestjs-cqrx/compare/v4.0.2...v5.0.0) (2025-09-13)
+
+### ⚠ BREAKING CHANGES
+
+* Subscribe to $all stream is disabled by default
+
+### Features
+
+* Disable subscribe to $all stream ([2fd1888](https://github.com/unlight/nestjs-cqrx/commit/2fd1888a2085fb086a23e62037a534839abfc532))
+
 ## [4.0.2](https://github.com/unlight/nestjs-cqrx/compare/v4.0.1...v4.0.2) (2025-09-07)
 
 ### Bug Fixes
