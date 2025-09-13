@@ -27,7 +27,8 @@ import { CqrxModule } from 'nestjs-cqrx';
 @Module({
   imports: [
     CqrxModule.forRoot({
-      eventstoreConnectionString: 'kurrentdb://localhost:34605?tls=false',
+      eventstoreConnectionString: 'kurrentdb://localhost:2113?tls=false',
+      subscribeToAll: false, // Subscribe to the global $all stream and get events from EventBus (@nestjs/cqrs)
     }),
   ],
 })
@@ -144,7 +145,7 @@ it will be automatically added to transform service.
 ## Development
 
 - docker-compose up
-- http://localhost:34605/web/index.html#/dashboard
+- http://localhost:2113/web/index.html#/dashboard
 
 ## Resources
 

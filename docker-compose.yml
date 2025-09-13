@@ -9,7 +9,7 @@ services:
       KURRENTDB_INSECURE: 'true'
       KURRENTDB_ENABLE_ATOM_PUB_OVER_HTTP: 'true'
     ports:
-      - '34605:2113'
+      - '2113:2113'
     volumes:
       - type: volume
         source: kurrentdb-volume-data

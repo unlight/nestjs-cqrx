@@ -15,7 +15,7 @@ import { TransformService } from './transform.service';
 import expect from 'expect';
 
 const eventstoreConnectionString =
-  'kurrentdb://localhost:34605?tls=false&keepAliveTimeout=120000&keepAliveInterval=120000';
+  'kurrentdb://localhost:2113?tls=false&keepAliveTimeout=120000&keepAliveInterval=120000';
 let app: INestApplication;
 let eventStoreService: EventStoreService;
 

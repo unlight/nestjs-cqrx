@@ -74,9 +74,13 @@ export class EventStoreService {
     };
   }
 
-  subscribeToAll(listener: (event: Event) => void): () => Promise<void> {
+  subscribeToAll(
+    eventListener: (event: Event) => void,
+    errorListener: (err: Error) => void,
+  ): () => Promise<void> {
     const subscription = this.client.subscribeToAll({ fromPosition: END });
-    subscription.on('data', this.createEventstoreEventHandler(listener));
+    subscription.on('data', this.createEventstoreEventHandler(eventListener));
+    subscription.on('error', errorListener);
 
     return () => subscription.unsubscribe();
   }

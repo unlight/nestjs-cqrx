@@ -6,19 +6,19 @@ import cuid from 'cuid';
 import expect from 'expect';
 import all from 'it-all';
 import { last } from 'lodash';
-import { lastValueFrom } from 'rxjs';
-import { filter, take } from 'rxjs/operators';
+import { lastValueFrom, of, race, throwError } from 'rxjs';
+import { delay, filter, switchMap, take } from 'rxjs/operators';
 
+import { randomInt } from 'node:crypto';
 import { AggregateRoot } from './aggregate-root';
-import { CqrxModule } from './cqrx.module';
 import { CqrxCoreModule } from './cqrx-core.module';
+import { CqrxModule } from './cqrx.module';
 import { Event } from './event';
 import { EventStoreService } from './eventstore.service';
-import { randomInt } from 'node:crypto';
 
 const randomString = () => randomInt(2 ** 48 - 1).toString(36);
 const eventstoreDatabaseConnectionString =
-  'kurrentdb://localhost:34605?tls=false&keepAliveTimeout=120000&keepAliveInterval=120000';
+  'kurrentdb://localhost:2113?tls=false&keepAliveTimeout=120000&keepAliveInterval=120000';
 
 describe('eventstore', () => {
   let app: INestApplication;
@@ -30,6 +30,7 @@ describe('eventstore', () => {
         imports: [
           CqrxCoreModule.forRoot({
             eventstoreConnectionString: eventstoreDatabaseConnectionString,
+            subscribeToAll: true,
           }),
           CqrxModule.forFeature([], [Event]),
         ],
@@ -175,9 +176,17 @@ describe('eventstore', () => {
     const r = randomString();
     const event = new Event({ name: 'Joye', r });
     const endData$ = lastValueFrom(
-      events.pipe(
-        filter<typeof event>(event => event.data.r === r),
-        take(1),
+      race(
+        of(1).pipe(
+          delay(2000),
+          switchMap(() =>
+            throwError(() => 'Maybe subscribeToAll is not enabled'),
+          ),
+        ),
+        events.pipe(
+          filter<typeof event>(event => event.data.r === r),
+          take(1),
+        ),
       ),
     );
     await eventStoreService.appendToStream('user_650', event);

@@ -17,7 +17,7 @@ import { GameViewRepository } from './repositories/game-view.repository';
 @Module({
   imports: [
     CqrxModule.forRoot({
-      eventstoreConnectionString: 'kurrentdb://localhost:34605?tls=false',
+      eventstoreConnectionString: 'kurrentdb://localhost:2113?tls=false',
     }),
     CqrxModule.forFeature(
       [Game],

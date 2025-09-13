@@ -2,6 +2,7 @@ import { KurrentDBClient } from '@kurrent/kurrentdb-client';
 import {
   DynamicModule,
   FactoryProvider,
+  Inject,
   Module,
   ModuleMetadata,
   OnModuleInit,
@@ -19,6 +20,7 @@ import { TransformService } from './transform.service';
 
 const defaultCqrxOptions = {
   eventstoreConnectionString: undefined as string | undefined,
+  subscribeToAll: false as boolean | undefined,
 };
 
 export type CqrxModuleOptions = typeof defaultCqrxOptions;
@@ -48,6 +50,7 @@ export class CqrxCoreModule implements OnModuleInit {
   constructor(
     private readonly eventBus$: EventBus<Event>,
     private readonly eventStoreService: EventStoreService,
+    @Inject(CQRX_OPTIONS) private readonly options: CqrxModuleOptions,
   ) {}
 
   static forRoot(options: Partial<CqrxModuleOptions>): DynamicModule {
@@ -144,9 +147,16 @@ export class CqrxCoreModule implements OnModuleInit {
   }
 
   onModuleInit() {
-    this.subscription = this.eventStoreService.subscribeToAll(event => {
-      this.eventBus$.subject$.next(event);
-    });
+    if (this.options.subscribeToAll) {
+      this.subscription = this.eventStoreService.subscribeToAll(
+        event => {
+          this.eventBus$.subject$.next(event);
+        },
+        error => {
+          this.eventBus$.subject$.error(error);
+        },
+      );
+    }
   }
 
   async onModuleDestroy() {

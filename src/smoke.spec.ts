@@ -8,7 +8,7 @@ import { EventStoreService } from './eventstore.service';
 import { expect } from 'expect';
 
 const eventstoreDatabaseConnectionString =
-  'kurrentdb://localhost:34605?tls=false&keepAliveTimeout=120000&keepAliveInterval=120000';
+  'kurrentdb://localhost:2113?tls=false&keepAliveTimeout=120000&keepAliveInterval=120000';
 
 describe('eventstore', () => {
   let app: INestApplication;

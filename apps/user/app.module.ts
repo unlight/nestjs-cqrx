@@ -7,7 +7,8 @@ import { UserModule } from './user/user.module';
   imports: [
     CqrxModule.forRoot({
       eventstoreConnectionString:
-        'kurrentdb://localhost:34605?tls=false&keepAliveTimeout=120000',
+        'kurrentdb://localhost:2113?tls=false&keepAliveTimeout=120000',
+      subscribeToAll: false,
     }),
     UserModule,
   ],

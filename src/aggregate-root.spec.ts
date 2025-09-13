@@ -19,7 +19,7 @@ import { CqrxCoreModule } from './cqrx-core.module';
 import expect from 'expect';
 
 describe('AggregateRoot', () => {
-  const eventstoreConnectionString = 'kurrentdb://localhost:34605?tls=false';
+  const eventstoreConnectionString = 'kurrentdb://localhost:2113?tls=false';
   let app: INestApplication;
   let eventStoreService: EventStoreService;
   class UserCreatedEvent extends Event {}
