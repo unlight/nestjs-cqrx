@@ -1,5 +1,5 @@
 import { ConflictException } from '@nestjs/common';
-import { AggregateRoot, EventHandler } from 'cqrx';
+import { AggregateRoot, EventHandler } from 'cqrx-core';
 
 import { EmailUpdated, UserRegistered } from '../events';
 import { isEmail } from 'class-validator';

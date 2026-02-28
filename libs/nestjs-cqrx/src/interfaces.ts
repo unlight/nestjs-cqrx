@@ -1,6 +1,6 @@
 import { FactoryProvider, ModuleMetadata, Type } from '@nestjs/common';
 import { Observable } from 'rxjs';
-import type { Event, AggregateRoot, IStoredEvent } from 'cqrx';
+import type { Event, AggregateRoot, IStoredEvent } from 'cqrx-core';
 import type { Nullable } from 'simplytyped';
 
 import type { ClientOptions as EventdbxOptions } from '../../eventdbx-cqrx/src/index.ts';

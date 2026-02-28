@@ -13,7 +13,7 @@ import {
   AggregateRoot,
   Transformers,
   AggregateRepository,
-} from 'cqrx';
+} from 'cqrx-core';
 import { aggregateRepositoryToken } from './providers.ts';
 
 @Module({})

@@ -2,7 +2,12 @@ import { Inject } from '@nestjs/common';
 import { ModulesContainer } from '@nestjs/core';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper.js';
 import { EVENTS_HANDLER_METADATA } from '@nestjs/cqrs/dist/decorators/constants.js';
-import { IStoredEvent, Transform, Transformers, TransformService } from 'cqrx';
+import {
+  IStoredEvent,
+  Transform,
+  Transformers,
+  TransformService,
+} from 'cqrx-core';
 
 import { EVENT_TRANSFORMERS } from './constants.ts';
 import type { CqrxModuleOptions } from './cqrx-core.module.ts';

@@ -1,7 +1,7 @@
 import { NotFoundException } from '@nestjs/common';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { InjectAggregateRepository } from 'nestjs-cqrx';
-import { AggregateRepository } from 'cqrx';
+import { AggregateRepository } from 'cqrx-core';
 
 import { UserDataDto } from '../dto';
 import { User } from '../model';

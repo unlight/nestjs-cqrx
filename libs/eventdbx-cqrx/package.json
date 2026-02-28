@@ -6,11 +6,11 @@
     ".": "./src/index.ts"
   },
   "peerDependencies": {
-    "cqrx": "0.0.0-dev",
+    "cqrx-core": "workspace:^",
     "eventdbxjs": "1"
   },
   "devDependencies": {
-    "cqrx": "0.0.0-dev",
+    "cqrx-core": "workspace:^",
     "eventdbxjs": "1"
   },
   "scripts": {

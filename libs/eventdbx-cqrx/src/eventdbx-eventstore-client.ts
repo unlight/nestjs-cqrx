@@ -6,7 +6,7 @@ import type {
   ICreateResult,
   IApplyResult,
   IStoredEvent,
-} from 'cqrx';
+} from 'cqrx-core';
 import type { ClientOptions, DbxClient, IEventResult } from './interfaces.ts';
 
 export async function createEventdbxEventstoreClient(options: ClientOptions) {

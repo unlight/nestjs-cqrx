@@ -17,7 +17,7 @@ import {
   EventStoreService,
   IEventStoreClient,
   TransformService,
-} from 'cqrx';
+} from 'cqrx-core';
 import type { EventdbxOptions, KurrentdbOptions } from './interfaces.ts';
 import {
   eventStoreClientFactory,

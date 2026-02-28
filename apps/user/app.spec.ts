@@ -8,7 +8,7 @@ import { User } from './user/model/user';
 import { aggregateRepositoryToken } from 'nestjs-cqrx';
 import { expect, beforeAll, afterAll, it } from 'vitest';
 import { Server } from 'node:http';
-import { AggregateRepository } from 'cqrx';
+import { AggregateRepository } from 'cqrx-core';
 import { createId } from '@paralleldrive/cuid2';
 
 let app: INestApplication;

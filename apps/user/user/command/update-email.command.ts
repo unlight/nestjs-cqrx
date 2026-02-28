@@ -6,7 +6,7 @@ import {
 } from '@nestjs/cqrs';
 import { InjectAggregateRepository } from 'nestjs-cqrx';
 
-import { AggregateRepository, EventStoreService } from 'cqrx';
+import { AggregateRepository, EventStoreService } from 'cqrx-core';
 
 import { User } from '../model';
 

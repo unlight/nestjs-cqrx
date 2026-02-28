@@ -13,7 +13,7 @@ import type {
   IStoredEvent,
   IEventStoreClient,
   IGetEventArgs,
-} from 'cqrx';
+} from 'cqrx-core';
 import type { ClientOptions } from './interfaces.ts';
 
 export function createKurrentdbEventstoreClient(options: ClientOptions) {

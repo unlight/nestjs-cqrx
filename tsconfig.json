@@ -33,7 +33,7 @@
     "baseUrl": ".",
     "paths": {
       "nestjs-cqrx": ["./libs/nestjs-cqrx/src/index.ts"],
-      "cqrx": ["libs/cqrx/src/index.ts"]
+      "cqrx-core": ["libs/cqrx-core/src/index.ts"]
     },
     "plugins": []
   }

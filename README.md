@@ -59,7 +59,7 @@ export class AppModule {}
 
 ```ts
 import { ConflictException } from '@nestjs/common';
-import { AggregateRoot, EventHandler } from 'cqrx';
+import { AggregateRoot, EventHandler } from 'cqrx-core';
 
 import { UserRegistered } from '../events';
 
@@ -105,7 +105,7 @@ user.isRegistered; // true
 #### Example of events
 
 ```ts
-import { Event } from 'cqrx';
+import { Event } from 'cqrx-core';
 
 type UserRegisteredDto = { email: string; password: string };
 

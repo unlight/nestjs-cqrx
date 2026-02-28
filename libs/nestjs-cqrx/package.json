@@ -6,13 +6,13 @@
     ".": "./src/index.ts"
   },
   "devDependencies": {
-    "cqrx": "workspace:^"
+    "cqrx-core": "workspace:^"
   },
   "peerDependencies": {
     "@nestjs/common": "8 - 11",
     "@nestjs/core": "8 - 11",
     "@nestjs/cqrs": "8 - 11",
-    "cqrx": "workspace:^",
+    "cqrx-core": "workspace:^",
     "eventdbx-cqrx": "workspace:^",
     "kurrentdb-cqrx": "workspace:^",
     "rxjs": "6 - 7"

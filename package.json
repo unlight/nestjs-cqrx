@@ -10,7 +10,7 @@
     "apps/tick-tack-toe",
     "apps/user",
     "libs/nestjs-cqrx",
-    "libs/cqrx",
+    "libs/cqrx-core",
     "@comment_libs/eventdbx-cqrx",
     "libs/kurrentdb-cqrx"
   ],
