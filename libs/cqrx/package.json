@@ -26,5 +26,8 @@
     "test:w": "vitest watch",
     "tscheck": "tsc --noEmit",
     "tscheck:w": "npm run tscheck -- --watch"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

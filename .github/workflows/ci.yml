@@ -74,7 +74,7 @@ jobs:
       - name: 'Release'
         if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/next')
         run: |
-          yarn release --ignore-private-packages --sequential-init
+          yarn release --ignore-private-packages --sequential-init --deps.prefix=^
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
