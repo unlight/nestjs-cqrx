@@ -5,9 +5,10 @@ import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
+    // CqrxModule.forRoot({ type: 'eventdbx', token: process.env.EVENTDBX_TOKEN }),
     CqrxModule.forRoot({
-      eventstoreDbConnectionString:
-        'esdb://localhost:2113?tls=false&keepAliveTimeout=120000',
+      type: 'kurrentdb',
+      connectionString: 'kurrentdb://localhost:2113?tls=false',
     }),
     UserModule,
   ],

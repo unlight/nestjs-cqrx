@@ -1,6 +1,6 @@
-# nestjs-cqrx
+# cqrx
 
-EventStoreDB NestJS CQRS module.
+Monorepo for cqrx modules, containing example apps and core libraries.
 
 ## Based on
 
@@ -15,6 +15,26 @@ EventStoreDB NestJS CQRS module.
 
 ## Install
 
+### 1. Core package
+
+```sh
+npm install --save cqrx
+```
+
+### 2. Database adapter for eventstore
+
+Choose your adapter for eventstore
+
+- [EventDBX](https://eventdbx.com/)
+- [KurrentDB (ex- EventStoreDB)](https://www.kurrent.io/)
+
+```sh
+npm install --save eventdbx-cqrx
+npm install --save kurrentdb-cqrx
+```
+
+### 3. NestJS module
+
 ```sh
 npm install --save nestjs-cqrx
 ```
@@ -27,20 +47,19 @@ import { CqrxModule } from 'nestjs-cqrx';
 @Module({
   imports: [
     CqrxModule.forRoot({
-      eventstoreDbConnectionString: 'esdb://localhost:2113?tls=false',
+      type: 'kurrentdb', // eventdbx
+      eventstoreConnectionString: 'kurrentdb://localhost:2113?tls=false',
     }),
   ],
 })
 export class AppModule {}
 ```
 
-You can generate connection string on [Connection details](https://developers.eventstore.com/clients/grpc/#connection-details) page
-
 #### Example of User model
 
 ```ts
 import { ConflictException } from '@nestjs/common';
-import { AggregateRoot, EventHandler } from 'nestjs-cqrx';
+import { AggregateRoot, EventHandler } from 'cqrx';
 
 import { UserRegistered } from '../events';
 
@@ -52,12 +71,14 @@ export class User extends AggregateRoot {
 
   @EventHandler(UserRegistered)
   createUser(event: UserRegistered): void {
+    // Called when populating state from database and when saving
     this.isRegistered = true;
     this.email = event.data.email;
     this.password = event.data.password;
   }
 
   register(email: string, password: string) {
+    // Business logic
     if (this.isRegistered) {
       throw new ConflictException();
     }
@@ -78,17 +99,13 @@ export class User extends AggregateRoot {
 const user = new User('123');
 user.apply(new UserRegistered({ data }));
 await userAggregateRepository.save(user);
-// Or you can create aggregate from repository
-// In this case you can use commit method
-const user = userAggregateRepository.create('123');
-user.apply(new UserRegistered({ data }));
-await user.commit();
+user.isRegistered; // true
 ```
 
 #### Example of events
 
 ```ts
-import { Event } from 'nestjs-cqrx';
+import { Event } from 'cqrx';
 
 type UserRegisteredDto = { email: string; password: string };
 
@@ -100,8 +117,11 @@ export class UserRegistered extends Event<UserRegisteredDto> {}
   imports: [
     CqrxModule.forFeature(
       [User],
-      // Subscribe and transform events from eventstore
-      [['UserRegistered', event => new UserRegistered(event)]],
+      // Subscribe and transform events from eventstore to domain event
+      [['UserRegistered', event => new UserRegistered(event.data)]],
+      // [UserRegistered]
+      // Shorthand version of above
+      // ['UserRegistered', event => Object.assign(new UserRegistered(), event)]
     ),
   ],
 })
@@ -113,12 +133,10 @@ export class UserModule {}
 type Transformer = [
   /* Recorded event type */ string,
   /* Function which accept stream event (plain object) */ (
-    event: RecordedEvent,
+    event: IStoredEvent,
   ) => Event,
 ];
 ```
-
-`['UserRegistered', event => new UserRegistered(event)]` can be shorthanded to `UserRegistered`
 
 Note: If you have decorator `EventsHandler` (from `@nestjs/cqrs`) of some event,
 it will be automatically added to transform service.
@@ -141,11 +159,6 @@ it will be automatically added to transform service.
 - https://github.com/cqrx/cqrx
 - https://github.com/nordfjord/nestjs-cqrs-es
 
-## Development
-
-- docker-compose up
-- http://localhost:2113/web/index.html#/dashboard
-
 ## Resources
 
 - https://github.com/bradsheppard/nestjs-async-cqrs
@@ -159,8 +172,24 @@ it will be automatically added to transform service.
 - https://github.com/oskardudycz/EventSourcing.JVM/tree/main/samples/event-sourcing-esdb-simple
 - https://github.com/PrestaShopCorp/nestjs-geteventstore
 
+## Development
+
+```ps
+docker compose up -d
+$env:EVENTDBX_TOKEN = (docker compose exec -T eventdbx dbx token bootstrap --stdout).Trim()
+```
+
+```bash
+docker compose up -d
+export EVENTDBX_TOKEN=$(docker compose exec -T eventdbx dbx token bootstrap --stdout)
+```
+
 ## Todo
 
+- update readme for each package - each section - copy when build
+- build/publish monorepo
+- use https://github.com/poppinss/ts-exec
+- get rid of swc, try to run user app with esm
 - read from specific position
 - find lib for creating errors
 - better to split on read/write events
@@ -168,4 +197,4 @@ it will be automatically added to transform service.
 
 ## License
 
-[MIT License](https://opensource.org/licenses/MIT) (c) 2024
+[MIT License](https://opensource.org/licenses/MIT) (c) 2026

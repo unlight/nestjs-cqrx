@@ -1,0 +1,26 @@
+{
+  "name": "kurrentdb-cqrx",
+  "version": "0.0.0-dev",
+  "description": "KurrentDB (formerly EventStoreDB) adapter and integration with cqrx, used by higher-level modules like nestjs-cqrx",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "peerDependencies": {
+    "@kurrent/kurrentdb-client": "1",
+    "cqrx": "workspace:^"
+  },
+  "devDependencies": {
+    "@kurrent/kurrentdb-client": "1",
+    "cqrx": "workspace:^"
+  },
+  "scripts": {
+    "build": "sh ../../Taskfile buildMicrobundle6",
+    "test": "npm run eslint && npm run tscheck && npm run test:r",
+    "test:r": "vitest run",
+    "test:cov": "vitest run --coverage",
+    "eslint": "eslint src",
+    "test:w": "vitest watch",
+    "tscheck": "tsc --noEmit",
+    "tscheck:w": "npm run tscheck -- --watch"
+  }
+}

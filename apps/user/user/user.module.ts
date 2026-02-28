@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { CqrxModule, Event } from 'nestjs-cqrx';
+import { CqrxModule } from 'nestjs-cqrx';
 
 import { COMMAND_HANDLERS } from './command';
-import { UserRegistered } from './events';
+import { EmailUpdated, UserRegistered } from './events';
 import { User } from './model';
 import { QUERY_HANDLERS } from './query';
 import { UserController } from './user.controller';
@@ -11,7 +11,7 @@ import { UserController } from './user.controller';
   imports: [
     CqrxModule.forFeature(
       [User],
-      [UserRegistered],
+      [UserRegistered, EmailUpdated], // Not necessary
       // [['UserRegistered', event => new UserRegistered(event)]],
     ),
   ],

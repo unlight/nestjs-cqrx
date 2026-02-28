@@ -1,3 +1,35 @@
+## [5.0.0](https://github.com/unlight/nestjs-cqrx/compare/v4.0.2...v5.0.0) (2025-09-13)
+
+### ⚠ BREAKING CHANGES
+
+* Subscribe to $all stream is disabled by default
+
+### Features
+
+* Disable subscribe to $all stream ([2fd1888](https://github.com/unlight/nestjs-cqrx/commit/2fd1888a2085fb086a23e62037a534839abfc532))
+
+## [4.0.2](https://github.com/unlight/nestjs-cqrx/compare/v4.0.1...v4.0.2) (2025-09-07)
+
+### Bug Fixes
+
+* Imports file extensions ([361defd](https://github.com/unlight/nestjs-cqrx/commit/361defd19609cf1784713c62e3d459fe049eab49))
+
+## [4.0.1](https://github.com/unlight/nestjs-cqrx/compare/v4.0.0...v4.0.1) (2025-09-07)
+
+### Bug Fixes
+
+* Remove package private property ([cf3f4ac](https://github.com/unlight/nestjs-cqrx/commit/cf3f4ac1145b5615d8bb286f6f16fd216ccbcf62))
+
+## [4.0.0](https://github.com/unlight/nestjs-cqrx/compare/v3.0.3...v4.0.0) (2025-09-07)
+
+### ⚠ BREAKING CHANGES
+
+* Package is ESM only
+
+### Miscellaneous Chores
+
+* Package is ESM only ([ea35741](https://github.com/unlight/nestjs-cqrx/commit/ea357413035a9a6cf7af1172fe567f442e5cdecd))
+
 ## [3.0.3](https://github.com/unlight/nestjs-cqrx/compare/v3.0.2...v3.0.3) (2024-10-06)
 
 ### Bug Fixes

@@ -1,0 +1,30 @@
+{
+  "name": "nestjs-cqrx",
+  "version": "0.0.0-dev",
+  "description": "NestJS module for integrating cqrx",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "devDependencies": {
+    "cqrx": "workspace:^"
+  },
+  "peerDependencies": {
+    "@nestjs/common": "8 - 11",
+    "@nestjs/core": "8 - 11",
+    "@nestjs/cqrs": "8 - 11",
+    "cqrx": "workspace:^",
+    "eventdbx-cqrx": "workspace:^",
+    "kurrentdb-cqrx": "workspace:^",
+    "rxjs": "6 - 7"
+  },
+  "scripts": {
+    "build": "sh ../../Taskfile buildMicrobundle6",
+    "test": "npm run eslint && npm run tscheck && npm run test:r",
+    "test:r": "vitest run",
+    "test:cov": "vitest run --coverage",
+    "eslint": "eslint src",
+    "test:w": "vitest watch",
+    "tscheck": "tsc --noEmit",
+    "tscheck:w": "npm run tscheck -- --watch"
+  }
+}

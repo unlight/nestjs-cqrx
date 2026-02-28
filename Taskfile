@@ -2,22 +2,32 @@
 PATH="$PWD/node_modules/.bin":$PATH
 set -e
 
-build_tsup() {
+buildMicrobundle6() {
   set -x
+  if [ -n "$1" ]; then
+    pushd $1
+  fi
   rm -rfv dist
-  tsup src/index.ts --format cjs,esm --target es2020 --no-sourcemap --cjsInterop --keep-names
-  mv dist/index.js dist/index.cjs
-  tsup src/index.ts --dts-only
-  cp -fv README.md dist
-
-  cat package.json | jq '.main = "./index.cjs"' |
-    jq 'del(.private)' |
-    jq 'del(.workspaces)' |
-    jq '.module = "./index.mjs"' |
-    jq '.types = "./index.d.ts"' |
-    jq '.exports.".".import = "./index.mjs"' |
-    jq '.exports.".".require = "./index.cjs"' \
-      >dist/package.json
+  npx dts-bundle-generator --no-banner --no-check --project tsconfig.json -o dist/index.d.ts src/index.ts
+  npx microbundle -i src/index.ts --tsconfig tsconfig.json --no-generateTypes --no-sourcemap --no-compress --no-pkg-main --target node -f esm -o dist || true
+  name=$(cat package.json | jq -r '.name')
+  cp -v package.json dist
+  cp -v ../../README.md dist
+  cd dist
+  mv index.d.ts "$name.d.ts"
+  mv "$name.js" "$name.mjs"
+  root=$(cat ../../../package.json | jq '{license,repository,bugs,homepage,keywords}')
+  cat ../package.json \
+    | jq 'del(.scripts, .exports)' \
+    | jq --argjson root "$root" '. * $root' \
+    | jq --arg name "$name" '
+    .module = "./\($name).mjs" |
+    .types = "./\($name).d.ts"
+  ' > package.json
+  cd ..
+  if [ -n "$1" ]; then
+    popd
+  fi
   set +x
 }
 

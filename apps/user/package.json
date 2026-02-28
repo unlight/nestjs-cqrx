@@ -1,0 +1,14 @@
+{
+  "name": "user-app",
+  "type": "commonjs",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Demo user application",
+  "scripts": {
+    "test": "npm run eslint && npm run tscheck && npm run test:r",
+    "eslint": "eslint \"**/*.{ts,tsx}\"",
+    "tscheck": "tsc --noEmit",
+    "test:r": "vitest run",
+    "test:w": "vitest"
+  }
+}

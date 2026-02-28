@@ -1,60 +1,84 @@
-name: Build and Release
+name: Continuous Integration
 on:
   - push
   - pull_request
 
 jobs:
   build:
-    name: 'Test'
+    name: 'Test, build, release'
     runs-on: ubuntu-latest
+    concurrency:
+      group: ci
+      cancel-in-progress: true
+    permissions:
+      id-token: write
+      contents: write
+      issues: write
+      pull-requests: write
+      packages: write
     steps:
       - name: 'Checkout repository'
-        uses: actions/checkout@v3
-
-      - name: 'Setup Node'
-        uses: actions/setup-node@v3
+        uses: actions/checkout@v6
         with:
-          node-version: 22
+          fetch-depth: 0
+
+      - name: 'Setup node'
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
 
       - name: 'Install depependencies'
-        run: npm install --force
+        run: |
+          yarn install --immutable
+          # TODO: Remove hack
+          # Install eventdbxjs in a temp directory, then copy it
+          mkdir -p /tmp/eventdbxjs-install
+          cd /tmp/eventdbxjs-install
+          npm init -y
+          npm install eventdbxjs eventdbxjs-linux-x64-gnu --omit=optional
+          cp -r node_modules/eventdbxjs $GITHUB_WORKSPACE/node_modules/
+          cp -r node_modules/eventdbxjs-linux-x64-gnu $GITHUB_WORKSPACE/node_modules/
+          cd $GITHUB_WORKSPACE
+          # npm install eventdbxjs --omit=optional --no-save --install-strategy=nested
+          # additional hacks
+          # npm install eventdbxjs --omit=optional
+          # npm install eventdbxjs --omit=optional --no-save
 
       - name: 'Check docker compose version'
         run: docker compose version
 
       - name: 'Start containers'
-        run: docker compose up -d
+        run: docker compose up -d --quiet-pull --wait --remove-orphans
 
-      - name: 'Test'
-        run: npm run test
+      - name: 'Setup env'
+        run: |
+          EVENTDBX_TOKEN=$(docker compose exec -T eventdbx dbx token bootstrap --stdout)
+          echo "EVENTDBX_TOKEN=$EVENTDBX_TOKEN" >> $GITHUB_ENV
+
+      - name: 'Lint source'
+        env:
+          EVENTDBX_TOKEN: ${{ ENV.EVENTDBX_TOKEN }}
+        run: |
+          yarn eslint
+
+      - name: 'Build'
+        run: |
+          yarn build
+
+      - name: 'Test run'
+        env:
+          EVENTDBX_TOKEN: ${{ ENV.EVENTDBX_TOKEN }}
+        run: |
+          yarn test:r
+
+      - name: 'Release'
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/next')
+        run: |
+          yarn release --ignore-private-packages --sequential-init
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: 'Stop containers'
         if: always()
         run: docker compose down
-
-  release:
-    name: 'Release'
-    runs-on: ubuntu-latest
-    needs: build
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/next')
-    steps:
-      - name: 'Checkout repository'
-        uses: actions/checkout@v3
-
-      - name: 'Setup Node'
-        uses: actions/setup-node@v3
-        with:
-          node-version: 22
-
-      - name: 'Install depependencies'
-        run: npm install --force
-
-      - name: 'Build'
-        run: npm run build
-
-      - name: 'Release'
-        run: |
-          npx semantic-release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

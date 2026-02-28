@@ -1,5 +1,11 @@
-import { Event } from 'nestjs-cqrx';
+import { ObjectType } from 'simplytyped';
+import { UserRegisteredDto } from '../dto/index.ts';
+import { Event } from 'cqrx';
 
-import { UserRegisteredDto } from '../dto';
+type TData = ObjectType<UserRegisteredDto>;
 
-export class UserRegistered extends Event<UserRegisteredDto> {}
+export class UserRegistered extends Event<TData> {
+  constructor(readonly data: TData) {
+    super();
+  }
+}
