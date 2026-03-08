@@ -17,7 +17,7 @@ let eventstoreClient: IEventStoreClient;
 let eventStoreService: EventStoreService;
 
 describe.each([
-  // { factory: dbxEventStoreClient },
+  { factory: dbxEventStoreClient },
   { factory: kurrentdbEventStoreClient },
 ])('eventStoreService implementation $factory.name', ({ factory }) => {
   beforeAll(async () => {
@@ -49,5 +49,19 @@ describe.each([
     const events = await all(eventStoreService.read(stream));
     const event = last(events);
     expect(event?.data).toEqual({ name: 'ivan' });
+  });
+
+  it('create and read stream', async () => {
+    const stream = `user_${randomString()}`;
+    const userRegisteredDto = { name: 'Lou' };
+    const userRegisteredEvent = new TestEvent<typeof userRegisteredDto>(
+      userRegisteredDto,
+    );
+    // Act
+    await eventStoreService.create(stream, userRegisteredEvent);
+    const events = await all(eventStoreService.read(stream));
+    const [event] = events;
+
+    expect(event.type).toEqual('test_event');
   });
 });
