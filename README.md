@@ -189,10 +189,6 @@ export EVENTDBX_TOKEN=$(docker compose exec -T eventdbx dbx token bootstrap --st
 ## Todo
 
 - update readme for each package - each section - copy when build
-- build/publish monorepo
-- use https://github.com/poppinss/ts-exec
-- get rid of swc, try to run user app with esm
-- read from specific position
 - find lib for creating errors
 - better to split on read/write events
 - reducer (similar to evolve of emmet)
