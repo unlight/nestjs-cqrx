@@ -1,16 +1,14 @@
 import { Body, Controller, Get, Param, Post, Sse } from '@nestjs/common';
 import { CommandBus, EventBus, ofType, QueryBus } from '@nestjs/cqrs';
 import { Observable } from 'rxjs';
-
-import { RegisterUser, UpdateEmail } from './command';
-import {
-  RegisterUserDto,
-  UpdateEmailDto,
-  UserDataDto,
-  UserRegisteredDto,
-} from './dto';
-import { GetUser } from './query';
-import { UserRegistered } from './events';
+import { UserDataDto } from './dto/response/user-data.dto.js';
+import { UserRegisteredDto } from './dto/response/user-registered.dto.js';
+import { RegisterUser } from './command/register-user.command.js';
+import { GetUser } from './query/get-user.query.js';
+import { RegisterUserDto } from './dto/request/register-user.dto.js';
+import { UpdateEmail } from './command/update-email.command.js';
+import { UserRegistered } from './events/user-registered.event.js';
+import { UpdateEmailDto } from './dto/request/update-email.dto.ts';
 
 @Controller('user')
 export class UserController {

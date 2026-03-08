@@ -9,7 +9,7 @@ import {
 import { CqrsModule } from '@nestjs/cqrs';
 import assert from 'node:assert';
 
-import { CQRX_OPTIONS } from './constants.ts';
+import { CQRX_OPTIONS } from './constants.js';
 
 import { ModulesContainer } from '@nestjs/core';
 import {
@@ -22,7 +22,7 @@ import type { EventdbxOptions, KurrentdbOptions } from './interfaces.ts';
 import {
   eventStoreClientFactory,
   transformServiceFactory,
-} from './providers.ts';
+} from './providers.js';
 
 export type CqrxModuleOptions =
   | ({ type: 'eventdbx' } & EventdbxOptions)

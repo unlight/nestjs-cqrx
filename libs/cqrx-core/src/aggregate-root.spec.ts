@@ -4,7 +4,7 @@ import { createId } from '@paralleldrive/cuid2';
 import { expect, it, vi } from 'vitest';
 import { AggregateRoot } from './aggregate-root.ts';
 import { EventHandler } from './event-handler.decorator.ts';
-import { Event } from './event.ts';
+import { Event } from './event.js';
 
 class UserCreatedEvent extends Event {}
 class UserChangedEmailEvent extends Event {}

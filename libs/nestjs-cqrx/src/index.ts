@@ -1,5 +1,5 @@
 export {
   aggregateRepositoryToken,
   InjectAggregateRepository,
-} from './providers.ts';
-export { CqrxModule } from './cqrx.module.ts';
+} from './providers.js';
+export { CqrxModule } from './cqrx.module.js';

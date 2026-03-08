@@ -2,6 +2,7 @@
   "name": "nestjs-cqrx",
   "version": "0.0.0-dev",
   "description": "NestJS module for integrating cqrx",
+  "type": "module",
   "exports": {
     ".": "./src/index.ts"
   },

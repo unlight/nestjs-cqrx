@@ -2,9 +2,8 @@ import { NotFoundException } from '@nestjs/common';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { InjectAggregateRepository } from 'nestjs-cqrx';
 import { AggregateRepository } from 'cqrx-core';
-
-import { UserDataDto } from '../dto';
-import { User } from '../model';
+import { UserDataDto } from '../dto/response/user-data.dto.js';
+import { User } from '../model/user.js';
 
 export class GetUser {
   constructor(public readonly email: string) {}

@@ -1,4 +1,4 @@
-import { AGGREGATE_EVENT_HANDLERS } from './constants.ts';
+import { AGGREGATE_EVENT_HANDLERS } from './constants.js';
 import type {
   AggregateEventHandlers,
   EventHandlerFunction,

@@ -1,8 +1,9 @@
 import { ConflictException } from '@nestjs/common';
 import { AggregateRoot, EventHandler } from 'cqrx-core';
 
-import { EmailUpdated, UserRegistered } from '../events';
 import { isEmail } from 'class-validator';
+import { UserRegistered } from '../events/user-registered.event.js';
+import { EmailUpdated } from '../events/email-updated.event.js';
 
 export class User extends AggregateRoot {
   protected static readonly aggregateType: string = 'user';

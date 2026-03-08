@@ -7,8 +7,7 @@ import {
 import { InjectAggregateRepository } from 'nestjs-cqrx';
 
 import { AggregateRepository, EventStoreService } from 'cqrx-core';
-
-import { User } from '../model';
+import { User } from '../model/user.js';
 
 export class UpdateEmail {
   constructor(

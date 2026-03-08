@@ -1,6 +1,6 @@
 {
   "name": "user-app",
-  "type": "commonjs",
+  "type": "module",
   "private": true,
   "version": "1.0.0",
   "description": "Demo user application",

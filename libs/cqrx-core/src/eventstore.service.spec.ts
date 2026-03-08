@@ -4,13 +4,13 @@ import { last } from 'lodash';
 import { randomInt } from 'node:crypto';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { IEventStoreClient } from './eventstore-client.ts';
-import { EventStoreService } from './eventstore.service';
 import {
   dbxEventStoreClient,
   kurrentdbEventStoreClient,
   TestEvent,
 } from '../testing/index.ts';
 import { TransformService } from './transform.service.ts';
+import { EventStoreService } from './eventstore.service.ts';
 
 const randomString = () => randomInt(2 ** 48 - 1).toString(36);
 let eventstoreClient: IEventStoreClient;

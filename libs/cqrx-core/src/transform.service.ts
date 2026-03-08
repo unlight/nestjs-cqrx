@@ -1,6 +1,6 @@
 import isClass from 'node-is-class';
-import type { IStoredEvent, Type } from './interfaces.ts';
-import { createFromStoredEvent } from './utils.ts';
+import type { IStoredEvent, Type } from './interfaces.js';
+import { createFromStoredEvent } from './utils.js';
 
 export type Transform = (event: IStoredEvent) => any;
 export type Transformer = Type<any> | [string, Transform];

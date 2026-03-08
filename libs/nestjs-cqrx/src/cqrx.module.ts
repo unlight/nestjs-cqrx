@@ -1,12 +1,12 @@
 import { DynamicModule, Module, Provider, Type } from '@nestjs/common';
 
-import { EVENT_TRANSFORMERS } from './constants.ts';
+import { EVENT_TRANSFORMERS } from './constants.js';
 import {
   CqrxCoreModule,
   CqrxModuleAsyncOptions,
   CqrxModuleOptions,
-} from './cqrx-core.module';
-import { AsyncAggregateRootFactory } from './interfaces.ts';
+} from './cqrx-core.module.js';
+import { AsyncAggregateRootFactory } from './interfaces.js';
 import {
   EventStoreService,
   getEventHandlers,
@@ -14,7 +14,7 @@ import {
   Transformers,
   AggregateRepository,
 } from 'cqrx-core';
-import { aggregateRepositoryToken } from './providers.ts';
+import { aggregateRepositoryToken } from './providers.js';
 
 @Module({})
 export class CqrxModule {

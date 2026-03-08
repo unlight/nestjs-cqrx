@@ -2,6 +2,7 @@
   "name": "eventdbx-cqrx",
   "version": "0.0.0-dev",
   "description": "EventDBX adapter and integration with cqrx, used by higher-level modules like nestjs-cqrx",
+  "type": "module",
   "exports": {
     ".": "./src/index.ts"
   },

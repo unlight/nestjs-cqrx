@@ -8,11 +8,10 @@ import { InjectAggregateRepository } from 'nestjs-cqrx';
 
 import { AggregateRepository, EventStoreService } from 'cqrx-core';
 
-import { UserRegisteredDto } from '../dto';
-import { User } from '../model';
 import { createId } from '@paralleldrive/cuid2';
-
-import { RegisterUserDto } from '../dto';
+import { User } from '../model/user.js';
+import { UserRegisteredDto } from '../dto/response/user-registered.dto.js';
+import { RegisterUserDto } from '../dto/request/register-user.dto.js';
 
 export class RegisterUser {
   constructor(public readonly data: RegisterUserDto) {}

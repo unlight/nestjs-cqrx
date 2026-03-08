@@ -1,5 +1,6 @@
 {
   "name": "kurrentdb-cqrx",
+  "type": "module",
   "version": "0.0.0-dev",
   "description": "KurrentDB (formerly EventStoreDB) adapter and integration with cqrx, used by higher-level modules like nestjs-cqrx",
   "exports": {

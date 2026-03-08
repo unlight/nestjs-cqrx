@@ -1,11 +1,11 @@
-export { Event } from './event.ts';
-export { AggregateRepository } from './aggregate.repository.ts';
-export { TransformService } from './transform.service.ts';
-export { getEventHandlers, EventHandler } from './event-handler.decorator.ts';
-export { EventStoreService } from './eventstore.service.ts';
-export { AggregateRoot } from './aggregate-root.ts';
-export { EventstoreClient } from './constants.ts';
-export type { IStoredEvent } from './interfaces.ts';
+export { Event } from './event.js';
+export { AggregateRepository } from './aggregate.repository.js';
+export { TransformService } from './transform.service.js';
+export { getEventHandlers, EventHandler } from './event-handler.decorator.js';
+export { EventStoreService } from './eventstore.service.js';
+export { AggregateRoot } from './aggregate-root.js';
+export { EventstoreClient } from './constants.js';
+export type { IStoredEvent } from './interfaces.js';
 export type {
   IEventStoreClient,
   ICreateArgs,
@@ -13,9 +13,9 @@ export type {
   IApplyArgs,
   ICreateResult,
   IApplyResult,
-} from './eventstore-client.ts';
+} from './eventstore-client.js';
 export type {
   Transform,
   Transformer,
   Transformers,
-} from './transform.service.ts';
+} from './transform.service.js';

@@ -1,7 +1,7 @@
-import { streamToAggregate } from './utils.ts';
-import { TransformService } from './transform.service.ts';
-import { Event } from './event.ts';
-import type { ICreateResult, IEventStoreClient } from './eventstore-client.ts';
+import { streamToAggregate } from './utils.js';
+import { TransformService } from './transform.service.js';
+import { Event } from './event.js';
+import type { ICreateResult, IEventStoreClient } from './eventstore-client.js';
 
 export class EventStoreService {
   constructor(

@@ -1,11 +1,13 @@
 import { Module } from '@nestjs/common';
 import { CqrxModule } from 'nestjs-cqrx';
 
-import { COMMAND_HANDLERS } from './command';
-import { EmailUpdated, UserRegistered } from './events';
-import { User } from './model';
-import { QUERY_HANDLERS } from './query';
-import { UserController } from './user.controller';
+import { User } from './model/user.js';
+import { GetUserHandler } from './query/get-user.query.js';
+import { UserController } from './user.controller.ts';
+import { UpdateEmailHandler } from './command/update-email.command.js';
+import { RegisterUserHandler } from './command/register-user.command.js';
+import { UserRegistered } from './events/user-registered.event.js';
+import { EmailUpdated } from './events/email-updated.event.js';
 
 @Module({
   imports: [
@@ -15,7 +17,7 @@ import { UserController } from './user.controller';
       // [['UserRegistered', event => new UserRegistered(event)]],
     ),
   ],
-  providers: [...QUERY_HANDLERS, ...COMMAND_HANDLERS],
+  providers: [GetUserHandler, UpdateEmailHandler, RegisterUserHandler],
   controllers: [UserController],
 })
 export class UserModule {}

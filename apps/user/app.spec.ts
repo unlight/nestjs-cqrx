@@ -2,9 +2,9 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import request from 'supertest';
 
-import { AllExceptionsFilter } from './app.exception-filter';
-import { AppModule } from './app.module';
-import { User } from './user/model/user';
+import { AllExceptionsFilter } from './app.exception-filter.ts';
+import { AppModule } from './app.module.ts';
+import { User } from './user/model/user.ts';
 import { aggregateRepositoryToken } from 'nestjs-cqrx';
 import { expect, beforeAll, afterAll, it } from 'vitest';
 import { Server } from 'node:http';

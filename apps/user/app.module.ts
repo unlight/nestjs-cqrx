@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { CqrxModule } from 'nestjs-cqrx';
 
-import { UserModule } from './user/user.module';
+import { UserModule } from './user/user.module.js';
 
 @Module({
   imports: [

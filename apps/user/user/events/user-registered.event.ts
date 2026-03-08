@@ -1,6 +1,6 @@
 import { ObjectType } from 'simplytyped';
-import { UserRegisteredDto } from '../dto/index.ts';
 import { Event } from 'cqrx-core';
+import type { UserRegisteredDto } from '../dto/response/user-registered.dto.ts';
 
 type TData = ObjectType<UserRegisteredDto>;
 

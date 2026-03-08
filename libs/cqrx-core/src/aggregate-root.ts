@@ -1,13 +1,13 @@
 import 'reflect-metadata';
 import { lastValueFrom, Observable } from 'rxjs';
 
-import { AGGREGATE_EVENT_HANDLERS } from './constants.ts';
+import { AGGREGATE_EVENT_HANDLERS } from './constants.js';
 import type {
   AggregateEventHandlers,
   EventHandlerFunction,
   Type,
 } from './interfaces.ts';
-import { Event } from './event.ts';
+import { Event } from './event.js';
 
 export abstract class AggregateRoot {
   protected static readonly aggregateType: string = '';

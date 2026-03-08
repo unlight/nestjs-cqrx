@@ -14,7 +14,7 @@ import type {
   IEventStoreClient,
   IGetEventArgs,
 } from 'cqrx-core';
-import type { ClientOptions } from './interfaces.ts';
+import type { ClientOptions } from './interfaces.js';
 
 export function createKurrentdbEventstoreClient(options: ClientOptions) {
   const { connectionString } = options;

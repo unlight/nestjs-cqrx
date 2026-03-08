@@ -9,9 +9,9 @@ import {
   TransformService,
 } from 'cqrx-core';
 
-import { EVENT_TRANSFORMERS } from './constants.ts';
-import type { CqrxModuleOptions } from './cqrx-core.module.ts';
-import type { Key, Nullable, Type } from './interfaces.ts';
+import { EVENT_TRANSFORMERS } from './constants.js';
+import type { CqrxModuleOptions } from './cqrx-core.module.js';
+import type { Key, Nullable, Type } from './interfaces.js';
 
 export function aggregateRepositoryToken(value: { readonly name: string }) {
   return `AggregateRepository${value.name}`;
@@ -32,7 +32,6 @@ export async function eventStoreClientFactory(options: CqrxModuleOptions) {
     }
     case 'kurrentdb': {
       const { createKurrentdbEventstoreClient } =
-        // @ts-expect-error Install issues
         await import('kurrentdb-cqrx');
 
       return createKurrentdbEventstoreClient(options);

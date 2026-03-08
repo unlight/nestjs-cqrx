@@ -1,2 +1,2 @@
-export { createKurrentdbEventstoreClient } from './kurrentdb-eventstore-client.ts';
-export type { ClientOptions } from './interfaces.ts';
+export { createKurrentdbEventstoreClient } from './kurrentdb-eventstore-client.js';
+export type { ClientOptions } from './interfaces.js';
