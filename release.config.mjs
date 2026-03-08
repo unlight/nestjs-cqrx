@@ -1,8 +1,9 @@
 /**
  * @type {import('semantic-release').GlobalConfig}
  */
+
 export default {
-  tagFormat: '${name}@${version}',
+  extends: ['semantic-release-commit-filter'],
   plugins: [
     [
       '@semantic-release/commit-analyzer',

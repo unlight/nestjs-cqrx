@@ -56,8 +56,6 @@ jobs:
           echo "EVENTDBX_TOKEN=$EVENTDBX_TOKEN" >> $GITHUB_ENV
 
       - name: 'Lint source'
-        env:
-          EVENTDBX_TOKEN: ${{ ENV.EVENTDBX_TOKEN }}
         run: |
           yarn eslint
 
@@ -73,8 +71,12 @@ jobs:
 
       - name: 'Release'
         if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/next')
+        shell: bash
         run: |
-          yarn release --ignore-private-packages --sequential-init --deps.prefix=^
+          bash Taskfile release libs/cqrx-core
+          bash Taskfile release libs/kurrentdb-cqrx
+          # bash Taskfile release libs/eventdbx-cqrx # TODO: Waiting fix https://github.com/eventdbx/eventdbx/issues/130
+          bash Taskfile release libs/nestjs-cqrx
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

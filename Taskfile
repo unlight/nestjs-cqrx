@@ -31,4 +31,16 @@ buildMicrobundle6() {
   set +x
 }
 
+release() {
+  set -x
+  if [ -z "$1" ]; then
+    echo 'Missing folder package'
+    exit 1;
+  fi
+  pushd $1
+  npx semantic-release
+  popd
+  set +x
+}
+
 "$@"
