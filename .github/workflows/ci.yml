@@ -44,6 +44,18 @@ jobs:
           # npm install eventdbxjs --omit=optional
           # npm install eventdbxjs --omit=optional --no-save
 
+      - name: 'Lint source'
+        run: |
+          yarn eslint
+
+      - name: 'Type check'
+        run: |
+          yarn typecheck
+
+      - name: 'Build'
+        run: |
+          yarn build
+
       - name: 'Check docker compose version'
         run: docker compose version
 
@@ -55,19 +67,15 @@ jobs:
           EVENTDBX_TOKEN=$(docker compose exec -T eventdbx dbx token bootstrap --stdout)
           echo "EVENTDBX_TOKEN=$EVENTDBX_TOKEN" >> $GITHUB_ENV
 
-      - name: 'Lint source'
-        run: |
-          yarn eslint
-
-      - name: 'Build'
-        run: |
-          yarn build
-
       - name: 'Test run'
         env:
           EVENTDBX_TOKEN: ${{ ENV.EVENTDBX_TOKEN }}
         run: |
           yarn test:r
+
+      - name: 'Stop containers'
+        if: always()
+        run: docker compose down
 
       - name: 'Release'
         if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/next')
@@ -80,7 +88,3 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      - name: 'Stop containers'
-        if: always()
-        run: docker compose down
