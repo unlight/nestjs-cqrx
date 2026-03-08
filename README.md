@@ -188,6 +188,7 @@ export EVENTDBX_TOKEN=$(docker compose exec -T eventdbx dbx token bootstrap --st
 
 ## Todo
 
+- try https://github.com/joe-p/semantic-release-scope-filter/
 - update readme for each package - each section - copy when build
 - find lib for creating errors
 - better to split on read/write events

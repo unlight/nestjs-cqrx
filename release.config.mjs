@@ -3,7 +3,6 @@
  */
 
 export default {
-  extends: ['semantic-release-commit-filter'],
   plugins: [
     [
       '@semantic-release/commit-analyzer',
