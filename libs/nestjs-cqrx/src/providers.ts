@@ -25,7 +25,6 @@ export async function eventStoreClientFactory(options: CqrxModuleOptions) {
   const { type } = options;
   switch (type) {
     case 'eventdbx': {
-      // @ts-expect-error Install issues
       const { createEventdbxEventstoreClient } = await import('eventdbx-cqrx');
 
       return createEventdbxEventstoreClient(options);
