@@ -55,13 +55,12 @@ export abstract class AggregateRoot {
 
   async callEventHandlers<E extends Event>(event: E): Promise<void> {
     const handlers = this.getEventHandlers(event);
-    const calls = handlers.map(async handler => {
-      const response$ = handler.call(this, event);
+    for (const handler of handlers) {
+      const response$ = await handler.call(this, event);
       if (response$ instanceof Observable) {
         await lastValueFrom(response$);
       }
-    });
-    await Promise.all(calls);
+    }
   }
 
   async applyFromHistory<E extends Event>(event: E): Promise<void> {
@@ -72,10 +71,6 @@ export abstract class AggregateRoot {
   async commit(): Promise<void> {
     const events = this.getUncommittedEvents();
     this.#internalEvents.length = 0;
-
-    for (const event of events) {
-      await this.callEventHandlers(event);
-    }
 
     await this.publishAll(events);
   }
