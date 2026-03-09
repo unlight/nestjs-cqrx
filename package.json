@@ -9,10 +9,10 @@
   "workspaces": [
     "apps/tick-tack-toe",
     "apps/user",
-    "libs/nestjs-cqrx",
     "libs/cqrx-core",
-    "@comment_libs/eventdbx-cqrx",
-    "libs/kurrentdb-cqrx"
+    "libs/kurrentdb-cqrx",
+    "@//libs/eventdbx-cqrx",
+    "libs/nestjs-cqrx"
   ],
   "repository": {
     "type": "git",
@@ -46,14 +46,12 @@
     "wineventdbxjs": "yarn add eventdbxjs@portal:./patches/eventdbxjs; git checkout yarn.lock"
   },
   "devDependencies": {
-    "@apollo/gateway": "^2.13.0",
     "@commitlint/config-conventional": "^20.4.3",
     "@eslint/compat": "^2.0.3",
     "@eslint/js": "^10.0.1",
     "@nestjs/common": "^11.1.12",
     "@nestjs/core": "^11.1.12",
     "@nestjs/cqrs": "^11.0.3",
-    "@nestjs/graphql": "^13.2.4",
     "@nestjs/platform-express": "^11.1.12",
     "@nestjs/testing": "^11.1.12",
     "@paralleldrive/cuid2": "^3.3.0",
@@ -67,7 +65,6 @@
     "@types/lodash": "^4.17.24",
     "@types/node": "^25.1.0",
     "@types/supertest": "^7.2.0",
-    "apollo-server-express": "^3.13.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.15.1",
     "conventional-changelog-conventionalcommits": "^9.3.0",
@@ -77,7 +74,6 @@
     "eslint-plugin-only-warn": "^1.2.1",
     "eslint-plugin-prettier": "^5.5.5",
     "globals": "^17.4.0",
-    "graphql": "^16.12.0",
     "it-all": "1.X",
     "lodash": "^4.17.23",
     "microbundle": "^0.15.1",
@@ -91,7 +87,6 @@
     "simplytyped": "^3.3.0",
     "supertest": "^7.2.2",
     "tsconfig-paths": "^4.2.0",
-    "typeid-js": "^1.2.0",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.54.0",
     "unplugin-swc": "^1.5.9",
