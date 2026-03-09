@@ -1,0 +1,15 @@
+{
+  "name": "tick-tack-toe-app",
+  "type": "module",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Demo tick-tack-toe application",
+  "scripts": {
+    "test": "npm run eslint && npm run tscheck && npm run test:r",
+    "eslint": "eslint \"**/*.{ts,tsx}\"",
+    "tscheck": "tsc --noEmit",
+    "tscheck:w": "tsc --noEmit --watch",
+    "test:r": "vitest run",
+    "test:w": "vitest"
+  }
+}
