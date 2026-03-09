@@ -15,6 +15,7 @@ import type {
   IGetEventArgs,
 } from 'cqrx-core';
 import type { ClientOptions } from './interfaces.js';
+import assert from 'node:assert';
 
 export function createKurrentdbEventstoreClient(options: ClientOptions) {
   const { connectionString } = options;
@@ -30,6 +31,9 @@ export class KurrentdbEventStoreClient implements IEventStoreClient {
   async create(args: ICreateArgs): Promise<ICreateResult> {
     const { aggregateId, aggregateType, eventData, eventType, metadata } = args;
     const streamId = `${aggregateType}_${aggregateId}`;
+
+    assert.ok(eventData !== undefined);
+
     const dataEvent = jsonEvent({
       type: eventType,
       data: eventData,
@@ -48,6 +52,9 @@ export class KurrentdbEventStoreClient implements IEventStoreClient {
   async apply(args: IApplyArgs): Promise<IApplyResult> {
     const { aggregateId, aggregateType, eventData, eventType, metadata } = args;
     const streamId = `${aggregateType}_${aggregateId}`;
+
+    assert.ok(eventData !== undefined);
+
     const dataEvent = jsonEvent({
       type: eventType,
       data: eventData,
