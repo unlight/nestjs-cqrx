@@ -19,3 +19,4 @@ export type {
   Transformer,
   Transformers,
 } from './transform.service.js';
+export { EventPublisher } from './event-publisher.js';

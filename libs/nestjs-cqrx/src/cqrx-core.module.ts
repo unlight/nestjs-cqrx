@@ -6,17 +6,19 @@ import {
   Provider,
   Type,
 } from '@nestjs/common';
-import { CqrsModule } from '@nestjs/cqrs';
+import { CqrsModule, EventBus } from '@nestjs/cqrs';
 import assert from 'node:assert';
 
 import { CQRX_OPTIONS } from './constants.js';
 
 import { ModulesContainer } from '@nestjs/core';
 import {
+  EventPublisher,
   EventstoreClient,
   EventStoreService,
   IEventStoreClient,
   TransformService,
+  Event,
 } from 'cqrx-core';
 import type { EventdbxOptions, KurrentdbOptions } from './interfaces.ts';
 import {
@@ -45,11 +47,13 @@ export interface CqrxModuleAsyncOptions extends Pick<
 }
 
 @Module({
-  exports: [CqrsModule, EventStoreService], // EventPublisher
+  exports: [CqrsModule, EventStoreService, EventPublisher],
   imports: [CqrsModule],
-  providers: [EventStoreService, TransformService], // EventPublisher
+  providers: [EventStoreService, TransformService, EventPublisher],
 })
 export class CqrxCoreModule {
+  constructor(private readonly eventBus$: EventBus<Event>) {}
+
   static forRoot(options: Partial<CqrxModuleOptions>): DynamicModule {
     return {
       global: true,
@@ -113,6 +117,12 @@ export class CqrxCoreModule {
         inject: [EventstoreClient, TransformService],
         useFactory: (...args: [IEventStoreClient, TransformService]) =>
           new EventStoreService(...args),
+      },
+      {
+        provide: EventPublisher,
+        inject: [EventStoreService],
+        useFactory: (...args: [EventStoreService]) =>
+          new EventPublisher(...args),
       },
     ];
   }

@@ -1,6 +1,8 @@
 import { AggregateRoot } from './aggregate-root.ts';
 import { EventStoreService } from './eventstore.service.ts';
 import type { Type } from './interfaces.ts';
+import { Event } from './event.ts';
+import assert from 'node:assert';
 
 export class AggregateRepository<T extends AggregateRoot> {
   constructor(
@@ -27,19 +29,31 @@ export class AggregateRepository<T extends AggregateRoot> {
    * Get uncommited events from aggregate and append to stream
    */
   async save(aggregate: T): Promise<void> {
-    const events = aggregate.getUncommittedEvents();
+    await AggregateRepository.save({
+      aggregate,
+      eventStoreService: this.eventStoreService,
+      events: aggregate.getUncommittedEvents(),
+    });
+  }
+
+  static async save(args: {
+    aggregate: AggregateRoot;
+    eventStoreService: EventStoreService;
+    events: Event[];
+  }) {
+    const { events, aggregate, eventStoreService } = args;
 
     if (aggregate.version === 0) {
       const event = events.shift();
       if (event) {
-        await this.eventStoreService.create(aggregate.stream, event);
+        await eventStoreService.create(aggregate.stream, event);
         await aggregate.callEventHandlers(event);
       }
     }
 
     // Commit, but no publish
     for (const event of events) {
-      await this.eventStoreService.apply(aggregate.stream, event);
+      await eventStoreService.apply(aggregate.stream, event);
       await aggregate.callEventHandlers(event);
     }
 
