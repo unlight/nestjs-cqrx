@@ -5,6 +5,8 @@ import {
   ModuleMetadata,
   Provider,
   Type,
+  type OnModuleInit,
+  Inject,
 } from '@nestjs/common';
 import { CqrsModule, EventBus } from '@nestjs/cqrs';
 import assert from 'node:assert';
@@ -28,7 +30,7 @@ import {
 
 export type CqrxModuleOptions =
   | ({ type: 'eventdbx' } & EventdbxOptions)
-  | ({ type: 'kurrentdb' } & KurrentdbOptions);
+  | ({ type: 'kurrentdb'; subscribeToAll: boolean } & KurrentdbOptions);
 
 interface CqrxOptionsFactory {
   createCqrxOptions(): Partial<CqrxModuleOptions>;
@@ -51,8 +53,23 @@ export interface CqrxModuleAsyncOptions extends Pick<
   imports: [CqrsModule],
   providers: [EventStoreService, TransformService, EventPublisher],
 })
-export class CqrxCoreModule {
-  constructor(private readonly eventBus$: EventBus<Event>) {}
+export class CqrxCoreModule implements OnModuleInit {
+  private subscription?: () => Promise<void>;
+
+  constructor(
+    private readonly eventBus$: EventBus<Event>,
+    @Inject(CQRX_OPTIONS) private readonly options: CqrxModuleOptions,
+  ) {}
+
+  onModuleInit() {
+    if (this.options.type === 'kurrentdb' && this.options.subscribeToAll) {
+      throw new Error('Not implemented');
+    }
+  }
+
+  async onModuleDestroy() {
+    await this.subscription?.();
+  }
 
   static forRoot(options: Partial<CqrxModuleOptions>): DynamicModule {
     return {

@@ -19,6 +19,7 @@ import { GameViewRepository } from './repositories/game-view.repository.js';
     CqrxModule.forRoot({
       type: 'kurrentdb',
       connectionString: 'kurrentdb://localhost:2113?tls=false',
+      subscribeToAll: false,
     }),
     CqrxModule.forFeature(
       [Game],

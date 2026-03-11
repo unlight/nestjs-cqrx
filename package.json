@@ -42,8 +42,8 @@
     "tscheck": "tsc --noEmit",
     "tscheck:w": "npm run tscheck -- --watch",
     "dev:user": "onchange -v **/*.ts -k -i -- node --import=@poppinss/ts-exec apps/user/main.ts",
-    "dev:ttt": "onchange -v **/.ts -k -i -- node --import=@poppinss/ts-exec apps/tick-tack-toe/main.ts",
-    "wineventdbxjs": "yarn add eventdbxjs@portal:./patches/eventdbxjs; git checkout yarn.lock"
+    "dev:ttt": "onchange -v **/*.ts -k -i -- node --import=@poppinss/ts-exec apps/tick-tack-toe/main.ts",
+    "wineventdbxjs": "yarn add eventdbxjs@portal:./patches/eventdbxjs"
   },
   "devDependencies": {
     "@commitlint/config-conventional": "^20.4.3",
