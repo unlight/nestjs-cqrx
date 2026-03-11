@@ -2,7 +2,7 @@
   "name": "cqrx-core",
   "description": "Core cqrx library with aggregate root and event handling primitives, independent of any specific framework or database",
   "type": "module",
-  "version": "1.0.0",
+  "version": "0.0.0-dev",
   "exports": {
     ".": "./src/index.ts"
   },
