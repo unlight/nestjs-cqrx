@@ -47,4 +47,21 @@ export class EventStoreService {
       yield transform?.(event) ?? event;
     }
   }
+
+  subscribeToAll(
+    eventListener: (event: Event) => void,
+    errorListener: (err: Error) => void,
+  ): undefined | (() => Promise<void>) {
+    const subscription = this.eventStoreClient.subscribeToAll?.(storedEvent => {
+      const transform = this.transformService.get(storedEvent.type);
+      if (transform) {
+        const domainEvent = transform(storedEvent);
+        eventListener(domainEvent);
+      }
+    }, errorListener);
+
+    if (!subscription) return;
+
+    return () => subscription.unsubscribe();
+  }
 }

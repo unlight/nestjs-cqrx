@@ -3,10 +3,17 @@ services:
     image: thachp/eventdbx:latest
     # container_name: eventdbx
     ports:
-      - '7070:7070'
-      - '6363:6363'
-    volumes:
-      - /var/lib/eventdbx
+      - '7070:7070' # Possibly for HTTP API (check docs)
+      - '6363:6363' # Control socket for client connections
+    # volumes:
+    # - ./eventdbx.yaml:/etc/eventdbx/config.yaml # Mount config file
+    # - eventdbx-data:/var/lib/eventdbx # Persist data
+    # If you use a process emitter, mount additional scripts:
+    # - ./materializer.js:/app/materializer.js
+    # command: ['start', '--config', '/etc/eventdbx/config.yaml']
+    # On Linux, if you need to reach host, you might use network_mode: host or specify extra_hosts
+    extra_hosts:
+      - 'host.docker.internal:host-gateway' # For Linux compatibility (Docker 20.10+)
 
   kurrentdb:
     image: kurrentplatform/kurrentdb:25.0.1-x64-8.0-bookworm-slim
@@ -30,3 +37,4 @@ services:
 volumes:
   kurrentdb-volume-data:
   kurrentdb-volume-logs:
+  # eventdbx-data:

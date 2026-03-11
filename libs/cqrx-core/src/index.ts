@@ -5,7 +5,7 @@ export { getEventHandlers, EventHandler } from './event-handler.decorator.js';
 export { EventStoreService } from './eventstore.service.js';
 export { AggregateRoot } from './aggregate-root.js';
 export { EventstoreClient } from './constants.js';
-export type { IStoredEvent } from './interfaces.js';
+export type { ReadableSubscription, IStoredEvent } from './interfaces.js';
 export type {
   IEventStoreClient,
   ICreateArgs,

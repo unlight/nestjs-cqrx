@@ -2,7 +2,6 @@ import { AGGREGATE_EVENT_HANDLERS } from './constants.js';
 import type {
   AggregateEventHandlers,
   EventHandlerFunction,
-  TEventData,
   Type,
 } from './interfaces.ts';
 

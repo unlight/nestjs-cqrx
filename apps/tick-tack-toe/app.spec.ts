@@ -9,7 +9,7 @@ import { GameCreatedDtoReponse } from './dto/game-created-dto.reponse.ts';
 import { StartGameCommand } from './commands/start-game.command.ts';
 import { PlayerMoveCommand } from './commands/player-move.command.ts';
 import { GameRepository } from './repositories/game.repository.ts';
-import { map, take, tap } from 'rxjs/operators';
+import { map, take } from 'rxjs/operators';
 import { lastValueFrom } from 'rxjs';
 import { GameEndedEvent } from './events/game-ended.event.ts';
 import { GameViewRepository } from './repositories/game-view.repository.ts';
@@ -89,12 +89,11 @@ describe('game by steps', () => {
   });
 });
 
-it.skip('game view repository from event bus', async () => {
+it('game view repository from event bus', async () => {
   const gameViewRepository = app.get(GameViewRepository);
   const events = app.get(EventBus);
   const playerMove$ = lastValueFrom(
     events.pipe(
-      tap(x => console.log(x)),
       ofType(PlayerMoveEvent),
       take(2),
       map(event => event.data),
@@ -125,15 +124,14 @@ it.skip('game view repository from event bus', async () => {
 });
 
 it('full game events', async () => {
-  // saga will not work
-  // const events = app.get(EventBus);
-  // const gameEndData$ = lastValueFrom(
-  //   events.pipe(
-  //     ofType(GameEndedEvent),
-  //     take(1),
-  //     map(event => event.data),
-  //   ),
-  // );
+  const events = app.get(EventBus);
+  const gameEndData$ = lastValueFrom(
+    events.pipe(
+      ofType(GameEndedEvent),
+      take(1),
+      map(event => event.data),
+    ),
+  );
 
   const { id: gameId } = await commandBus.execute<
     CreateGameCommand,
@@ -172,9 +170,7 @@ it('full game events', async () => {
 
   await gameRepository.save(game);
 
-  game = await gameRepository.findOne(gameId);
-
-  // expect(await gameEndData$).toEqual(
-  //   expect.objectContaining({ winnerId: '1', gameId }),
-  // );
+  expect(await gameEndData$).toEqual(
+    expect.objectContaining({ winnerId: '1', gameId }),
+  );
 });

@@ -1,4 +1,4 @@
-import { IStoredEvent } from './interfaces.ts';
+import type { IStoredEvent, ReadableSubscription } from './interfaces.ts';
 
 export type IApplyArgs = {
   aggregateType: string;
@@ -27,4 +27,8 @@ export interface IEventStoreClient {
   apply(args: IApplyArgs): Promise<IApplyResult>;
   read(args: IGetEventArgs): AsyncIterableIterator<IStoredEvent>;
   disconnect(): Promise<void>;
+  subscribeToAll(
+    eventListener: (event: IStoredEvent) => void,
+    errorListener: (error: Error) => void,
+  ): ReadableSubscription;
 }

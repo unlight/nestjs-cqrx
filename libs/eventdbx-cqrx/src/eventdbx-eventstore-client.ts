@@ -6,6 +6,7 @@ import type {
   ICreateResult,
   IApplyResult,
   IStoredEvent,
+  ReadableSubscription,
 } from 'cqrx-core';
 import type { ClientOptions, DbxClient, IEventResult } from './interfaces.ts';
 
@@ -108,5 +109,12 @@ export class EventdbxEventstoreClient implements IEventStoreClient {
 
   async disconnect(): Promise<void> {
     await this.client.disconnect();
+  }
+
+  subscribeToAll(
+    eventListener: (event: IStoredEvent) => void,
+    errorListener: (error: Error) => void,
+  ): ReadableSubscription {
+    throw new Error('Not implemented');
   }
 }

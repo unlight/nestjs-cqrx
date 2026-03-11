@@ -1,4 +1,5 @@
 import {
+  END,
   jsonEvent,
   KurrentDBClient,
   NO_STREAM,
@@ -83,7 +84,7 @@ export class KurrentdbEventStoreClient implements IEventStoreClient {
   /**
    * Transform database event to common event interface
    */
-  private createEvent(event: RecordedEvent): IStoredEvent<any> {
+  private createEvent(event: RecordedEvent): IStoredEvent {
     return {
       created: event.created,
       data: event.data,
@@ -97,5 +98,26 @@ export class KurrentdbEventStoreClient implements IEventStoreClient {
 
   async disconnect(): Promise<void> {
     await this.kurrentDbClient.dispose();
+  }
+
+  subscribeToAll(
+    eventListener: (event: IStoredEvent) => void,
+    errorListener?: (err: Error) => void,
+  ) {
+    const subscription = this.kurrentDbClient.subscribeToAll({
+      fromPosition: END,
+    });
+
+    subscription.on('data', data => {
+      const { event } = data;
+
+      if (event) {
+        eventListener(this.createEvent(event));
+      }
+    });
+
+    if (errorListener) subscription.on('error', errorListener);
+
+    return subscription as any;
   }
 }

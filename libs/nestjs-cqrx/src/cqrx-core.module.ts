@@ -54,16 +54,24 @@ export interface CqrxModuleAsyncOptions extends Pick<
   providers: [EventStoreService, TransformService, EventPublisher],
 })
 export class CqrxCoreModule implements OnModuleInit {
-  private subscription?: () => Promise<void>;
+  private subscription?: () => undefined | Promise<void>;
 
   constructor(
-    private readonly eventBus$: EventBus<Event>,
     @Inject(CQRX_OPTIONS) private readonly options: CqrxModuleOptions,
+    private readonly eventStoreService: EventStoreService,
+    private readonly eventBus$: EventBus<Event>,
   ) {}
 
   onModuleInit() {
     if (this.options.type === 'kurrentdb' && this.options.subscribeToAll) {
-      throw new Error('Not implemented');
+      this.subscription = this.eventStoreService.subscribeToAll(
+        event => {
+          this.eventBus$.subject$.next(event);
+        },
+        error => {
+          this.eventBus$.subject$.error(error);
+        },
+      );
     }
   }
 

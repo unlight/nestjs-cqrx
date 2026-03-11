@@ -1,3 +1,4 @@
+import type { Readable } from 'node:stream';
 import type { Observable } from 'rxjs';
 
 import type {
@@ -19,7 +20,7 @@ export type EventHandlerFunction<E = any> =
   | ((event: E) => Observable<void> | Promise<void> | void)
   | (() => Observable<void> | Promise<void> | void);
 
-export interface IStoredEvent<D = PlainObject> {
+export interface IStoredEvent<D = any> {
   /**
    * The event stream that events belongs to
    */
@@ -50,6 +51,8 @@ export interface IStoredEvent<D = PlainObject> {
   readonly metadata?: unknown;
 }
 
-export type TEventData = {};
-
 export type { Nullable, PlainObject, Constructor };
+
+export interface ReadableSubscription extends Readable {
+  unsubscribe(): Promise<void>;
+}

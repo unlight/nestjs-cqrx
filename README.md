@@ -33,6 +33,17 @@ npm install --save eventdbx-cqrx
 npm install --save kurrentdb-cqrx
 ```
 
+#### KurrentDB Configuration
+
+- `connectionString` Connection string
+- `subscribeToAll: boolean` Live subscription, receives events written after subscribing.
+  Subscribe to the global $all stream and get events
+  to EventBus (@nestjs/cqrs) (default: false)
+
+#### EventDBX Configuration
+
+See https://docs.eventdbx.com/client-sdks/javascript#connect-and-configure
+
 ### 3. NestJS module
 
 ```sh
@@ -47,8 +58,8 @@ import { CqrxModule } from 'nestjs-cqrx';
 @Module({
   imports: [
     CqrxModule.forRoot({
-      type: 'kurrentdb', // eventdbx
-      eventstoreConnectionString: 'kurrentdb://localhost:2113?tls=false',
+      type: 'kurrentdb',
+      connectionString: 'kurrentdb://localhost:2113?tls=false',
     }),
   ],
 })
@@ -188,7 +199,7 @@ export EVENTDBX_TOKEN=$(docker compose exec -T eventdbx dbx token bootstrap --st
 
 ## Todo
 
-- update readme for each package - each section - copy when build
+- configure eventdbx plugin
 - find lib for creating errors
 - better to split on read/write events
 - reducer (similar to evolve of emmet)
