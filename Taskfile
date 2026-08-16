@@ -2,32 +2,30 @@
 PATH="$PWD/node_modules/.bin":$PATH
 set -e
 
-buildMicrobundle6() {
+build() {
   set -x
-  if [ -n "$1" ]; then
-    pushd $1
-  fi
-  rm -rfv dist
-  npx dts-bundle-generator --no-banner --no-check --project tsconfig.json -o dist/index.d.ts src/index.ts
-  npx microbundle -i src/index.ts --tsconfig tsconfig.json --no-generateTypes --no-sourcemap --no-compress --no-pkg-main --target node -f esm -o dist || true
-  name=$(cat package.json | jq -r '.name')
-  cp -v package.json dist
-  cp -v ../../README.md dist
-  cd dist
-  mv index.d.ts "$name.d.ts"
-  mv "$name.js" "$name.mjs"
-  root=$(cat ../../../package.json | jq '{license,repository,bugs,homepage,keywords}')
-  cat ../package.json \
-    | jq 'del(.scripts, .exports)' \
-    | jq --argjson root "$root" '. * $root' \
-    | jq --arg name "$name" '
-    .module = "./\($name).mjs" |
-    .types = "./\($name).d.ts"
-  ' > package.json
-  cd ..
-  if [ -n "$1" ]; then
-    popd
-  fi
+  rm -rf dist
+  tsdown
+
+  NAME=$(jq -r '.name' package.json)
+  ROOT=$(jq '{license, repository, bugs, homepage, keywords}' ../../package.json)
+
+  mv "dist/index.js"   "dist/${NAME}.mjs"
+  mv "dist/index.d.ts" "dist/${NAME}.d.ts"
+  cp ../../README.md dist/README.md
+
+  jq --argjson root "$ROOT" '
+    del(.scripts, .devDependencies, .exports)
+    | . * $root
+    | .module  = "./\(.name).mjs"
+    | .types   = "./\(.name).d.ts"
+    | .exports = {
+        ".": {
+          types:   "./\(.name).d.ts",
+          default: "./\(.name).mjs"
+        }
+      }
+  ' package.json > dist/package.json
   set +x
 }
 

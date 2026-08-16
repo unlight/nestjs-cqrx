@@ -8,6 +8,8 @@ import {
   Transformers,
   TransformService,
 } from 'cqrx-core';
+import type { EventdbxEventstoreClient } from 'eventdbx-cqrx';
+import type { KurrentdbEventStoreClient } from 'kurrentdb-cqrx';
 
 import { EVENT_TRANSFORMERS } from './constants.js';
 import type { CqrxModuleOptions } from './cqrx-core.module.js';
@@ -21,7 +23,9 @@ export const InjectAggregateRepository = (
   aggregate: Type<unknown>,
 ): ParameterDecorator => Inject(aggregateRepositoryToken(aggregate));
 
-export async function eventStoreClientFactory(options: CqrxModuleOptions) {
+export async function eventStoreClientFactory(
+  options: CqrxModuleOptions,
+): Promise<EventdbxEventstoreClient | KurrentdbEventStoreClient> {
   const { type } = options;
   switch (type) {
     case 'eventdbx': {

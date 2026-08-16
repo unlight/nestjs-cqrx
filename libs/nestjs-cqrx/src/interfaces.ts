@@ -3,8 +3,8 @@ import { Observable } from 'rxjs';
 import type { Event, AggregateRoot, IStoredEvent } from 'cqrx-core';
 import type { Nullable } from 'simplytyped';
 
-import type { ClientOptions as EventdbxOptions } from '../../eventdbx-cqrx/src/index.ts';
-import type { ClientOptions as KurrentdbOptions } from '../../kurrentdb-cqrx/src/index.ts';
+import type { ClientOptions as EventdbxOptions } from 'eventdbx-cqrx';
+import type { ClientOptions as KurrentdbOptions } from 'kurrentdb-cqrx';
 
 export type RequiredEvent<P = unknown> = Required<IStoredEvent<P>>;
 export type AggregateEventHandlers = Map<Type<Event>, Array<string | symbol>>;

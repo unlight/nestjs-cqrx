@@ -196,6 +196,7 @@ export EVENTDBX_TOKEN=$(docker compose exec -T eventdbx dbx token bootstrap --st
 - find lib for creating errors
 - better to split on read/write events
 - reducer (similar to evolve of emmet)
+- configure commit lint for scope
 
 ## License
 

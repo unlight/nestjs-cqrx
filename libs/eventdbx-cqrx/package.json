@@ -15,7 +15,7 @@
     "eventdbxjs": "1"
   },
   "scripts": {
-    "build": "sh ../../Taskfile buildMicrobundle6",
+    "build": "sh ../../Taskfile build",
     "test": "npm run eslint && npm run tscheck && npm run test:r",
     "test:r": "vitest run",
     "test:cov": "vitest run --coverage",
