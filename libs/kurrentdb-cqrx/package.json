@@ -8,11 +8,11 @@
   },
   "peerDependencies": {
     "@kurrent/kurrentdb-client": "1",
-    "cqrx-core": "workspace:^"
+    "cqrx-core": "*"
   },
   "devDependencies": {
     "@kurrent/kurrentdb-client": "1",
-    "cqrx-core": "workspace:^"
+    "cqrx-core": "*"
   },
   "scripts": {
     "build": "sh ../../Taskfile buildMicrobundle6",

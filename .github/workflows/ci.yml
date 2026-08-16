@@ -26,35 +26,19 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 24
+          cache: npm
 
-      - name: 'Install depependencies'
-        run: |
-          yarn install --immutable
-          # TODO: Remove hack
-          # Install eventdbxjs in a temp directory, then copy it
-          mkdir -p /tmp/eventdbxjs-install
-          cd /tmp/eventdbxjs-install
-          npm init -y
-          npm install eventdbxjs eventdbxjs-linux-x64-gnu --omit=optional
-          cp -r node_modules/eventdbxjs $GITHUB_WORKSPACE/node_modules/
-          cp -r node_modules/eventdbxjs-linux-x64-gnu $GITHUB_WORKSPACE/node_modules/
-          cd $GITHUB_WORKSPACE
-          # npm install eventdbxjs --omit=optional --no-save --install-strategy=nested
-          # additional hacks
-          # npm install eventdbxjs --omit=optional
-          # npm install eventdbxjs --omit=optional --no-save
+      - name: 'Install dependencies'
+        run: npm ci
 
       - name: 'Lint source'
-        run: |
-          yarn eslint
+        run: npm run eslint
 
       - name: 'Type check'
-        run: |
-          yarn typecheck
+        run: npm run typecheck
 
       - name: 'Build'
-        run: |
-          yarn build
+        run: npm run build
 
       - name: 'Check docker compose version'
         run: docker compose version
@@ -69,9 +53,8 @@ jobs:
 
       - name: 'Test run'
         env:
-          EVENTDBX_TOKEN: ${{ ENV.EVENTDBX_TOKEN }}
-        run: |
-          yarn test:r
+          EVENTDBX_TOKEN: ${{ env.EVENTDBX_TOKEN }}
+        run: npm run test:r
 
       - name: 'Stop containers'
         if: always()

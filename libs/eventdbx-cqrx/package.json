@@ -7,11 +7,11 @@
     ".": "./src/index.ts"
   },
   "peerDependencies": {
-    "cqrx-core": "workspace:^",
+    "cqrx-core": "*",
     "eventdbxjs": "1"
   },
   "devDependencies": {
-    "cqrx-core": "workspace:^",
+    "cqrx-core": "*",
     "eventdbxjs": "1"
   },
   "scripts": {
