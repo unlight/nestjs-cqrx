@@ -185,13 +185,6 @@ it will be automatically added to transform service.
 
 ## Development
 
-```ps
-docker compose down
-docker compose up -d
-$env:EVENTDBX_TOKEN = (docker compose exec -T eventdbx dbx token bootstrap --stdout).Trim()
-yarn wineventdbxjs
-```
-
 ```bash
 docker compose up -d
 export EVENTDBX_TOKEN=$(docker compose exec -T eventdbx dbx token bootstrap --stdout)

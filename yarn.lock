@@ -1879,6 +1879,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@mongodb-js/saslprep@npm:^1.3.0":
+  version: 1.4.13
+  resolution: "@mongodb-js/saslprep@npm:1.4.13"
+  dependencies:
+    sparse-bitfield: "npm:^3.0.3"
+  checksum: 10c0/f379e6d35a09bc3495cf88e483dc3349d076261b6101fab46435f8d5cd40b8095dd0d770183bc69536383c4a3a86905abd71ddb77f3bfdf5c27a7bf5b82101ff
+  languageName: node
+  linkType: hard
+
 "@neon-rs/load@npm:^0.1.82":
   version: 0.1.82
   resolution: "@neon-rs/load@npm:0.1.82"
@@ -3315,6 +3324,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/pg@npm:^8.15.6":
+  version: 8.21.0
+  resolution: "@types/pg@npm:8.21.0"
+  dependencies:
+    "@types/node": "npm:*"
+    pg-protocol: "npm:*"
+    pg-types: "npm:^2.2.0"
+  checksum: 10c0/829b1185896a722a9c802e0d3cbbe66fba9d963f759d727acd68206803e37d5c4249241abcc2a595b0e3ebc667293de722a668a016a1d4ab1bbc3f5dbe3b7c93
+  languageName: node
+  linkType: hard
+
 "@types/resolve@npm:1.17.1":
   version: 1.17.1
   resolution: "@types/resolve@npm:1.17.1"
@@ -3350,6 +3370,22 @@ __metadata:
   version: 13.15.10
   resolution: "@types/validator@npm:13.15.10"
   checksum: 10c0/3e2e65fcd37dd6961ca3fd0535293d0c42f5911dc3ca44b96f458835e6db2392b678ccbb0c9815d8c0a14e653439e6c62c7b8758a6cd1d6e390551c9e56618ac
+  languageName: node
+  linkType: hard
+
+"@types/webidl-conversions@npm:*":
+  version: 7.0.3
+  resolution: "@types/webidl-conversions@npm:7.0.3"
+  checksum: 10c0/ac2ccff93b95ac7c8ca73dc6064403181691bba7ea144296f462dc9108a07be16cbad7b9c704b3df706dcc5a117e1f7bf7fb27aeb75b09c0f3148de8aee11aff
+  languageName: node
+  linkType: hard
+
+"@types/whatwg-url@npm:^11.0.2":
+  version: 11.0.5
+  resolution: "@types/whatwg-url@npm:11.0.5"
+  dependencies:
+    "@types/webidl-conversions": "npm:*"
+  checksum: 10c0/7a9b9252dee98df6db1ad62337daca7f59ae50d7a3406d14ac6b57168d406004359994f3371155e24f3cf12002c4cb8bbb0883bd4cefb9d7ee8e2b510bdd7f5e
   languageName: node
   linkType: hard
 
@@ -4104,6 +4140,13 @@ __metadata:
   bin:
     browserslist: cli.js
   checksum: 10c0/545a5fa9d7234e3777a7177ec1e9134bb2ba60a69e6b95683f6982b1473aad347c77c1264ccf2ac5dea609a9731fbfbda6b85782bdca70f80f86e28a402504bd
+  languageName: node
+  linkType: hard
+
+"bson@npm:^6.10.4":
+  version: 6.10.4
+  resolution: "bson@npm:6.10.4"
+  checksum: 10c0/6c6819ce642516901349f42c5d9d131d5a4e84352a3859c814d4abf6b2b9249e3685b57fc4cf7b5737fb5c71252f65900a41826c1429815a93e43f0f5bb3c173
   languageName: node
   linkType: hard
 
@@ -5713,6 +5756,164 @@ __metadata:
   version: 5.0.1
   resolution: "event-target-shim@npm:5.0.1"
   checksum: 10c0/0255d9f936215fd206156fd4caa9e8d35e62075d720dc7d847e89b417e5e62cf1ce6c9b4e0a1633a9256de0efefaf9f8d26924b1f3c8620cffb9db78e7d3076b
+  languageName: node
+  linkType: hard
+
+"eventdbx-cqrx@workspace:libs/eventdbx-cqrx":
+  version: 0.0.0-use.local
+  resolution: "eventdbx-cqrx@workspace:libs/eventdbx-cqrx"
+  dependencies:
+    cqrx-core: "workspace:^"
+    eventdbxjs: "npm:1"
+  peerDependencies:
+    cqrx-core: "workspace:^"
+    eventdbxjs: 1
+  languageName: unknown
+  linkType: soft
+
+"eventdbxjs-android-arm-eabi@npm:1.4.5":
+  version: 1.4.5
+  resolution: "eventdbxjs-android-arm-eabi@npm:1.4.5"
+  conditions: os=android & cpu=arm
+  languageName: node
+  linkType: hard
+
+"eventdbxjs-android-arm64@npm:1.4.5":
+  version: 1.4.5
+  resolution: "eventdbxjs-android-arm64@npm:1.4.5"
+  conditions: os=android & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"eventdbxjs-darwin-arm64@npm:1.4.5":
+  version: 1.4.5
+  resolution: "eventdbxjs-darwin-arm64@npm:1.4.5"
+  conditions: os=darwin & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"eventdbxjs-darwin-x64@npm:1.4.5":
+  version: 1.4.5
+  resolution: "eventdbxjs-darwin-x64@npm:1.4.5"
+  conditions: os=darwin & cpu=x64
+  languageName: node
+  linkType: hard
+
+"eventdbxjs-freebsd-x64@npm:1.4.5":
+  version: 1.4.5
+  resolution: "eventdbxjs-freebsd-x64@npm:1.4.5"
+  conditions: os=freebsd & cpu=x64
+  languageName: node
+  linkType: hard
+
+"eventdbxjs-linux-arm-gnueabihf@npm:1.4.5":
+  version: 1.4.5
+  resolution: "eventdbxjs-linux-arm-gnueabihf@npm:1.4.5"
+  conditions: os=linux & cpu=arm
+  languageName: node
+  linkType: hard
+
+"eventdbxjs-linux-arm64-gnu@npm:1.4.5":
+  version: 1.4.5
+  resolution: "eventdbxjs-linux-arm64-gnu@npm:1.4.5"
+  conditions: os=linux & cpu=arm64 & libc=glibc
+  languageName: node
+  linkType: hard
+
+"eventdbxjs-linux-arm64-musl@npm:1.4.5":
+  version: 1.4.5
+  resolution: "eventdbxjs-linux-arm64-musl@npm:1.4.5"
+  conditions: os=linux & cpu=arm64 & libc=musl
+  languageName: node
+  linkType: hard
+
+"eventdbxjs-linux-x64-gnu@npm:1.4.5, eventdbxjs-wasm32-wasi@npm:eventdbxjs-linux-x64-gnu@1.4.5":
+  version: 1.4.5
+  resolution: "eventdbxjs-linux-x64-gnu@npm:1.4.5"
+  conditions: os=linux & cpu=x64 & libc=glibc
+  languageName: node
+  linkType: hard
+
+"eventdbxjs-linux-x64-musl@npm:1.4.5":
+  version: 1.4.5
+  resolution: "eventdbxjs-linux-x64-musl@npm:1.4.5"
+  conditions: os=linux & cpu=x64 & libc=musl
+  languageName: node
+  linkType: hard
+
+"eventdbxjs-win32-arm64-msvc@npm:1.4.5":
+  version: 1.4.5
+  resolution: "eventdbxjs-win32-arm64-msvc@npm:1.4.5"
+  conditions: os=win32 & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"eventdbxjs-win32-ia32-msvc@npm:1.4.5":
+  version: 1.4.5
+  resolution: "eventdbxjs-win32-ia32-msvc@npm:1.4.5"
+  conditions: os=win32 & cpu=ia32
+  languageName: node
+  linkType: hard
+
+"eventdbxjs-win32-x64-msvc@npm:1.4.5":
+  version: 1.4.5
+  resolution: "eventdbxjs-win32-x64-msvc@npm:1.4.5"
+  conditions: os=win32 & cpu=x64
+  languageName: node
+  linkType: hard
+
+"eventdbxjs@npm:1, eventdbxjs@npm:^1.3.1":
+  version: 1.4.5
+  resolution: "eventdbxjs@npm:1.4.5"
+  dependencies:
+    "@types/pg": "npm:^8.15.6"
+    eventdbxjs: "npm:^1.3.1"
+    eventdbxjs-android-arm-eabi: "npm:1.4.5"
+    eventdbxjs-android-arm64: "npm:1.4.5"
+    eventdbxjs-darwin-arm64: "npm:1.4.5"
+    eventdbxjs-darwin-x64: "npm:1.4.5"
+    eventdbxjs-freebsd-x64: "npm:1.4.5"
+    eventdbxjs-linux-arm-gnueabihf: "npm:1.4.5"
+    eventdbxjs-linux-arm64-gnu: "npm:1.4.5"
+    eventdbxjs-linux-arm64-musl: "npm:1.4.5"
+    eventdbxjs-linux-x64-gnu: "npm:1.4.5"
+    eventdbxjs-linux-x64-musl: "npm:1.4.5"
+    eventdbxjs-wasm32-wasi: "npm:1.4.5"
+    eventdbxjs-win32-arm64-msvc: "npm:1.4.5"
+    eventdbxjs-win32-ia32-msvc: "npm:1.4.5"
+    eventdbxjs-win32-x64-msvc: "npm:1.4.5"
+    mongodb: "npm:^6.20.0"
+    pg: "npm:^8.16.3"
+  dependenciesMeta:
+    eventdbxjs-android-arm-eabi:
+      optional: true
+    eventdbxjs-android-arm64:
+      optional: true
+    eventdbxjs-darwin-arm64:
+      optional: true
+    eventdbxjs-darwin-x64:
+      optional: true
+    eventdbxjs-freebsd-x64:
+      optional: true
+    eventdbxjs-linux-arm-gnueabihf:
+      optional: true
+    eventdbxjs-linux-arm64-gnu:
+      optional: true
+    eventdbxjs-linux-arm64-musl:
+      optional: true
+    eventdbxjs-linux-x64-gnu:
+      optional: true
+    eventdbxjs-linux-x64-musl:
+      optional: true
+    eventdbxjs-wasm32-wasi:
+      optional: true
+    eventdbxjs-win32-arm64-msvc:
+      optional: true
+    eventdbxjs-win32-ia32-msvc:
+      optional: true
+    eventdbxjs-win32-x64-msvc:
+      optional: true
+  checksum: 10c0/c1befd0db5190404a79638f0db15e79a9c580308c1e7e36d958dab428bc78f130e74be0bf1cc40504ca5471d398c7330b53596369746366e34280a4f3dab8534
   languageName: node
   linkType: hard
 
@@ -7907,6 +8108,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"memory-pager@npm:^1.0.2":
+  version: 1.5.0
+  resolution: "memory-pager@npm:1.5.0"
+  checksum: 10c0/2596e80c99fee24f05bd8a20cde2ee899012c996f4ec361ac76ed6f009f34149d733ac6f76880106ccd6a66d062ad439357578d383d429df66ba1278f68806e9
+  languageName: node
+  linkType: hard
+
 "meow@npm:^13.0.0":
   version: 13.2.0
   resolution: "meow@npm:13.2.0"
@@ -8179,6 +8387,50 @@ __metadata:
   bin:
     mkdirp: bin/cmd.js
   checksum: 10c0/e2e2be789218807b58abced04e7b49851d9e46e88a2f9539242cc8a92c9b5c3a0b9bab360bd3014e02a140fc4fbc58e31176c408b493f8a2a6f4986bd7527b01
+  languageName: node
+  linkType: hard
+
+"mongodb-connection-string-url@npm:^3.0.2":
+  version: 3.0.2
+  resolution: "mongodb-connection-string-url@npm:3.0.2"
+  dependencies:
+    "@types/whatwg-url": "npm:^11.0.2"
+    whatwg-url: "npm:^14.1.0 || ^13.0.0"
+  checksum: 10c0/8b7ac99634f167dbe690e90fa10528e3ffc029faf2feabf36efb84299a04831130b3dba114dbe132f05a8a38022976904b625976996a4534bca4368e8fa5ba33
+  languageName: node
+  linkType: hard
+
+"mongodb@npm:^6.20.0":
+  version: 6.21.0
+  resolution: "mongodb@npm:6.21.0"
+  dependencies:
+    "@mongodb-js/saslprep": "npm:^1.3.0"
+    bson: "npm:^6.10.4"
+    mongodb-connection-string-url: "npm:^3.0.2"
+  peerDependencies:
+    "@aws-sdk/credential-providers": ^3.188.0
+    "@mongodb-js/zstd": ^1.1.0 || ^2.0.0
+    gcp-metadata: ^5.2.0
+    kerberos: ^2.0.1
+    mongodb-client-encryption: ">=6.0.0 <7"
+    snappy: ^7.3.2
+    socks: ^2.7.1
+  peerDependenciesMeta:
+    "@aws-sdk/credential-providers":
+      optional: true
+    "@mongodb-js/zstd":
+      optional: true
+    gcp-metadata:
+      optional: true
+    kerberos:
+      optional: true
+    mongodb-client-encryption:
+      optional: true
+    snappy:
+      optional: true
+    socks:
+      optional: true
+  checksum: 10c0/3269316bdba174139e10cb25a1f22a8445beb14f26987d61dba922ddd5784b35b4bec563554da4d1ab180a3c1ff77f092ba858cd3ae3da45e3aaf706ef27a460
   languageName: node
   linkType: hard
 
@@ -9083,6 +9335,87 @@ __metadata:
   languageName: node
   linkType: hard
 
+"pg-cloudflare@npm:^1.4.0":
+  version: 1.4.0
+  resolution: "pg-cloudflare@npm:1.4.0"
+  checksum: 10c0/553764d00055052648393cda53c1feb065991d6f9fbfdeb56cf8396c5b33377ab2897aaf5dc9cd3933d09023a1f01e8b1ca755431dcf5fd71c92ea277e2888f1
+  languageName: node
+  linkType: hard
+
+"pg-connection-string@npm:^2.14.0":
+  version: 2.14.0
+  resolution: "pg-connection-string@npm:2.14.0"
+  checksum: 10c0/c26d85970f782de72b90aa45b4acfa34df90242fc08bc676e8827297164044dbfb40a2cf20b0646bd02662a6b14c5ed27f322db627e41e582f2b705bc41e8b47
+  languageName: node
+  linkType: hard
+
+"pg-int8@npm:1.0.1":
+  version: 1.0.1
+  resolution: "pg-int8@npm:1.0.1"
+  checksum: 10c0/be6a02d851fc2a4ae3e9de81710d861de3ba35ac927268973eb3cb618873a05b9424656df464dd43bd7dc3fc5295c3f5b3c8349494f87c7af50ec59ef14e0b98
+  languageName: node
+  linkType: hard
+
+"pg-pool@npm:^3.14.0":
+  version: 3.14.0
+  resolution: "pg-pool@npm:3.14.0"
+  peerDependencies:
+    pg: ">=8.0"
+  checksum: 10c0/3dd706e67e3b317e29409d9eb3bd44e960eabd86db2a9711a9391bbd43881f8ce7a5f7054a341509558ee05e9bf0a3cc7aef037039da0790ce1e16762ade3ba6
+  languageName: node
+  linkType: hard
+
+"pg-protocol@npm:*, pg-protocol@npm:^1.16.0":
+  version: 1.16.0
+  resolution: "pg-protocol@npm:1.16.0"
+  checksum: 10c0/8ea4a8f4970aa0ca1e5bf9a482da0a41a043d7470fbaf7592736971146b09a2a4003d953c0091b72fc30bf7a7994a0b7fdf897bf50cd219787bd22806b3ffb04
+  languageName: node
+  linkType: hard
+
+"pg-types@npm:2.2.0, pg-types@npm:^2.2.0":
+  version: 2.2.0
+  resolution: "pg-types@npm:2.2.0"
+  dependencies:
+    pg-int8: "npm:1.0.1"
+    postgres-array: "npm:~2.0.0"
+    postgres-bytea: "npm:~1.0.0"
+    postgres-date: "npm:~1.0.4"
+    postgres-interval: "npm:^1.1.0"
+  checksum: 10c0/ab3f8069a323f601cd2d2279ca8c425447dab3f9b61d933b0601d7ffc00d6200df25e26a4290b2b0783b59278198f7dd2ed03e94c4875797919605116a577c65
+  languageName: node
+  linkType: hard
+
+"pg@npm:^8.16.3":
+  version: 8.23.0
+  resolution: "pg@npm:8.23.0"
+  dependencies:
+    pg-cloudflare: "npm:^1.4.0"
+    pg-connection-string: "npm:^2.14.0"
+    pg-pool: "npm:^3.14.0"
+    pg-protocol: "npm:^1.16.0"
+    pg-types: "npm:2.2.0"
+    pgpass: "npm:1.0.5"
+  peerDependencies:
+    pg-native: ">=3.0.1"
+  dependenciesMeta:
+    pg-cloudflare:
+      optional: true
+  peerDependenciesMeta:
+    pg-native:
+      optional: true
+  checksum: 10c0/11ce12a71b4239588c18f078531c378d5bcdbcb9ea892e080a6e71f91aaece2b4b8fd93ee5777f94210f9258ff56161f8ed1a45050c32d295aaca037bba12ee8
+  languageName: node
+  linkType: hard
+
+"pgpass@npm:1.0.5":
+  version: 1.0.5
+  resolution: "pgpass@npm:1.0.5"
+  dependencies:
+    split2: "npm:^4.1.0"
+  checksum: 10c0/5ea6c9b2de04c33abb08d33a2dded303c4a3c7162a9264519cbe85c0a9857d712463140ba42fad0c7cd4b21f644dd870b45bb2e02fcbe505b4de0744fd802c1d
+  languageName: node
+  linkType: hard
+
 "picocolors@npm:^1.0.0, picocolors@npm:^1.1.1":
   version: 1.1.1
   resolution: "picocolors@npm:1.1.1"
@@ -9567,6 +9900,36 @@ __metadata:
   languageName: node
   linkType: hard
 
+"postgres-array@npm:~2.0.0":
+  version: 2.0.0
+  resolution: "postgres-array@npm:2.0.0"
+  checksum: 10c0/cbd56207e4141d7fbf08c86f2aebf21fa7064943d3f808ec85f442ff94b48d891e7a144cc02665fb2de5dbcb9b8e3183a2ac749959e794b4a4cfd379d7a21d08
+  languageName: node
+  linkType: hard
+
+"postgres-bytea@npm:~1.0.0":
+  version: 1.0.1
+  resolution: "postgres-bytea@npm:1.0.1"
+  checksum: 10c0/10b28a27c9d703d5befd97c443e62b551096d1014bc59ab574c65bf0688de7f3f068003b2aea8dcff83cf0f6f9a35f9f74457c38856cf8eb81b00cf3fb44f164
+  languageName: node
+  linkType: hard
+
+"postgres-date@npm:~1.0.4":
+  version: 1.0.7
+  resolution: "postgres-date@npm:1.0.7"
+  checksum: 10c0/0ff91fccc64003e10b767fcfeefb5eaffbc522c93aa65d5051c49b3c4ce6cb93ab091a7d22877a90ad60b8874202c6f1d0f935f38a7235ed3b258efd54b97ca9
+  languageName: node
+  linkType: hard
+
+"postgres-interval@npm:^1.1.0":
+  version: 1.2.0
+  resolution: "postgres-interval@npm:1.2.0"
+  dependencies:
+    xtend: "npm:^4.0.0"
+  checksum: 10c0/c1734c3cb79e7f22579af0b268a463b1fa1d084e742a02a7a290c4f041e349456f3bee3b4ee0bb3f226828597f7b76deb615c1b857db9a742c45520100456272
+  languageName: node
+  linkType: hard
+
 "prelude-ls@npm:^1.2.1":
   version: 1.2.1
   resolution: "prelude-ls@npm:1.2.1"
@@ -9722,7 +10085,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"punycode@npm:^2.1.0":
+"punycode@npm:^2.1.0, punycode@npm:^2.3.1":
   version: 2.3.1
   resolution: "punycode@npm:2.3.1"
   checksum: 10c0/14f76a8206bc3464f794fb2e3d3cc665ae416c01893ad7a02b23766eb07159144ee612ad67af5e84fa4479ccfe67678c4feb126b0485651b302babf66f04f9e9
@@ -10720,6 +11083,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"sparse-bitfield@npm:^3.0.3":
+  version: 3.0.3
+  resolution: "sparse-bitfield@npm:3.0.3"
+  dependencies:
+    memory-pager: "npm:^1.0.2"
+  checksum: 10c0/248c6ff7b5e354735e1daac4059222a29c9d291dfcf265daf675d13515eeaac454cfcccd687c8d134f86698b39abd7ad4d7434f7272dd6f8e41a00f21aae4194
+  languageName: node
+  linkType: hard
+
 "spawn-error-forwarder@npm:~1.0.0":
   version: 1.0.0
   resolution: "spawn-error-forwarder@npm:1.0.0"
@@ -10768,6 +11140,13 @@ __metadata:
   version: 3.0.23
   resolution: "spdx-license-ids@npm:3.0.23"
   checksum: 10c0/8495620f6f2a237749cce922ea2d593a66f7885c301b1a0f5542183e7041182f27f616a8f13345cefdea0c9b3e0899328e0aa8cec100cf4f3fac4bb3bd975515
+  languageName: node
+  linkType: hard
+
+"split2@npm:^4.1.0":
+  version: 4.2.0
+  resolution: "split2@npm:4.2.0"
+  checksum: 10c0/b292beb8ce9215f8c642bb68be6249c5a4c7f332fc8ecadae7be5cbdf1ea95addc95f0459ef2e7ad9d45fd1064698a097e4eb211c83e772b49bc0ee423e91534
   languageName: node
   linkType: hard
 
@@ -11336,6 +11715,15 @@ __metadata:
     "@tokenizer/token": "npm:^0.3.0"
     ieee754: "npm:^1.2.1"
   checksum: 10c0/8786e28e3cb65b9e890bc3c38def98e6dfe4565538237f8c0e47dbe549ed8f5f00de8dc464717868308abb4729f1958f78f69e1c4c3deebbb685729113a6fee8
+  languageName: node
+  linkType: hard
+
+"tr46@npm:^5.1.0":
+  version: 5.1.1
+  resolution: "tr46@npm:5.1.1"
+  dependencies:
+    punycode: "npm:^2.3.1"
+  checksum: 10c0/ae270e194d52ec67ebd695c1a42876e0f19b96e4aca2ab464ab1d9d17dc3acd3e18764f5034c93897db73421563be27c70c98359c4501136a497e46deda5d5ec
   languageName: node
   linkType: hard
 
@@ -11990,10 +12378,27 @@ __metadata:
   languageName: node
   linkType: hard
 
+"webidl-conversions@npm:^7.0.0":
+  version: 7.0.0
+  resolution: "webidl-conversions@npm:7.0.0"
+  checksum: 10c0/228d8cb6d270c23b0720cb2d95c579202db3aaf8f633b4e9dd94ec2000a04e7e6e43b76a94509cdb30479bd00ae253ab2371a2da9f81446cc313f89a4213a2c4
+  languageName: node
+  linkType: hard
+
 "webpack-virtual-modules@npm:^0.6.2":
   version: 0.6.2
   resolution: "webpack-virtual-modules@npm:0.6.2"
   checksum: 10c0/5ffbddf0e84bf1562ff86cf6fcf039c74edf09d78358a6904a09bbd4484e8bb6812dc385fe14330b715031892dcd8423f7a88278b57c9f5002c84c2860179add
+  languageName: node
+  linkType: hard
+
+"whatwg-url@npm:^14.1.0 || ^13.0.0":
+  version: 14.2.0
+  resolution: "whatwg-url@npm:14.2.0"
+  dependencies:
+    tr46: "npm:^5.1.0"
+    webidl-conversions: "npm:^7.0.0"
+  checksum: 10c0/f746fc2f4c906607d09537de1227b13f9494c171141e5427ed7d2c0dd0b6a48b43d8e71abaae57d368d0c06b673fd8ec63550b32ad5ed64990c7b0266c2b4272
   languageName: node
   linkType: hard
 
@@ -12144,7 +12549,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"xtend@npm:^4.0.2, xtend@npm:~4.0.1":
+"xtend@npm:^4.0.0, xtend@npm:^4.0.2, xtend@npm:~4.0.1":
   version: 4.0.2
   resolution: "xtend@npm:4.0.2"
   checksum: 10c0/366ae4783eec6100f8a02dff02ac907bf29f9a00b82ac0264b4d8b832ead18306797e283cf19de776538babfdcb2101375ec5646b59f08c52128ac4ab812ed0e
